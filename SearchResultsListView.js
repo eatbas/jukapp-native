@@ -1,9 +1,9 @@
 'use strict';
 
 var React = require('react-native');
-var VideoCell = require('./VideoCell.js')
-var ApiListView = require("./ApiListView.js")
 var SearchBar = require('react-native-search-bar');
+var Jukapp = require('./Jukapp');
+var VideoCell = require('./VideoCell.js')
 
 var {
  AppRegistry,
@@ -17,40 +17,45 @@ var {
  TextInput
 } = React;
 
-class SearchResultsListView extends React.Component {
+var SearchResultsListView = React.createClass ({
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
+  getInitialState: function() {
+    return {
+      dataSource: new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2}),
       query: null,
     };
-  }
+  },
 
-  renderRow(rowData, sectionID, rowID) {
+  _handleBackButtonPress: function() {
+    this.props.navigator.pop();
+  },
+
+  _handleNextButtonPress: function() {
+    this.props.navigator.push(nextRoute);
+  },
+
+  renderFooter: function() {
+    if (this.state.loading) {
+      return <ActivityIndicatorIOS />;
+    }
+  },
+
+  renderRow: function(rowData, sectionID, rowID) {
     return (
       <VideoCell video={rowData} />
     )
-  }
+  },
 
-  _handleBackButtonPress() {
-    this.props.navigator.pop();
-  }
-
-  _handleNextButtonPress() {
-    this.props.navigator.push(nextRoute);
-  }
-
-  render() {
-
+  render: function() {
     if (this.state.query !== null) {
-      var url = "/search?query=" + this.state.query
       var searchResults =
-        <ApiListView
-            style={styles.listView}
-            url={url}
-            renderRow={(o) => this.renderRow(o)}
-            automaticallyAdjustContentInsets={false}
+        <ListView
+          style={styles.listView}
+          contentContainerStyle={styles.listViewContent}
+          dataSource={this.state.dataSource}
+          renderRow={this.renderRow}
+          renderFooter={this.renderFooter}
+          automaticallyAdjustContentInsets={false}
         />
     }
 
@@ -61,12 +66,22 @@ class SearchResultsListView extends React.Component {
           onChangeText={(text) => {
             this.state.tempQuery = text
           }}
-          onSearchButtonPress={() => {
+          onSearchButtonPress={(text) => {
             console.log('onSearchButtonPress')
-            this.setState({
-              query: this.state.tempQuery,
-              isLoading: true
-            });
+            console.log(text)
+            var url = "/search?query=" + text
+            Jukapp.fetch(url)
+              .then((responseData) => {
+                this.setState({
+                  query: url,
+                  dataSource: this.state.dataSource.cloneWithRows(responseData["videos"])
+                });
+              })
+              .done(() => {
+                this.setState({
+                  loading: false
+                })
+              });
           }}
           onCancelButtonPress={() => {
             console.log('onCancelButtonPress')
@@ -78,7 +93,7 @@ class SearchResultsListView extends React.Component {
       </View>
     );
   }
-}
+});
 
 var styles = StyleSheet.create({
   container: {
@@ -87,8 +102,12 @@ var styles = StyleSheet.create({
     marginTop: 64,
   },
   listView: {
+    backgroundColor: '#EEF2F2',
     padding: 10,
-  }
+  },
+  listViewContent: {
+    justifyContent: 'center',
+  },
 });
 
 module.exports = SearchResultsListView

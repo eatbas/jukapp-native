@@ -1,7 +1,6 @@
 'use strict';
 
 var React = require('react-native');
-var VideoCell = require('./VideoCell.js')
 var ApiListView = require("./ApiListView.js")
 
 var {
@@ -16,12 +15,6 @@ var {
 } = React;
 
 class FavoritesListView extends React.Component {
-
-  renderRow(rowData, sectionID, rowID) {
-    return (
-      <VideoCell video={rowData} />
-    )
-  }
 
   _handleBackButtonPress() {
     this.props.navigator.pop();

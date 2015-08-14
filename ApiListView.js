@@ -2,6 +2,7 @@
 
 var React = require('react-native');
 var Jukapp = require('./Jukapp');
+var VideoCell = require('./VideoCell.js')
 
 var {
  StyleSheet,
@@ -9,80 +10,71 @@ var {
  ActivityIndicatorIOS
 } = React;
 
-class ApiListView extends React.Component {
+var ApiListView = React.createClass({
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
+  getInitialState: function () {
+    return {
       dataSource: new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2}),
       hasMore: false,
       loading: false,
     };
+  },
 
-    this.objects = [];
-  }
-
-  componentDidMount() {
+  componentDidMount: function() {
     this.refresh();
-  }
+  },
 
-  onEndReached() {
-    if(this.state.hasMore)
-      this.refresh()
-  }
+  onEndReached: function() {
+    console.log('end reached')
+  },
 
-  refresh() {
-    var state = this.state;
+  renderRow: function(rowData, sectionID, rowID) {
+    return (
+      <VideoCell video={rowData} />
+    )
+  },
 
-    if(state.loading)
+  refresh: function() {
+    if(this.state.loading)
       return;
 
     this.setState({
       loading: true,
-    })
+    });
 
     Jukapp.fetch(this.props.url)
       .then((responseData) => {
-        if (responseData["videos"]) {
-          responseData = responseData["videos"]
-        }
-
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(responseData)
         });
       })
       .done(() => {
-      this.setState({
-        loading: false
-      })
+        this.setState({
+          loading: false
+        })
+      });
+  },
 
-    })
-  }
-
-  renderFooter() {
+  renderFooter: function() {
     if (this.state.loading) {
       return <ActivityIndicatorIOS />;
     }
-  }
+  },
 
-  render() {
-    var automaticallyAdjustContentInsets = this.props.automaticallyAdjustContentInsets == null ? true : this.props.automaticallyAdjustContentInsets
-
+  render: function() {
     return (
       <ListView
         style={[styles.listView, this.props.style]}
         contentContainerStyle={styles.listViewContent}
         dataSource={this.state.dataSource}
-        renderRow={this.props.renderRow}
+        renderRow={this.renderRow}
         renderSectionHeader={this.props.renderSectionHeader}
-        renderFooter={this.renderFooter.bind(this)}
-        onEndReached={this.onEndReached.bind(this)}
-        automaticallyAdjustContentInsets={automaticallyAdjustContentInsets}
+        renderFooter={this.renderFooter}
+        onEndReached={this.onEndReached}
       />
     );
   }
-}
+});
 
 var styles = StyleSheet.create({
 
