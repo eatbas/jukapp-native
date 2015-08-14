@@ -36,11 +36,9 @@ var FavoritesListView = React.createClass ({
 });
 
 var styles = StyleSheet.create({
-
   container: {
     padding: 10,
   }
-
 });
 
 module.exports = FavoritesListView

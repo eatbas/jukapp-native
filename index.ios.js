@@ -14,6 +14,7 @@ var {
 
 var FavoritesListView = require('./FavoritesListView')
 var SearchResultsListView = require('./SearchResultsListView')
+var RoomsListView = require('./RoomsListView')
 
 var Jukapp = React.createClass({
   _handleNextButtonPress: function() {
@@ -29,8 +30,8 @@ var Jukapp = React.createClass({
         style={styles.container}
         ref='nav'
         initialRoute={{
-          component: SearchResultsListView,
-          title: 'Search',
+          component: RoomsListView,
+          title: 'Rooms',
           rightButtonTitle: 'Favorites',
           onRightButtonPress: this._handleNextButtonPress,
         }}
