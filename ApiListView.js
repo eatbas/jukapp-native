@@ -57,28 +57,6 @@ class ApiListView extends React.Component {
     })
   }
 
-
-  onDataArrived(json) {
-    for (var key in json) {
-      break
-    }
-
-    var payload = json[key]
-
-    this.objects = this.objects.concat(payload)
-
-    var hasMore = this.state.hasMore
-
-    if(payload.length < this.props.batchSize) {
-      hasMore = false
-    }
-    this.setState({
-      hasMore: hasMore,
-      dataSource: this.state.dataSource.cloneWithRows(this.objects)
-    })
-  }
-
-
   renderFooter() {
     if (this.state.loading) {
       return <ActivityIndicatorIOS />;

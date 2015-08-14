@@ -32,7 +32,7 @@ class VideoCell extends React.Component {
 
           <View style={styles.rowData}>
             <Text style={styles.title}>{video.title}</Text>
-            <Text style={styles.details}>12 VIEWS</Text>
+            <Text style={styles.details}>1234 VIEWS</Text>
           </View>
         </View>
       </TouchableHighlight>

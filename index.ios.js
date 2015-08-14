@@ -13,6 +13,7 @@ var {
 } = React;
 
 var FavoritesListView = require('./FavoritesListView')
+var SearchResultsListView = require('./SearchResultsListView')
 
 var Jukapp = React.createClass({
   render: function() {

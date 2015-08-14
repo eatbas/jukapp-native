@@ -37,7 +37,6 @@ class Jukapp {
     })
 
     return fetch(JUKAPP_URL + "/queue", options)
-      .then(() =>{})
       .catch((response) => {
         console.log("Queue error", response)
         AlertIOS.alert("Queue error" + response)
