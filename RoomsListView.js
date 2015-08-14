@@ -2,6 +2,8 @@
 
 var React = require('react-native');
 var Jukapp = require('./Jukapp');
+var SearchResultsListView = require('./SearchResultsListView')
+var FavoritesListView = require('./FavoritesListView')
 
 var {
   AppRegistry,
@@ -11,7 +13,8 @@ var {
   Image,
   ListView,
   TouchableHighlight,
-  ActivityIndicatorIOS
+  ActivityIndicatorIOS,
+  AlertIOS
 } = React;
 
 var RoomsListView = React.createClass ({
@@ -19,7 +22,7 @@ var RoomsListView = React.createClass ({
   getInitialState: function () {
     return {
       dataSource: new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2}),
-      loading: false,
+      loading: true,
     };
   },
 
@@ -28,7 +31,10 @@ var RoomsListView = React.createClass ({
   },
 
   _handleNextButtonPress: function() {
-    this.props.navigator.push(nextRoute);
+    this.props.navigator.push({
+      component: FavoritesListView,
+      title: 'Favorites'
+    });
   },
 
   componentDidMount: function() {
@@ -51,7 +57,19 @@ var RoomsListView = React.createClass ({
         underlayColor="#CFD6D6"
         style={{ marginBottom:10 }}
         onPress={() => {
-          // Jukapp.joinRoom(room)
+          Jukapp.joinRoom(rowData.id)
+            .then((responseData) => {
+              if (responseData.status == 200) {
+                this.props.navigator.push({
+                  component: SearchResultsListView,
+                  title: 'Search',
+                  rightButtonTitle: 'Favorites',
+                  onRightButtonPress: this._handleNextButtonPress,
+                })
+              } else {
+                AlertIOS.alert("Room doesn't exist")
+              }
+            });
         }}>
 
         <View style={styles.cell}>

@@ -28,6 +28,23 @@ class Jukapp {
       });
   }
 
+  joinRoom(roomId) {
+    var options = {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-AuthToken': 'vbSFYuoGRcpaUSiAdyZM',
+        'X-Username': 'berk'
+      }
+    }
+
+    return fetch(JUKAPP_URL + "/rooms/" + roomId + "/join", options)
+      .catch((response) => {
+        console.log("Join error", response)
+        AlertIOS.alert("Join error" + response)
+      });
+  }
+
   queueVideo(video) {
     var options = this.defaultOptions()
     options['method'] = 'POST'

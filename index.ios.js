@@ -12,18 +12,9 @@ var {
   NavigatorIOS
 } = React;
 
-var FavoritesListView = require('./FavoritesListView')
-var SearchResultsListView = require('./SearchResultsListView')
 var RoomsListView = require('./RoomsListView')
 
 var Jukapp = React.createClass({
-  _handleNextButtonPress: function() {
-    this.refs.nav.push({
-      component: FavoritesListView,
-      title: 'Favorites'
-    });
-  },
-
   render: function() {
     return (
       <NavigatorIOS
@@ -31,9 +22,7 @@ var Jukapp = React.createClass({
         ref='nav'
         initialRoute={{
           component: RoomsListView,
-          title: 'Rooms',
-          rightButtonTitle: 'Favorites',
-          onRightButtonPress: this._handleNextButtonPress,
+          title: 'Rooms'
         }}
       />
     );
