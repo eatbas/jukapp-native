@@ -6,15 +6,15 @@ var Jukapp = require('./Jukapp');
 var VideoCell = require('./VideoCell.js')
 
 var {
- AppRegistry,
- StyleSheet,
- Text,
- View,
- Image,
- ListView,
- TouchableHighlight,
- ActivityIndicatorIOS,
- TextInput
+  AppRegistry,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ListView,
+  TouchableHighlight,
+  ActivityIndicatorIOS,
+  TextInput
 } = React;
 
 var SearchResultsListView = React.createClass ({

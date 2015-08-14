@@ -4,14 +4,14 @@ var React = require('react-native');
 var ApiListView = require("./ApiListView.js")
 
 var {
- AppRegistry,
- StyleSheet,
- Text,
- View,
- Image,
- ListView,
- TouchableHighlight,
- ActivityIndicatorIOS
+  AppRegistry,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ListView,
+  TouchableHighlight,
+  ActivityIndicatorIOS
 } = React;
 
 var FavoritesListView = React.createClass ({

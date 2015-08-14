@@ -5,9 +5,9 @@ var Jukapp = require('./Jukapp');
 var VideoCell = require('./VideoCell.js')
 
 var {
- StyleSheet,
- ListView,
- ActivityIndicatorIOS
+  StyleSheet,
+  ListView,
+  ActivityIndicatorIOS
 } = React;
 
 var ApiListView = React.createClass({

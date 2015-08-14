@@ -4,13 +4,13 @@ var React = require('react-native');
 var Jukapp = require('./Jukapp.js');
 
 var {
- AppRegistry,
- StyleSheet,
- Text,
- View,
- Image,
- ListView,
- TouchableHighlight,
+  AppRegistry,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ListView,
+  TouchableHighlight,
 } = React;
 
 var VideoCell = React.createClass ({
