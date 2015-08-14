@@ -14,17 +14,17 @@ var {
  ActivityIndicatorIOS
 } = React;
 
-class FavoritesListView extends React.Component {
+var FavoritesListView = React.createClass ({
 
-  _handleBackButtonPress() {
+  _handleBackButtonPress: function() {
     this.props.navigator.pop();
-  }
+  },
 
-  _handleNextButtonPress() {
+  _handleNextButtonPress: function() {
     this.props.navigator.push(nextRoute);
-  }
+  },
 
-  render() {
+  render: function() {
     return (
       <ApiListView
         style={styles.container}
@@ -33,7 +33,7 @@ class FavoritesListView extends React.Component {
       />
     );
   }
-}
+});
 
 var styles = StyleSheet.create({
 

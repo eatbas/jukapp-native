@@ -13,9 +13,9 @@ var {
  TouchableHighlight,
 } = React;
 
-class VideoCell extends React.Component {
+var VideoCell = React.createClass ({
 
-  render() {
+  render: function() {
     var video = this.props.video;
     var image = { uri: 'http://img.youtube.com/vi/' + video.youtube_id + '/default.jpg' }
 
@@ -38,8 +38,7 @@ class VideoCell extends React.Component {
       </TouchableHighlight>
     );
   }
-}
-
+});
 
 var styles = StyleSheet.create({
 
