@@ -16,13 +16,23 @@ var FavoritesListView = require('./FavoritesListView')
 var SearchResultsListView = require('./SearchResultsListView')
 
 var Jukapp = React.createClass({
+  _handleNextButtonPress: function() {
+    this.refs.nav.push({
+      component: FavoritesListView,
+      title: 'Favorites'
+    });
+  },
+
   render: function() {
     return (
       <NavigatorIOS
         style={styles.container}
+        ref='nav'
         initialRoute={{
           component: SearchResultsListView,
           title: 'Search',
+          rightButtonTitle: 'Favorites',
+          onRightButtonPress: this._handleNextButtonPress,
         }}
       />
     );
