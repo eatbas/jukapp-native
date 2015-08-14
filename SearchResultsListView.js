@@ -63,12 +63,7 @@ var SearchResultsListView = React.createClass ({
       <View style={styles.container}>
         <SearchBar
           placeholder='Search on YouTube'
-          onChangeText={(text) => {
-            this.state.tempQuery = text
-          }}
           onSearchButtonPress={(text) => {
-            console.log('onSearchButtonPress')
-            console.log(text)
             var url = "/search?query=" + text
             Jukapp.fetch(url)
               .then((responseData) => {
