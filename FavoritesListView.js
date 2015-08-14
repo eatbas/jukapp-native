@@ -35,6 +35,7 @@ class FavoritesListView extends React.Component {
     return (
       <ApiListView
         style={styles.container}
+        url="/favorites"
         renderRow={(o) => this.renderRow(o)}
       />
     );

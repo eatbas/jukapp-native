@@ -16,7 +16,7 @@ class ApiListView extends React.Component {
 
     this.state = {
       dataSource: new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2}),
-      hasMore: true,
+      hasMore: false,
       loading: false,
     };
 
@@ -42,11 +42,14 @@ class ApiListView extends React.Component {
       loading: true,
     })
 
-    Jukapp.fetch('/favorites')
+    Jukapp.fetch(this.props.url)
       .then((responseData) => {
-        console.log(responseData)
+        if (responseData["videos"]) {
+          responseData = responseData["videos"]
+        }
+
         this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(responseData,)
+          dataSource: this.state.dataSource.cloneWithRows(responseData)
         });
       })
       .done(() => {
@@ -64,6 +67,8 @@ class ApiListView extends React.Component {
   }
 
   render() {
+    var automaticallyAdjustContentInsets = this.props.automaticallyAdjustContentInsets == null ? true : this.props.automaticallyAdjustContentInsets
+
     return (
       <ListView
         style={[styles.listView, this.props.style]}
@@ -73,6 +78,7 @@ class ApiListView extends React.Component {
         renderSectionHeader={this.props.renderSectionHeader}
         renderFooter={this.renderFooter.bind(this)}
         onEndReached={this.onEndReached.bind(this)}
+        automaticallyAdjustContentInsets={automaticallyAdjustContentInsets}
       />
     );
   }
@@ -80,13 +86,13 @@ class ApiListView extends React.Component {
 
 var styles = StyleSheet.create({
 
- listView: {
-   backgroundColor: '#EEF2F2',
- },
+  listView: {
+    backgroundColor: '#EEF2F2',
+  },
 
- listViewContent: {
-   justifyContent: 'center',
- },
+  listViewContent: {
+    justifyContent: 'center',
+  },
 
 });
 

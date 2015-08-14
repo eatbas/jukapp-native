@@ -21,8 +21,8 @@ var Jukapp = React.createClass({
       <NavigatorIOS
         style={styles.container}
         initialRoute={{
-          component: FavoritesListView,
-          title: 'Favorites',
+          component: SearchResultsListView,
+          title: 'Search',
         }}
       />
     );

@@ -49,6 +49,14 @@ var styles = StyleSheet.create({
     padding: 16,
     height: 96,
     justifyContent: 'flex-start',
+    borderRadius: 4,
+    shadowColor: '#000000',
+    shadowRadius: 1,
+    shadowOpacity: 0.3,
+    shadowOffset: {
+      height: 1,
+      width: 0
+    }
   },
 
   rowData: {

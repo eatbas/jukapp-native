@@ -13,10 +13,19 @@ var {
  Image,
  ListView,
  TouchableHighlight,
- ActivityIndicatorIOS
+ ActivityIndicatorIOS,
+ TextInput
 } = React;
 
 class SearchResultsListView extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      query: null,
+    };
+  }
 
   renderRow(rowData, sectionID, rowID) {
     return (
@@ -33,31 +42,49 @@ class SearchResultsListView extends React.Component {
   }
 
   render() {
+
+    if (this.state.query !== null) {
+      var url = "/search?query=" + this.state.query
+      var searchResults =
+        <ApiListView
+            style={styles.listView}
+            url={url}
+            renderRow={(o) => this.renderRow(o)}
+            automaticallyAdjustContentInsets={false}
+        />
+    }
+
     return (
-      <View style={styles.searchContainer}>
+      <View style={styles.container}>
         <SearchBar
           placeholder='Search on YouTube'
+          onChangeText={(text) => {
+            this.state.tempQuery = text
+          }}
           onSearchButtonPress={() => {
             console.log('onSearchButtonPress')
+            this.setState({
+              query: this.state.tempQuery,
+              isLoading: true
+            });
           }}
           onCancelButtonPress={() => {
             console.log('onCancelButtonPress')
           }}
         />
 
-        <ApiListView
-          style={styles.listView}
-          renderRow={(o) => this.renderRow(o)}
-        />
+        {searchResults}
+
       </View>
     );
   }
 }
 
 var styles = StyleSheet.create({
-  searchContainer: {
-      paddingVertical: 64,
-      flex: 1
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+    marginTop: 64,
   },
   listView: {
     padding: 10,
