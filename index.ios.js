@@ -5,24 +5,32 @@
 'use strict';
 
 var React = require('react-native');
+var RoomsListView = require('./RoomsListView')
 
 var {
   AppRegistry,
   StyleSheet,
-  NavigatorIOS
+  Navigator,
+  View
 } = React;
-
-var RoomsListView = require('./RoomsListView')
 
 var Jukapp = React.createClass({
   render: function() {
     return (
-      <NavigatorIOS
-        style={styles.container}
-        ref='nav'
+      <Navigator
         initialRoute={{
           component: RoomsListView,
           title: 'Rooms'
+        }}
+        configureScene={() => {
+            return Navigator.SceneConfigs.FloatFromRight;
+        }}
+        renderScene={(route, navigator) => {
+            console.log(route, navigator);
+
+            if (route.component) {
+                return React.createElement(route.component, { navigator });
+            }
         }}
       />
     );

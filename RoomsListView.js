@@ -4,6 +4,7 @@ var React = require('react-native');
 var Jukapp = require('./Jukapp');
 var SearchResultsListView = require('./SearchResultsListView')
 var FavoritesListView = require('./FavoritesListView')
+var RoomView = require('./RoomView')
 
 var {
   AppRegistry,
@@ -24,17 +25,6 @@ var RoomsListView = React.createClass ({
       dataSource: new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2}),
       loading: true,
     };
-  },
-
-  _handleBackButtonPress: function() {
-    this.props.navigator.pop();
-  },
-
-  _handleNextButtonPress: function() {
-    this.props.navigator.push({
-      component: FavoritesListView,
-      title: 'Favorites'
-    });
   },
 
   componentDidMount: function() {
@@ -61,10 +51,8 @@ var RoomsListView = React.createClass ({
             .then((responseData) => {
               if (responseData.status == 200) {
                 this.props.navigator.push({
-                  component: SearchResultsListView,
-                  title: 'Search',
-                  rightButtonTitle: 'Favorites',
-                  onRightButtonPress: this._handleNextButtonPress,
+                  component: RoomView,
+                  title: 'Room'
                 })
               } else {
                 AlertIOS.alert("Room doesn't exist")
