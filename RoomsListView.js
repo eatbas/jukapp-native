@@ -5,6 +5,8 @@ var Jukapp = require('./Jukapp');
 var SearchResultsListView = require('./SearchResultsListView')
 var FavoritesListView = require('./FavoritesListView')
 var RoomView = require('./RoomView')
+var JukappStore = require('./JukappStore');
+var JukappActions = require('./JukappActions');
 
 var {
   AppRegistry,
@@ -28,6 +30,16 @@ var RoomsListView = React.createClass ({
   },
 
   componentDidMount: function() {
+    JukappStore.addChangeListener(() => {
+      console.log(JukappStore.getCurrentRoom());
+      if (JukappStore.getCurrentRoom()) {
+        this.props.navigator.push({
+          component: RoomView,
+          title: 'Room'
+        })
+      }
+    });
+
     Jukapp.fetch("/rooms")
       .then((responseData) => {
         this.setState({
@@ -47,17 +59,7 @@ var RoomsListView = React.createClass ({
         underlayColor="#CFD6D6"
         style={{ marginBottom:10 }}
         onPress={() => {
-          Jukapp.joinRoom(rowData.id)
-            .then((responseData) => {
-              if (responseData.status == 200) {
-                this.props.navigator.push({
-                  component: RoomView,
-                  title: 'Room'
-                })
-              } else {
-                AlertIOS.alert("Room doesn't exist")
-              }
-            });
+          JukappActions.joinRoom(rowData.id)
         }}>
 
         <View style={styles.cell}>
