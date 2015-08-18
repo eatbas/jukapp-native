@@ -34,7 +34,11 @@ var JukappActions = {
   },
 
   favoriteVideo: function(video) {
-    console.log('notimplementedyet');
+    console.log('favoriteVideo called');
+  },
+
+  unfavoriteVideo: function(video) {
+    console.log('unfavoriteVideo called');
   },
 };
 

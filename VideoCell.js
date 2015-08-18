@@ -20,10 +20,43 @@ var {
 
 var VideoCell = React.createClass ({
 
+  renderFavoriteButton: function() {
+    var video = this.props.video;
+    if (JukappStore.isFavoriteVideo(video)) {
+      return (<TouchableHighlight
+        underlayColor="#ebeeee"
+        style={styles.secondaryButton}
+        onPress={() => {
+          JukappActions.unfavoriteVideo(video)
+        }}>
+        <Icon
+          name='fontawesome|star'
+          size={20}
+          color='black'
+          style={styles.star}
+        />
+      </TouchableHighlight>)
+    } else {
+      return (<TouchableHighlight
+        underlayColor="#ebeeee"
+        style={styles.secondaryButton}
+        onPress={() => {
+          JukappActions.favoriteVideo(video)
+        }}>
+        <Icon
+          name='fontawesome|star-o'
+          size={20}
+          color='black'
+          style={styles.star}
+        />
+      </TouchableHighlight>)
+    }
+  },
+
   render: function() {
     var video = this.props.video;
     var image = { uri: 'http://img.youtube.com/vi/' + video.youtube_id + '/default.jpg' }
-    var iconName = JukappStore.isFavoriteVideo(video) ? 'fontawesome|star' : 'fontawesome|star-o'
+    var secondaryButton = this.renderFavoriteButton();
 
     return (
       <TouchableHighlight
@@ -41,19 +74,7 @@ var VideoCell = React.createClass ({
             <Text style={styles.details}>1234 VIEWS</Text>
           </View>
 
-          <TouchableHighlight
-            underlayColor="#ebeeee"
-            style={styles.secondaryButton}
-            onPress={() => {
-              JukappActions.favoriteVideo(video)
-            }}>
-            <Icon
-              name={iconName}
-              size={20}
-              color='black'
-              style={styles.star}
-            />
-          </TouchableHighlight>
+          {secondaryButton}
         </View>
       </TouchableHighlight>
     );
