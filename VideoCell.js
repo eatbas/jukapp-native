@@ -1,7 +1,13 @@
 'use strict';
 
 var React = require('react-native');
-var Jukapp = require('./Jukapp.js');
+var JukappActions = require('./JukappActions');
+var JukappStore = require('./JukappStore')
+var JukappApi = require('./JukappApi')
+
+var {
+  Icon
+} = require('react-native-icons');
 
 var {
   AppRegistry,
@@ -15,16 +21,55 @@ var {
 
 var VideoCell = React.createClass ({
 
+  renderFavoriteButton: function() {
+    var video = this.props.video;
+
+    if (!JukappStore.isLoggedIn()) {
+      return;
+    }
+
+    if (JukappStore.isFavoriteVideo(video)) {
+      return (<TouchableHighlight
+        underlayColor="#ebeeee"
+        style={styles.secondaryButton}
+        onPress={() => {
+          JukappApi.unfavoriteVideo(video)
+        }}>
+        <Icon
+          name='fontawesome|star'
+          size={20}
+          color='black'
+          style={styles.star}
+        />
+      </TouchableHighlight>)
+    } else {
+      return (<TouchableHighlight
+        underlayColor="#ebeeee"
+        style={styles.secondaryButton}
+        onPress={() => {
+          JukappApi.favoriteVideo(video)
+        }}>
+        <Icon
+          name='fontawesome|star-o'
+          size={20}
+          color='black'
+          style={styles.star}
+        />
+      </TouchableHighlight>)
+    }
+  },
+
   render: function() {
     var video = this.props.video;
     var image = { uri: 'http://img.youtube.com/vi/' + video.youtube_id + '/default.jpg' }
+    var secondaryButton = this.renderFavoriteButton();
 
     return (
       <TouchableHighlight
         underlayColor="#CFD6D6"
         style={{ marginBottom:10 }}
         onPress={() => {
-          Jukapp.queueVideo(video)
+          JukappApi.queueVideo(video)
         }}>
 
         <View style={styles.cell}>
@@ -34,6 +79,8 @@ var VideoCell = React.createClass ({
             <Text style={styles.title}>{video.title}</Text>
             <Text style={styles.details}>1234 VIEWS</Text>
           </View>
+
+          {secondaryButton}
         </View>
       </TouchableHighlight>
     );
@@ -58,6 +105,24 @@ var styles = StyleSheet.create({
     }
   },
 
+  secondaryButton: {
+    justifyContent: 'center',
+    marginTop: 16,
+    marginBottom: 16,
+  },
+
+  star: {
+    height: 40,
+    width: 40,
+    shadowColor: '#000000',
+    shadowRadius: 1,
+    shadowOpacity: 0.3,
+    shadowOffset: {
+      height: 1,
+      width: 0
+    }
+  },
+
   rowData: {
     flexDirection: 'column',
     paddingLeft: 16,
@@ -67,7 +132,7 @@ var styles = StyleSheet.create({
 
   title: {
     color: 'black',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     textAlign: 'left',
     paddingTop: 4,
@@ -75,7 +140,7 @@ var styles = StyleSheet.create({
 
   details: {
     color: '#9FA7A7',
-    fontSize: 14,
+    fontSize: 12,
     textAlign: 'left',
     paddingBottom: 4
   },

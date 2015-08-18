@@ -6,6 +6,8 @@
 
 var React = require('react-native');
 var RoomsListView = require('./RoomsListView')
+var JukappStore = require('./JukappStore')
+var RoomView = require('./RoomView')
 
 var {
   AppRegistry,
@@ -15,26 +17,37 @@ var {
 } = React;
 
 var Jukapp = React.createClass({
-  render: function() {
-    return (
-      <Navigator
-        initialRoute={{
-          component: RoomsListView,
-          title: 'Rooms'
-        }}
-        configureScene={() => {
-            return Navigator.SceneConfigs.FloatFromRight;
-        }}
-        renderScene={(route, navigator) => {
-            console.log(route, navigator);
+  getInitialState: function() {
+    return {
+      isInRoom: JukappStore.isInRoom()
+    }
+  },
 
-            if (route.component) {
-                return React.createElement(route.component, { navigator });
-            }
-        }}
-      />
-    );
-  }
+  componentDidMount: function() {
+    JukappStore.addChangeListener(this._onChange);
+  },
+
+  componentWillUnmount: function() {
+    JukappStore.removeChangeListener(this._onChange);
+  },
+
+  render: function() {
+    if (!this.state.isInRoom) {
+      return this.renderRoomsList();
+    }
+
+    return (<RoomView/>)
+  },
+
+  renderRoomsList: function() {
+    return (<RoomsListView />)
+  },
+
+  _onChange: function() {
+    this.setState({
+      isInRoom: JukappStore.isInRoom()
+    })
+  },
 });
 
 var styles = StyleSheet.create({

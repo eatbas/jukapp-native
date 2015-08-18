@@ -2,8 +2,9 @@
 
 var React = require('react-native');
 var SearchBar = require('react-native-search-bar');
-var Jukapp = require('./Jukapp');
 var VideoCell = require('./VideoCell.js')
+var JukappStore = require('./JukappStore');
+var JukappApi = require('./JukappApi');
 
 var {
   AppRegistry,
@@ -20,17 +21,19 @@ var {
 var SearchResultsListView = React.createClass ({
 
   getInitialState: function() {
+    var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+
     return {
-      dataSource: new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2})
+      dataSource: dataSource.cloneWithRows(JukappStore.getSearchResults())
     };
   },
 
-  _handleBackButtonPress: function() {
-    this.props.navigator.pop();
+  componentDidMount: function() {
+    JukappStore.addChangeListener(this._onChange);
   },
 
-  _handleNextButtonPress: function() {
-    this.props.navigator.push(nextRoute);
+  componentWillUnmount: function() {
+    JukappStore.removeChangeListener(this._onChange);
   },
 
   renderFooter: function() {
@@ -46,8 +49,19 @@ var SearchResultsListView = React.createClass ({
   },
 
   render: function() {
-    if (this.state.query !== null) {
-      var searchResults =
+    return (
+      <View style={styles.container}>
+        <SearchBar
+          placeholder='Search on YouTube'
+          onSearchButtonPress={(query) => {
+            this.setState({loading: true});
+            JukappApi.searchVideo(query);
+          }}
+          onCancelButtonPress={() => {
+            console.log('onCancelButtonPress')
+          }}
+        />
+
         <ListView
           style={styles.listView}
           contentContainerStyle={styles.listViewContent}
@@ -56,37 +70,17 @@ var SearchResultsListView = React.createClass ({
           renderFooter={this.renderFooter}
           automaticallyAdjustContentInsets={false}
         />
-    }
-
-    return (
-      <View style={styles.container}>
-        <SearchBar
-          placeholder='Search on YouTube'
-          onSearchButtonPress={(text) => {
-            var url = "/search?query=" + text
-            Jukapp.fetch(url)
-              .then((responseData) => {
-                this.setState({
-                  query: url,
-                  dataSource: this.state.dataSource.cloneWithRows(responseData["videos"])
-                });
-              })
-              .done(() => {
-                this.setState({
-                  loading: false
-                })
-              });
-          }}
-          onCancelButtonPress={() => {
-            console.log('onCancelButtonPress')
-          }}
-        />
-
-        {searchResults}
 
       </View>
     );
-  }
+  },
+
+  _onChange: function() {
+    this.setState({
+      loading: false,
+      dataSource: this.state.dataSource.cloneWithRows(JukappStore.getSearchResults())
+    });
+  },
 });
 
 var styles = StyleSheet.create({

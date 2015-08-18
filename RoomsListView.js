@@ -1,10 +1,11 @@
 'use strict';
 
 var React = require('react-native');
-var Jukapp = require('./Jukapp');
-var SearchResultsListView = require('./SearchResultsListView')
-var FavoritesListView = require('./FavoritesListView')
-var RoomView = require('./RoomView')
+var SearchResultsListView = require('./SearchResultsListView');
+var FavoritesListView = require('./FavoritesListView');
+var RoomView = require('./RoomView');
+var JukappStore = require('./JukappStore');
+var JukappApi = require('./JukappApi');
 
 var {
   AppRegistry,
@@ -21,24 +22,28 @@ var {
 var RoomsListView = React.createClass ({
 
   getInitialState: function () {
+    var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+
     return {
-      dataSource: new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2}),
+      dataSource: dataSource.cloneWithRows(JukappStore.getRooms()),
       loading: true,
     };
   },
 
   componentDidMount: function() {
-    Jukapp.fetch("/rooms")
-      .then((responseData) => {
-        this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(responseData)
-        });
-      })
-      .done(() => {
-        this.setState({
-          loading: false
-        })
-      });
+    JukappStore.addChangeListener(this._onChange);
+    JukappApi.fetchRooms();
+  },
+
+  componentWillUnmount: function() {
+    JukappStore.removeChangeListener(this._onChange);
+  },
+
+  _onChange: function() {
+    this.setState({
+      dataSource: this.state.dataSource.cloneWithRows(JukappStore.getRooms()),
+      loading: false
+    })
   },
 
   renderRow: function(rowData, sectionID, rowID) {
@@ -47,17 +52,7 @@ var RoomsListView = React.createClass ({
         underlayColor="#CFD6D6"
         style={{ marginBottom:10 }}
         onPress={() => {
-          Jukapp.joinRoom(rowData.id)
-            .then((responseData) => {
-              if (responseData.status == 200) {
-                this.props.navigator.push({
-                  component: RoomView,
-                  title: 'Room'
-                })
-              } else {
-                AlertIOS.alert("Room doesn't exist")
-              }
-            });
+          JukappApi.joinRoom(rowData.id)
         }}>
 
         <View style={styles.cell}>
