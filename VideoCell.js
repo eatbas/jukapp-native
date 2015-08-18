@@ -24,8 +24,9 @@ var VideoCell = React.createClass ({
   renderFavoriteButton: function() {
     var video = this.props.video;
 
-    if (!JukappStore.isLoggedIn())
+    if (!JukappStore.isLoggedIn()) {
       return;
+    }
 
     if (JukappStore.isFavoriteVideo(video)) {
       return (<TouchableHighlight

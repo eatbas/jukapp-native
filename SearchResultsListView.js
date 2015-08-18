@@ -24,7 +24,7 @@ var SearchResultsListView = React.createClass ({
     var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
     return {
-      dataSource: dataSource
+      dataSource: dataSource.cloneWithRows(JukappStore.getSearchResults())
     };
   },
 

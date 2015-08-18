@@ -16,20 +16,6 @@ var {
 } = React;
 
 var RoomView = React.createClass({
-  getInitialState: function() {
-    return {
-      isLoggedIn: JukappStore.isLoggedIn()
-    };
-  },
-
-  componentDidMount: function() {
-    JukappStore.addChangeListener(this._onChange);
-  },
-
-  componentWillUnmount: function() {
-    JukappStore.removeChangeListener(this._onChange);
-  },
-
   _handleNextButtonPress: function() {
     this.refs.nav.push({
       component: FavoritesListView,
@@ -39,13 +25,6 @@ var RoomView = React.createClass({
 
   _handleBackButtonPress: function() {
     JukappActions.leftRoom();
-  },
-
-  _onChange: function() {
-    console.log('onchange');
-    this.setState({
-      isLoggedIn: JukappStore.isLoggedIn()
-    })
   },
 
   render: function() {
