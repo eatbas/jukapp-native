@@ -27,6 +27,10 @@ var Jukapp = React.createClass({
     JukappStore.addChangeListener(this._onChange);
   },
 
+  componentWillUnmount: function() {
+    JukappStore.removeChangeListener(this._onChange);
+  },
+
   render: function() {
     if (!this.state.isInRoom) {
       return this.renderRoomsList();

@@ -3,214 +3,22 @@ var EventEmitter = require('events').EventEmitter;
 
 var assign = require('object-assign');
 
-var JUKAPP_URL = 'https://jukapp-api.herokuapp.com'
 var CHANGE_EVENT = 'change';
 
 var currentRoom;
-var username;
-var authToken;
+var user;
 var favorites = [];
-
-/**
- * Create a TODO item.
- * @param  {string} text The content of the TODO
- */
-// function create(text) {
-  // Hand waving here -- not showing how this interacts with XHR or persistent
-  // server-side storage.
-  // Using the current timestamp + random number in place of a real id.
-//   var id = (+new Date() + Math.floor(Math.random() * 999999)).toString(36);
-//   _todos[id] = {
-//     id: id,
-//     complete: false,
-//     text: text
-//   };
-// }
-
-function defaultOptions() {
-  var options = {
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    }
-  };
-
-  if (currentRoom) {
-    options['headers']['X-Room-ID'] = currentRoom;
-  }
-
-  if (username && authToken) {
-    options['headers']['X-Username'] = username;
-    options['headers']['X-AuthToken'] = authToken;
-  }
-
-  return options;
-}
-
-function videoOptions(video) {
-  return JSON.stringify({
-    youtube_id: video.youtube_id,
-    title: video.title
-  });
-}
-
-function joinRoom(roomId) {
-  return fetch(JUKAPP_URL + '/rooms/' + roomId + '/join', defaultOptions())
-    .then((response) => {
-      if (response.status == 200) {
-        currentRoom = roomId
-      } else {
-        currentRoom = null
-      }
-    })
-    .catch((response) => {
-      currentRoom = null
-      console.log('Join error', response)
-      AlertIOS.alert('Join error' + response)
-    });
-}
-
-function leaveRoom() {
-  currentRoom = null
-}
-
-function queueVideo(video) {
-  var options = defaultOptions();
-  options['method'] = 'POST'
-  options['body'] = videoOptions(video);
-
-  return fetch(JUKAPP_URL + "/queue", options)
-    .then((response) => {
-      if (response.status == 201) {
-        console.log('Successfully queued video')
-      } else {
-        console.log('Could not queue video')
-      }
-    })
-    .catch((response) => {
-      console.log("Queue error", response)
-      AlertIOS.alert("Queue error" + response)
-    });
-}
-
-function login() {
-  username = 'berk'
-  authToken = 'vbSFYuoGRcpaUSiAdyZM'
-}
-
-function fetchFavorites() {
-  return fetch(JUKAPP_URL + "/favorites", defaultOptions())
-    .then((response) => {
-      return response.json()
-    })
-    .then((responseData) => {
-      favorites = responseData;
-    })
-    .catch((response) => {
-      console.log("Favorites error", response)
-      AlertIOS.alert("Favorites error" + response)
-    });
-}
-
-function favoriteVideo(video) {
-  var options = defaultOptions();
-  options['method'] = 'POST'
-  options['body'] = videoOptions(video);
-
-  return fetch(JUKAPP_URL + "/favorites", options)
-    .then((response) => {
-      if (response.status == 201) {
-        console.log('Successfully favorited video')
-      } else {
-        console.log('Could not favorite video')
-      }
-    })
-    .catch((response) => {
-      console.log("Favorites error", response)
-      AlertIOS.alert("Favorites error" + response)
-    });
-}
-
-function unfavoriteVideo(video) {
-  var options = defaultOptions();
-  options['method'] = 'DELETE'
-  options['body'] = videoOptions(video);
-
-  return fetch(JUKAPP_URL + "/favorites", options)
-    .then((response) => {
-      if (response.status == 200) {
-        console.log('Successfully unfavorited video')
-      } else {
-        console.log('Could not unfavorite video')
-      }
-    })
-    .catch((response) => {
-      console.log("Favorites error", response)
-      AlertIOS.alert("Favorites error" + response)
-    });
-}
-
-/**
- * Update a TODO item.
- * @param  {string} id
- * @param {object} updates An object literal containing only the data to be
- *     updated.
- */
-// function update(id, updates) {
-//   _todos[id] = assign({}, _todos[id], updates);
-// }
-
-/**
- * Update all of the TODO items with the same object.
- * @param  {object} updates An object literal containing only the data to be
- *     updated.
- */
-// function updateAll(updates) {
-//   for (var id in _todos) {
-//     update(id, updates);
-//   }
-// }
-
-// /**
-//  * Delete a TODO item.
-//  * @param  {string} id
-//  */
-// function destroy(id) {
-//   delete _todos[id];
-// }
-
-// /**
-//  * Delete all the completed TODO items.
-//  */
-// function destroyCompleted() {
-//   for (var id in _todos) {
-//     if (_todos[id].complete) {
-//       destroy(id);
-//     }
-//   }
-// }
+var rooms = [];
+var searchResults = [];
 
 var JukappStore = assign({}, EventEmitter.prototype, {
-
-  /**
-   * Tests whether all the remaining TODO items are marked as completed.
-   * @return {boolean}
-   */
-  // areAllComplete: function() {
-  //   for (var id in _todos) {
-  //     if (!_todos[id].complete) {
-  //       return false;
-  //     }
-  //   }
-  //   return true;
-  // },
 
   isInRoom: function() {
     return !!currentRoom
   },
 
   isLoggedIn: function() {
-    return !!username && !!authToken;
+    return !!user;
   },
 
   isFavoriteVideo: function(video) {
@@ -223,8 +31,22 @@ var JukappStore = assign({}, EventEmitter.prototype, {
     return false;
   },
 
+  getUser: function() {
+    if (this.isLoggedIn()) {
+      return user;
+    }
+  },
+
+  getRooms: function() {
+    return rooms;
+  },
+
   getCurrentRoom: function() {
     return currentRoom;
+  },
+
+  getSearchResults: function() {
+    return searchResults;
   },
 
   getFavorites: function() {
@@ -235,16 +57,10 @@ var JukappStore = assign({}, EventEmitter.prototype, {
     this.emit(CHANGE_EVENT);
   },
 
-  /**
-   * @param {function} callback
-   */
   addChangeListener: function(callback) {
     this.on(CHANGE_EVENT, callback);
   },
 
-  /**
-   * @param {function} callback
-   */
   removeChangeListener: function(callback) {
     this.removeListener(CHANGE_EVENT, callback);
   }
@@ -253,54 +69,34 @@ var JukappStore = assign({}, EventEmitter.prototype, {
 // Register callback to handle all updates
 Dispatcher.register(function(action) {
   switch(action.actionType) {
-    case 'join-room':
-      joinRoom(action.roomId)
-        .done(() => {
-          JukappStore.emitChange();
-        })
-      break;
-
-    case 'leave-room':
-      leaveRoom();
+    case 'loaded-rooms':
+      rooms = action.rooms;
       JukappStore.emitChange();
       break;
 
-    case 'queue-video':
-      queueVideo(action.video)
-        .done(() => {
-          JukappStore.emitChange();
-        });
+    case 'joined-room':
+      currentRoom = action.room.id;
+      JukappStore.emitChange();
       break;
 
-    case 'login':
-      login()
-      fetchFavorites()
-        .done(() =>{
-          JukappStore.emitChange();
-        });
+    case 'left-room':
+      currentRoom = null;
+      JukappStore.emitChange();
       break;
 
-    case 'fetch-favorites':
-      fetchFavorites()
-        .done(() =>{
-          JukappStore.emitChange();
-        });
+    case 'logged-in':
+      user = action.user
+      JukappStore.emitChange();
       break;
 
-    case 'favorite-video':
-      favoriteVideo(action.video)
-      fetchFavorites()
-        .done(() =>{
-          JukappStore.emitChange();
-        });
+    case 'loaded-favorites':
+      favorites = action.favorites;
+      JukappStore.emitChange();
       break;
 
-    case 'unfavorite-video':
-      unfavoriteVideo(action.video)
-      fetchFavorites()
-        .done(() =>{
-          JukappStore.emitChange();
-        });
+    case 'completed-search':
+      searchResults = action.searchResults;
+      JukappStore.emitChange();
       break;
 
     default:

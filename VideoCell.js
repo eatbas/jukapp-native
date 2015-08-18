@@ -3,6 +3,7 @@
 var React = require('react-native');
 var JukappActions = require('./JukappActions');
 var JukappStore = require('./JukappStore')
+var JukappApi = require('./JukappApi')
 
 var {
   Icon
@@ -31,7 +32,7 @@ var VideoCell = React.createClass ({
         underlayColor="#ebeeee"
         style={styles.secondaryButton}
         onPress={() => {
-          JukappActions.unfavoriteVideo(video)
+          JukappApi.unfavoriteVideo(video)
         }}>
         <Icon
           name='fontawesome|star'
@@ -45,7 +46,7 @@ var VideoCell = React.createClass ({
         underlayColor="#ebeeee"
         style={styles.secondaryButton}
         onPress={() => {
-          JukappActions.favoriteVideo(video)
+          JukappApi.favoriteVideo(video)
         }}>
         <Icon
           name='fontawesome|star-o'
@@ -67,7 +68,7 @@ var VideoCell = React.createClass ({
         underlayColor="#CFD6D6"
         style={{ marginBottom:10 }}
         onPress={() => {
-          JukappActions.queueVideo(video)
+          JukappApi.queueVideo(video)
         }}>
 
         <View style={styles.cell}>

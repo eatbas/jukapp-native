@@ -8,6 +8,7 @@ var React = require('react-native');
 var SearchResultsListView = require('./SearchResultsListView');
 var FavoritesListView = require('./FavoritesListView');
 var JukappActions = require('./JukappActions');
+var JukappStore = require('./JukappStore');
 
 var {
   StyleSheet,
@@ -15,6 +16,20 @@ var {
 } = React;
 
 var RoomView = React.createClass({
+  getInitialState: function() {
+    return {
+      isLoggedIn: JukappStore.isLoggedIn()
+    };
+  },
+
+  componentDidMount: function() {
+    JukappStore.addChangeListener(this._onChange);
+  },
+
+  componentWillUnmount: function() {
+    JukappStore.removeChangeListener(this._onChange);
+  },
+
   _handleNextButtonPress: function() {
     this.refs.nav.push({
       component: FavoritesListView,
@@ -23,7 +38,14 @@ var RoomView = React.createClass({
   },
 
   _handleBackButtonPress: function() {
-    JukappActions.leaveRoom();
+    JukappActions.leftRoom();
+  },
+
+  _onChange: function() {
+    console.log('onchange');
+    this.setState({
+      isLoggedIn: JukappStore.isLoggedIn()
+    })
   },
 
   render: function() {

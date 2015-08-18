@@ -1,51 +1,46 @@
 var Dispatcher = require('./Dispatcher');
 
 var JukappActions = {
-  joinRoom: function(roomId) {
+  loadedRooms: function(rooms) {
     Dispatcher.dispatch({
-      actionType: 'join-room',
-      roomId: roomId
+      actionType: 'loaded-rooms',
+      rooms: rooms
+    });
+  },
+
+  joinedRoom: function(room) {
+    Dispatcher.dispatch({
+      actionType: 'joined-room',
+      room: room
     })
   },
 
-  leaveRoom: function() {
+  leftRoom: function() {
     Dispatcher.dispatch({
-      actionType: 'leave-room'
+      actionType: 'left-room'
     })
   },
 
-  queueVideo: function(video) {
+  loggedIn: function(user) {
     Dispatcher.dispatch({
-      actionType: 'queue-video',
-      video: video
+      actionType: 'logged-in',
+      user: user
     })
   },
 
-  login: function() {
+  loadedFavorites: function(favorites) {
     Dispatcher.dispatch({
-      actionType: 'login'
+      actionType: 'loaded-favorites',
+      favorites: favorites
     })
   },
 
-  fetchFavorites: function(video) {
+  completedSearch: function(searchResults) {
     Dispatcher.dispatch({
-      actionType: 'fetch-favorites'
+      actionType: 'completed-search',
+      searchResults: searchResults
     })
-  },
-
-  favoriteVideo: function(video) {
-    Dispatcher.dispatch({
-      actionType: 'favorite-video',
-      video: video
-    })
-  },
-
-  unfavoriteVideo: function(video) {
-    Dispatcher.dispatch({
-      actionType: 'unfavorite-video',
-      video: video
-    })
-  },
+  }
 };
 
 module.exports = JukappActions;
