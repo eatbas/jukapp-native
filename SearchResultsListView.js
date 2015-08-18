@@ -2,7 +2,6 @@
 
 var React = require('react-native');
 var SearchBar = require('react-native-search-bar');
-var Jukapp = require('./Jukapp');
 var VideoCell = require('./VideoCell.js')
 var JukappStore = require('./JukappStore');
 var JukappApi = require('./JukappApi');
