@@ -47,6 +47,13 @@ function defaultOptions() {
   return options;
 }
 
+function videoOptions(video) {
+  return JSON.stringify({
+    youtube_id: video.youtube_id,
+    title: video.title
+  });
+}
+
 function joinRoom(roomId) {
   return fetch(JUKAPP_URL + '/rooms/' + roomId + '/join', defaultOptions())
     .then((response) => {
@@ -70,14 +77,10 @@ function leaveRoom() {
 function queueVideo(video) {
   var options = defaultOptions();
   options['method'] = 'POST'
-  options['body'] = JSON.stringify({
-    youtube_id: video.youtube_id,
-    title: video.title
-  })
+  options['body'] = videoOptions(video);
 
   return fetch(JUKAPP_URL + "/queue", options)
     .then((response) => {
-      console.log(response.status);
       if (response.status == 201) {
         console.log('Successfully queued video')
       } else {
@@ -104,8 +107,46 @@ function fetchFavorites() {
       favorites = responseData;
     })
     .catch((response) => {
-      console.log("Queue error", response)
-      AlertIOS.alert("Queue error" + response)
+      console.log("Favorites error", response)
+      AlertIOS.alert("Favorites error" + response)
+    });
+}
+
+function favoriteVideo(video) {
+  var options = defaultOptions();
+  options['method'] = 'POST'
+  options['body'] = videoOptions(video);
+
+  return fetch(JUKAPP_URL + "/favorites", options)
+    .then((response) => {
+      if (response.status == 201) {
+        console.log('Successfully favorited video')
+      } else {
+        console.log('Could not favorite video')
+      }
+    })
+    .catch((response) => {
+      console.log("Favorites error", response)
+      AlertIOS.alert("Favorites error" + response)
+    });
+}
+
+function unfavoriteVideo(video) {
+  var options = defaultOptions();
+  options['method'] = 'DELETE'
+  options['body'] = videoOptions(video);
+
+  return fetch(JUKAPP_URL + "/favorites", options)
+    .then((response) => {
+      if (response.status == 200) {
+        console.log('Successfully unfavorited video')
+      } else {
+        console.log('Could not unfavorite video')
+      }
+    })
+    .catch((response) => {
+      console.log("Favorites error", response)
+      AlertIOS.alert("Favorites error" + response)
     });
 }
 
@@ -228,7 +269,7 @@ Dispatcher.register(function(action) {
       queueVideo(action.video)
         .done(() => {
           JukappStore.emitChange();
-        })
+        });
       break;
 
     case 'login':
@@ -236,14 +277,30 @@ Dispatcher.register(function(action) {
       fetchFavorites()
         .done(() =>{
           JukappStore.emitChange();
-        })
+        });
       break;
 
     case 'fetch-favorites':
       fetchFavorites()
         .done(() =>{
           JukappStore.emitChange();
-        })
+        });
+      break;
+
+    case 'favorite-video':
+      favoriteVideo(action.video)
+      fetchFavorites()
+        .done(() =>{
+          JukappStore.emitChange();
+        });
+      break;
+
+    case 'unfavorite-video':
+      unfavoriteVideo(action.video)
+      fetchFavorites()
+        .done(() =>{
+          JukappStore.emitChange();
+        });
       break;
 
     default:

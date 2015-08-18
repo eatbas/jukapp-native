@@ -4,6 +4,7 @@ var React = require('react-native');
 var SearchBar = require('react-native-search-bar');
 var Jukapp = require('./Jukapp');
 var VideoCell = require('./VideoCell.js')
+var JukappStore = require('./JukappStore');
 
 var {
   AppRegistry,
@@ -25,12 +26,8 @@ var SearchResultsListView = React.createClass ({
     };
   },
 
-  _handleBackButtonPress: function() {
-    this.props.navigator.pop();
-  },
-
-  _handleNextButtonPress: function() {
-    this.props.navigator.push(nextRoute);
+  componentDidMount: function() {
+    JukappStore.addChangeListener(this._onChange);
   },
 
   renderFooter: function() {
@@ -86,7 +83,18 @@ var SearchResultsListView = React.createClass ({
 
       </View>
     );
-  }
+  },
+
+  _onChange: function() {
+    this.setState({
+      loading: false
+    //   dataSource: this.state.dataSource.cloneWithRows(
+    //     JukappStore.getFavorites()
+    //   ),
+    //   isLoggedIn: JukappStore.isLoggedIn(),
+    //   loading: false
+    });
+  },
 });
 
 var styles = StyleSheet.create({

@@ -29,7 +29,7 @@ var FavoritesListView = React.createClass ({
 
   componentDidMount: function() {
     JukappStore.addChangeListener(this._onChange);
-    // JukappActions.fetchFavorites();
+    JukappActions.fetchFavorites();
   },
 
   _handleBackButtonPress: function() {

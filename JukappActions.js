@@ -34,11 +34,17 @@ var JukappActions = {
   },
 
   favoriteVideo: function(video) {
-    console.log('favoriteVideo called');
+    Dispatcher.dispatch({
+      actionType: 'favorite-video',
+      video: video
+    })
   },
 
   unfavoriteVideo: function(video) {
-    console.log('unfavoriteVideo called');
+    Dispatcher.dispatch({
+      actionType: 'unfavorite-video',
+      video: video
+    })
   },
 };
 
