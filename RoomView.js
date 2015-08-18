@@ -5,8 +5,9 @@
 'use strict';
 
 var React = require('react-native');
-var SearchResultsListView = require('./SearchResultsListView')
-var FavoritesListView = require('./FavoritesListView')
+var SearchResultsListView = require('./SearchResultsListView');
+var FavoritesListView = require('./FavoritesListView');
+var JukappActions = require('./JukappActions');
 
 var {
   StyleSheet,
@@ -22,7 +23,7 @@ var RoomView = React.createClass({
   },
 
   _handleBackButtonPress: function() {
-    this.props.navigator.pop()
+    JukappActions.leaveRoom();
   },
 
   render: function() {

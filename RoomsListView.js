@@ -30,16 +30,6 @@ var RoomsListView = React.createClass ({
   },
 
   componentDidMount: function() {
-    JukappStore.addChangeListener(() => {
-      console.log(JukappStore.getCurrentRoom());
-      if (JukappStore.getCurrentRoom()) {
-        this.props.navigator.push({
-          component: RoomView,
-          title: 'Room'
-        })
-      }
-    });
-
     Jukapp.fetch("/rooms")
       .then((responseData) => {
         this.setState({

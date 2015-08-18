@@ -46,18 +46,7 @@ class Jukapp {
   }
 
   queueVideo(video) {
-    var options = this.defaultOptions()
-    options['method'] = 'POST'
-    options['body'] = JSON.stringify({
-      youtube_id: video.youtube_id,
-      title: video.title
-    })
-
-    return fetch(JUKAPP_URL + "/queue", options)
-      .catch((response) => {
-        console.log("Queue error", response)
-        AlertIOS.alert("Queue error" + response)
-      });
+    console.log('wrong queueVideo function called')
   }
 }
 
