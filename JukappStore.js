@@ -1,9 +1,14 @@
+var React = require('react-native');
 var Dispatcher = require('./Dispatcher');
 var EventEmitter = require('events').EventEmitter;
+var {
+  AsyncStorage
+} = React;
 
 var assign = require('object-assign');
 
 var CHANGE_EVENT = 'change';
+var JUKAPP_STORE_KEY = '@JukappStore:key'
 
 var currentRoom;
 var user;
@@ -11,7 +16,26 @@ var favorites = [];
 var rooms = [];
 var searchResults = [];
 
+function joinedRoom(roomId) {
+  currentRoom = roomId;
+  AsyncStorage.setItem(JUKAPP_STORE_KEY, JSON.stringify({room_id: currentRoom}))
+}
+
+function leftRoom() {
+  currentRoom = null;
+  AsyncStorage.removeItem(JUKAPP_STORE_KEY)
+}
+
 var JukappStore = assign({}, EventEmitter.prototype, {
+
+  initialize: function() {
+    AsyncStorage.getItem(JUKAPP_STORE_KEY).then((value) => {
+      var store = JSON.parse(value);
+      if (store) {
+        currentRoom = store.room_id
+      }
+    });
+  },
 
   isInRoom: function() {
     return !!currentRoom
@@ -75,18 +99,17 @@ Dispatcher.register(function(action) {
       break;
 
     case 'joined-room':
-      currentRoom = action.room.id;
+      joinedRoom(action.room.id);
       JukappStore.emitChange();
       break;
 
     case 'left-room':
-      currentRoom = null;
+      leftRoom();
       JukappStore.emitChange();
       break;
 
     case 'logged-in':
       user = action.user
-      // searchResults = []
       JukappStore.emitChange();
       break;
 

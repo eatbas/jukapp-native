@@ -29,6 +29,7 @@ var Jukapp = React.createClass({
   },
 
   componentDidMount: function() {
+    JukappStore.initialize();
     JukappStore.addChangeListener(this._onChange);
   },
 
