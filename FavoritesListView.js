@@ -9,11 +9,7 @@ var LoginView = require('./LoginView');
 
 var {
   StyleSheet,
-  Text,
-  View,
-  Image,
   ListView,
-  TouchableHighlight,
   ActivityIndicatorIOS
 } = React;
 

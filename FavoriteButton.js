@@ -22,11 +22,12 @@ var FavoriteButton = React.createClass ({
 
   handleButtonPress: function() {
     var video = this.props.video
-
     this.state.isFavorite ? JukappApi.unfavoriteVideo(video) : JukappApi.favoriteVideo(video);
+  },
 
+  componentWillReceiveProps: function() {
     this.setState({
-      isFavorite: !this.state.isFavorite
+      isFavorite: this.props.isFavorite
     });
   },
 

@@ -15,7 +15,6 @@ var {
   Text,
   View,
   Image,
-  ListView,
   TouchableHighlight,
 } = React;
 
@@ -27,6 +26,8 @@ var VideoCell = React.createClass ({
     }
 
     var video = this.props.video
+
+    console.log(video.title + " " + JukappStore.isFavoriteVideo(video));
 
     return(<FavoriteButton isFavorite={JukappStore.isFavoriteVideo(video)} video={video} />);
   },

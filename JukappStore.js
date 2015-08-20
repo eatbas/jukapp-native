@@ -86,7 +86,7 @@ Dispatcher.register(function(action) {
 
     case 'logged-in':
       user = action.user
-      searchResults = []
+      // searchResults = []
       JukappStore.emitChange();
       break;
 
