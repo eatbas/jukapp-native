@@ -2,61 +2,32 @@
 
 var React = require('react-native');
 var JukappActions = require('./JukappActions');
-var JukappStore = require('./JukappStore')
-var JukappApi = require('./JukappApi')
+var JukappStore = require('./JukappStore');
+var JukappApi = require('./JukappApi');
+var FavoriteButton = require('./FavoriteButton');
 
 var {
   Icon
 } = require('react-native-icons');
 
 var {
-  AppRegistry,
   StyleSheet,
   Text,
   View,
   Image,
-  ListView,
   TouchableHighlight,
 } = React;
 
 var VideoCell = React.createClass ({
 
   renderFavoriteButton: function() {
-    var video = this.props.video;
-
     if (!JukappStore.isLoggedIn()) {
       return;
     }
 
-    if (JukappStore.isFavoriteVideo(video)) {
-      return (<TouchableHighlight
-        underlayColor="#ebeeee"
-        style={styles.secondaryButton}
-        onPress={() => {
-          JukappApi.unfavoriteVideo(video)
-        }}>
-        <Icon
-          name='fontawesome|star'
-          size={20}
-          color='black'
-          style={styles.star}
-        />
-      </TouchableHighlight>)
-    } else {
-      return (<TouchableHighlight
-        underlayColor="#ebeeee"
-        style={styles.secondaryButton}
-        onPress={() => {
-          JukappApi.favoriteVideo(video)
-        }}>
-        <Icon
-          name='fontawesome|star-o'
-          size={20}
-          color='black'
-          style={styles.star}
-        />
-      </TouchableHighlight>)
-    }
+    var video = this.props.video
+
+    return(<FavoriteButton isFavorite={JukappStore.isFavoriteVideo(video)} video={video} />);
   },
 
   render: function() {

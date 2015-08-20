@@ -1,7 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- */
 'use strict';
 
 var React = require('react-native');
@@ -16,16 +12,7 @@ var {
 } = React;
 
 var RoomView = React.createClass({
-  _handleNextButtonPress: function() {
-    this.refs.nav.push({
-      component: FavoritesListView,
-      title: 'Favorites'
-    });
-  },
 
-  _handleBackButtonPress: function() {
-    JukappActions.leftRoom();
-  },
 
   render: function() {
     return (

@@ -7,19 +7,24 @@
 var React = require('react-native');
 var RoomsListView = require('./RoomsListView')
 var JukappStore = require('./JukappStore')
-var RoomView = require('./RoomView')
+var JukappActions = require('./JukappActions');
+var SearchResultsListView = require('./SearchResultsListView')
+var FavoritesListView = require('./FavoritesListView')
+var LoginView = require('./LoginView')
 
 var {
   AppRegistry,
   StyleSheet,
   Navigator,
-  View
+  View,
+  NavigatorIOS
 } = React;
 
 var Jukapp = React.createClass({
   getInitialState: function() {
     return {
-      isInRoom: JukappStore.isInRoom()
+      isInRoom: JukappStore.isInRoom(),
+      isLoggedIn: JukappStore.isLoggedIn()
     }
   },
 
@@ -31,12 +36,35 @@ var Jukapp = React.createClass({
     JukappStore.removeChangeListener(this._onChange);
   },
 
+  _handleNextButtonPress: function() {
+    this.refs.nav.push({
+        component: FavoritesListView,
+        title: 'Favorites'
+    });
+  },
+
+  _handleBackButtonPress: function() {
+    JukappActions.leftRoom();
+  },
+
   render: function() {
     if (!this.state.isInRoom) {
       return this.renderRoomsList();
     }
 
-    return (<RoomView/>)
+    return (
+      <NavigatorIOS
+        style={styles.container}
+        ref='nav'
+        initialRoute={{
+          component: SearchResultsListView,
+          title: 'Search',
+          rightButtonTitle: 'Favorites',
+          onRightButtonPress: this._handleNextButtonPress,
+          leftButtonTitle: 'Leave',
+          onLeftButtonPress: this._handleBackButtonPress,
+        }}
+      />)
   },
 
   renderRoomsList: function() {
@@ -45,7 +73,8 @@ var Jukapp = React.createClass({
 
   _onChange: function() {
     this.setState({
-      isInRoom: JukappStore.isInRoom()
+      isInRoom: JukappStore.isInRoom(),
+      isLoggedIn: JukappStore.isLoggedIn()
     })
   },
 });

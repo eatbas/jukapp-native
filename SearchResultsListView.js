@@ -7,21 +7,17 @@ var JukappStore = require('./JukappStore');
 var JukappApi = require('./JukappApi');
 
 var {
-  AppRegistry,
   StyleSheet,
-  Text,
   View,
-  Image,
   ListView,
   TouchableHighlight,
-  ActivityIndicatorIOS,
-  TextInput
+  ActivityIndicatorIOS
 } = React;
 
 var SearchResultsListView = React.createClass ({
 
   getInitialState: function() {
-    var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => true});
 
     return {
       dataSource: dataSource.cloneWithRows(JukappStore.getSearchResults())

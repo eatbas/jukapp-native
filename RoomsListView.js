@@ -8,15 +8,12 @@ var JukappStore = require('./JukappStore');
 var JukappApi = require('./JukappApi');
 
 var {
-  AppRegistry,
   StyleSheet,
   Text,
   View,
-  Image,
   ListView,
   TouchableHighlight,
   ActivityIndicatorIOS,
-  AlertIOS
 } = React;
 
 var RoomsListView = React.createClass ({
