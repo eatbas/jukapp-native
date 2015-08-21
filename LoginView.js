@@ -10,22 +10,52 @@ var {
   Text,
   View,
   TouchableHighlight,
-  TextInput
+  TextInput,
+  ActivityIndicatorIOS
 } = React;
 
 var LoginView = React.createClass ({
+  getInitialState: function() {
+    return {
+      loading: false
+    };
+  },
+
   onLogin: function() {
     JukappApi.login(this.state.username, this.state.password)
+      .done(() => {
+        this.setState({loading: false});
+      });
     this.setState({loading: true});
   },
 
   render: function() {
-    return (
-      <View style={styles.centerContainer}>
-        <View style={styles.loginContainer}>
+    var header = null
+
+    if (this.state.loading) {
+      header = (
+        <View style={styles.headerContainer}>
+          <Text style={[styles.noticeText, {paddingRight: 16}]}>
+            Trying to login
+          </Text>
+          <ActivityIndicatorIOS />
+        </View>
+      )
+    } else {
+      header = (
+        <View style={styles.headerContainer}>
           <Text style={styles.noticeText}>
             Please login to continue
           </Text>
+        </View>
+      )
+    }
+
+    return (
+      <View style={styles.page}>
+        <View style={styles.loginContainer}>
+
+          {header}
 
           <TextInput
             placeholder='Username'
@@ -71,7 +101,7 @@ var LoginView = React.createClass ({
 });
 
 var styles = StyleSheet.create({
-  centerContainer: {
+  page: {
     flex: 1,
     backgroundColor: '#EEF2F2',
   },
@@ -85,13 +115,18 @@ var styles = StyleSheet.create({
     flexDirection: 'column',
   },
 
+  headerContainer: {
+    flexDirection: 'row',
+    marginTop: 160,
+    marginBottom: 16,
+    justifyContent: 'space-between',
+  },
+
   noticeText: {
     opacity: 1,
     color: 'rgba(0,0,0,0.87)',
     fontSize: 16,
     fontWeight: 'bold',
-    textAlign: 'left',
-    marginBottom: 16,
   },
 
   textbox: {
