@@ -1,9 +1,15 @@
 'use strict';
 
+var React = require('react-native');
 var JukappActions = require('./JukappActions');
 var JukappStore = require('./JukappStore');
 
 var JUKAPP_URL = 'https://jukapp-api.herokuapp.com'
+
+var {
+  AlertIOS
+} = React;
+
 
 var JukappApi = {
   defaultOptions: function() {
@@ -86,20 +92,43 @@ var JukappApi = {
       });
   },
 
-  login: function() {
-    var user = {
-      username: 'berk',
-      authToken: 'vbSFYuoGRcpaUSiAdyZM'
-    };
+  login: function(username, password) {
+    var options = this.defaultOptions();
+    options['method'] = 'POST'
+    options['body'] = JSON.stringify({
+      user: {
+        username: username,
+        password: password
+      }
+    });
 
-    JukappActions.loggedIn(user);
-    this.fetchFavorites();
+    return fetch(JUKAPP_URL + "/users/sign_in", options)
+      .then((response) => {
+        if (response.status == 201) {
+          return response.json();
+          console.log('Successfully logged in')
+        } else {
+          return Promise.reject(new Error);
+          console.log('Could not log in')
+        }
+      })
+      .then((responseData => {
+        if (!responseData) return;
+        var user = {
+          username: responseData["username"],
+          authToken: responseData["authentication_token"]
+        };
+
+        JukappActions.loggedIn(user);
+
+        this.fetchFavorites();
+      }))
   },
 
   fetchFavorites: function() {
     fetch(JUKAPP_URL + "/favorites", this.defaultOptions())
       .then((response) => {
-        return response.json()
+        return response.json();
       })
       .then(JukappActions.loadedFavorites)
       .catch((response) => {
