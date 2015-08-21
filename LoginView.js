@@ -17,15 +17,20 @@ var {
 var LoginView = React.createClass ({
   getInitialState: function() {
     return {
-      loading: false
+      loading: false,
+      loginError: false,
     };
   },
 
   onLogin: function() {
     JukappApi.login(this.state.username, this.state.password)
+     .catch((response) => {
+        this.setState({loginError: true});
+      })
       .done(() => {
         this.setState({loading: false});
       });
+
     this.setState({loading: true});
   },
 
@@ -39,6 +44,14 @@ var LoginView = React.createClass ({
             Trying to login
           </Text>
           <ActivityIndicatorIOS />
+        </View>
+      )
+    } else if (this.state.loginError) {
+      header = (
+        <View style={styles.headerContainer}>
+          <Text style={styles.noticeText}>
+            Login failed
+          </Text>
         </View>
       )
     } else {
@@ -116,14 +129,13 @@ var styles = StyleSheet.create({
   },
 
   headerContainer: {
+    alignSelf: 'center',
     flexDirection: 'row',
-    marginTop: 160,
     marginBottom: 16,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
 
   noticeText: {
-    opacity: 1,
     color: 'rgba(0,0,0,0.87)',
     fontSize: 16,
     fontWeight: 'bold',
@@ -160,7 +172,6 @@ var styles = StyleSheet.create({
   },
 
   buttonText: {
-    opacity: 1,
     color: 'rgba(0,0,0,0.87)',
     fontSize: 16,
     fontWeight: 'bold',

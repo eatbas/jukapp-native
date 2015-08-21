@@ -114,6 +114,7 @@ var JukappApi = {
           return response.json();
           console.log('Successfully logged in')
         } else {
+          return Promise.reject(new Error);
           console.log('Could not log in')
         }
       })
@@ -128,10 +129,6 @@ var JukappApi = {
 
         this.fetchFavorites();
       }))
-      .catch((response) => {
-        console.log("Queue error", response)
-        AlertIOS.alert("Queue error" + response)
-      });
   },
 
   fetchFavorites: function() {
