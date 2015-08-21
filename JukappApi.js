@@ -93,12 +93,6 @@ var JukappApi = {
   },
 
   login: function(username, password) {
-    // use username and password to log in
-    // var user = {
-    //   username: 'berk',
-    //   authToken: 'vbSFYuoGRcpaUSiAdyZM'
-    // };
-
     var options = this.defaultOptions();
     options['method'] = 'POST'
     options['body'] = JSON.stringify({

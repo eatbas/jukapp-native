@@ -43,7 +43,7 @@ function syncStorage() {
 var JukappStore = assign({}, EventEmitter.prototype, {
 
   initialize: function() {
-    AsyncStorage.removeItem(JUKAPP_STORE_KEY);
+    // AsyncStorage.removeItem(JUKAPP_STORE_KEY);
     AsyncStorage.getItem(JUKAPP_STORE_KEY).then((value) => {
       var store = JSON.parse(value);
       if (store) {
