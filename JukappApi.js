@@ -86,7 +86,8 @@ var JukappApi = {
       });
   },
 
-  login: function() {
+  login: function(username, password) {
+    // use username and password to log in
     var user = {
       username: 'berk',
       authToken: 'vbSFYuoGRcpaUSiAdyZM'
