@@ -18,12 +18,26 @@ var searchResults = [];
 
 function joinedRoom(roomId) {
   currentRoom = roomId;
-  AsyncStorage.setItem(JUKAPP_STORE_KEY, JSON.stringify({room_id: currentRoom}))
+  syncStorage();
 }
 
 function leftRoom() {
   currentRoom = null;
-  AsyncStorage.removeItem(JUKAPP_STORE_KEY)
+  syncStorage();
+}
+
+function loggedIn(loginUser) {
+  user = loginUser;
+  syncStorage();
+}
+
+function syncStorage() {
+  var store = JSON.stringify({
+    user: user,
+    room_id: currentRoom
+  });
+
+  AsyncStorage.setItem(JUKAPP_STORE_KEY, store);
 }
 
 var JukappStore = assign({}, EventEmitter.prototype, {
@@ -32,7 +46,14 @@ var JukappStore = assign({}, EventEmitter.prototype, {
     AsyncStorage.getItem(JUKAPP_STORE_KEY).then((value) => {
       var store = JSON.parse(value);
       if (store) {
-        currentRoom = store.room_id
+        console.log(store);
+        if (store.room_id) {
+          currentRoom = store.room_id;
+        }
+
+        if (store.user) {
+          user = store.user;
+        }
       }
     });
   },
@@ -109,7 +130,7 @@ Dispatcher.register(function(action) {
       break;
 
     case 'logged-in':
-      user = action.user
+      loggedIn(action.user);
       JukappStore.emitChange();
       break;
 
