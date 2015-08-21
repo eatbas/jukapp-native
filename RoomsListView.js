@@ -3,7 +3,6 @@
 var React = require('react-native');
 var SearchResultsListView = require('./SearchResultsListView');
 var FavoritesListView = require('./FavoritesListView');
-var RoomView = require('./RoomView');
 var JukappStore = require('./JukappStore');
 var JukappApi = require('./JukappApi');
 

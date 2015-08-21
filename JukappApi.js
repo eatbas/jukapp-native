@@ -161,7 +161,7 @@ var JukappApi = {
     options['method'] = 'DELETE'
     options['body'] = this.videoOptions(video);
 
-    return fetch(JUKAPP_URL + "/favorites", options)
+    fetch(JUKAPP_URL + "/favorites", options)
       .then((response) => {
         if (response.status == 200) {
           this.fetchFavorites();

@@ -11,6 +11,7 @@ var JukappActions = require('./JukappActions');
 var SearchResultsListView = require('./SearchResultsListView')
 var FavoritesListView = require('./FavoritesListView')
 var LoginView = require('./LoginView')
+var RoomView = require('./RoomView')
 
 var {
   AppRegistry,
@@ -58,8 +59,8 @@ var Jukapp = React.createClass({
         style={styles.container}
         ref='nav'
         initialRoute={{
-          component: SearchResultsListView,
-          title: 'Search',
+          component: RoomView,
+          title: 'Room',
           rightButtonTitle: 'Favorites',
           onRightButtonPress: this._handleNextButtonPress,
           leftButtonTitle: 'Leave',
