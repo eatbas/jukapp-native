@@ -45,10 +45,13 @@ var RoomView = React.createClass({
   },
 
   _onChange: function() {
+
+
     this.setState({
       dataSource: this.state.dataSource.cloneWithRows(JukappStore.getFavorites()),
       isLoggedIn: JukappStore.isLoggedIn(),
-      loading: false
+      loading: false,
+      video: JukappStore.getFavorites()[0]
     })
   },
 
@@ -65,9 +68,14 @@ var RoomView = React.createClass({
   },
 
   render: function() {
+    var image = null
+    if (this.state.video) {
+      image = {uri: 'http://img.youtube.com/vi/' + this.state.video.youtube_id + '/default.jpg' }
+    }
+
     return (
       <View style={styles.cell}>
-        <Image source={''} style={styles.productImage}/>
+        <Image source={image} style={styles.videoImage}/>
 
         <View style={styles.rowData}>
 
@@ -98,6 +106,7 @@ var RoomView = React.createClass({
           dataSource={this.state.dataSource}
           renderRow={this.renderRow}
           renderFooter={this.renderFooter}
+          automaticallyAdjustContentInsets={false}
         />
       </View>
     );
@@ -115,7 +124,10 @@ var styles = StyleSheet.create({
   },
 
   cell: {
+    flex: 1,
+    flexDirection: 'column',
     backgroundColor: 'white',
+    marginTop: 70,
   },
 
   rowData: {
@@ -151,10 +163,10 @@ var styles = StyleSheet.create({
     textAlign: 'center'
   },
 
-  productImage: {
+  videoImage: {
     alignSelf: 'center',
-    width: 350,
-    height: 350
+    width: 192,
+    height: 192,
   },
 });
 
