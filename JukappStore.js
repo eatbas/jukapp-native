@@ -15,6 +15,7 @@ var user;
 var favorites = [];
 var rooms = [];
 var searchResults = [];
+var queuedVideos = [];
 
 function joinedRoom(roomId) {
   currentRoom = roomId;
@@ -95,6 +96,10 @@ var JukappStore = assign({}, EventEmitter.prototype, {
     return searchResults;
   },
 
+  getQueuedVideos: function() {
+    return queuedVideos;
+  },
+
   getFavorites: function() {
     return favorites;
   },
@@ -134,6 +139,12 @@ Dispatcher.register(function(action) {
       loggedIn(action.user);
       JukappStore.emitChange();
       break;
+
+    case 'loaded-queued-videos':
+      queuedVideos = action.queuedVideos;
+      JukappStore.emitChange();
+      break;
+
 
     case 'loaded-favorites':
       favorites = action.favorites;

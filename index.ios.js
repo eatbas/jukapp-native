@@ -60,7 +60,7 @@ var Jukapp = React.createClass({
         ref='nav'
         initialRoute={{
           component: RoomView,
-          title: 'Room',
+          title: 'Queue',
           rightButtonTitle: 'Favorites',
           onRightButtonPress: this._handleNextButtonPress,
           leftButtonTitle: 'Leave',

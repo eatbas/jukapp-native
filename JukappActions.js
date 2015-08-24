@@ -12,34 +12,43 @@ var JukappActions = {
     Dispatcher.dispatch({
       actionType: 'joined-room',
       room: room
-    })
+    });
   },
 
   leftRoom: function() {
     Dispatcher.dispatch({
       actionType: 'left-room'
-    })
+    });
   },
 
   loggedIn: function(user) {
     Dispatcher.dispatch({
       actionType: 'logged-in',
       user: user
-    })
+    });
+  },
+
+  loadedQueuedVideos: function(queuedVideos) {
+    console.log(queuedVideos);
+
+    Dispatcher.dispatch({
+      actionType: 'loaded-queued-videos',
+      queuedVideos: queuedVideos
+    });
   },
 
   loadedFavorites: function(favorites) {
     Dispatcher.dispatch({
       actionType: 'loaded-favorites',
       favorites: favorites
-    })
+    });
   },
 
   completedSearch: function(searchResults) {
     Dispatcher.dispatch({
       actionType: 'completed-search',
       searchResults: searchResults
-    })
+    });
   }
 };
 

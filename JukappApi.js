@@ -125,8 +125,20 @@ var JukappApi = {
       }))
   },
 
+  fetchQueuedVideos: function() {
+    fetch(JUKAPP_URL + "/queued_videos", this.defaultOptions())
+      .then((response) => {
+        return response.json();
+      })
+      .then(JukappActions.loadedQueuedVideos)
+      .catch((response) => {
+        console.log("Queued videos error", response)
+        AlertIOS.alert("Queued videos error" + response)
+      });
+  },
+
   fetchFavorites: function() {
-    fetch(JUKAPP_URL + "/favorites", this.defaultOptions())
+    return fetch(JUKAPP_URL + "/favorites", this.defaultOptions())
       .then((response) => {
         return response.json();
       })
