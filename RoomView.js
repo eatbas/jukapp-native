@@ -14,7 +14,7 @@ var {
   Image,
   Text,
   ListView,
-  ActivityIndicatorIOS
+  ActivityIndicatorIOS,
 } = React;
 
 var RoomView = React.createClass({
@@ -30,6 +30,10 @@ var RoomView = React.createClass({
   },
 
   componentDidMount: function() {
+    JukappApi.addEventListener((message) => {
+      JukappApi.fetchQueuedVideos();
+    });
+
     JukappStore.addChangeListener(this._onChange);
 
     if (this.state.isLoggedIn) {
@@ -43,6 +47,7 @@ var RoomView = React.createClass({
 
   componentWillUnmount: function() {
     JukappStore.removeChangeListener(this._onChange);
+    JukappApi.removeEventListener();
   },
 
   _handleBackButtonPress: function() {

@@ -3,12 +3,16 @@
 var React = require('react-native');
 var JukappActions = require('./JukappActions');
 var JukappStore = require('./JukappStore');
+var EventSource = require('NativeModules').RNEventSource;
 
 var JUKAPP_URL = 'https://jukapp-api.herokuapp.com'
 
 var {
-  AlertIOS
+  AlertIOS,
+  DeviceEventEmitter
 } = React;
+
+var eventListener;
 
 
 var JukappApi = {
@@ -185,6 +189,25 @@ var JukappApi = {
         console.log("Favorites error", response)
         AlertIOS.alert("Favorites error" + response)
       });
+  },
+
+  addEventListener: function(onEvent) {
+    eventListener = DeviceEventEmitter.addListener(
+      'EventSourceMessage', function(message) {
+        if (message.event != 'heartbeat') {
+          onEvent(message);
+        }
+      });
+
+    EventSource.connectWithURL("https://jukapp-api.herokuapp.com/events?channels[]=queue-1");
+  },
+
+  removeEventListener: function() {
+    EventSource.close();
+
+    if (eventListener) {
+      eventListener.remove();
+    }
   }
 }
 
