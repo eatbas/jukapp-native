@@ -83,7 +83,6 @@ var styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#EEF2F2',
-    marginTop: 64,
   },
   listView: {
     backgroundColor: '#EEF2F2',

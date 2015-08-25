@@ -17,13 +17,19 @@ var {
 } = React;
 
 var MenuView = React.createClass({
+  room: function() {
+    this.props.menuActions.close();
+    this.props.navigator.replace({id: 'room'});
+  },
+
   favorites: function() {
     this.props.menuActions.close();
+    this.props.navigator.replace({id: 'favorites'});
+  },
 
-    this.props.navigator.push({
-        component: FavoritesListView,
-        title: 'Favorites',
-    });
+  search: function() {
+    this.props.menuActions.close();
+    this.props.navigator.replace({id: 'search'});
   },
 
   leave: function() {
@@ -48,6 +54,7 @@ var MenuView = React.createClass({
 
         <TouchableHighlight
           style={styles.item}
+          onPress={this.room}
           underlayColor="#ebeeee"
         >
           <View style={styles.itemContent}>
@@ -58,6 +65,22 @@ var MenuView = React.createClass({
               style={styles.icon}
             />
             <Text style={styles.itemTitle}>Room</Text>
+          </View>
+        </TouchableHighlight>
+
+        <TouchableHighlight
+          style={styles.item}
+          onPress={this.search}
+          underlayColor="#ebeeee"
+        >
+          <View style={styles.itemContent}>
+            <Icon
+              name='fontawesome|search'
+              size={20}
+              color='black'
+              style={styles.icon}
+            />
+            <Text style={styles.itemTitle}>Search</Text>
           </View>
         </TouchableHighlight>
 
