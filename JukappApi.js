@@ -3,12 +3,16 @@
 var React = require('react-native');
 var JukappActions = require('./JukappActions');
 var JukappStore = require('./JukappStore');
+var EventSource = require('NativeModules').RNEventSource;
 
 var JUKAPP_URL = 'https://jukapp-api.herokuapp.com'
 
 var {
-  AlertIOS
+  AlertIOS,
+  DeviceEventEmitter
 } = React;
+
+var eventListener;
 
 
 var JukappApi = {
@@ -64,13 +68,11 @@ var JukappApi = {
   },
 
   searchVideo: function(query) {
-    fetch(JUKAPP_URL + '/search?query=' + query)
+    fetch(JUKAPP_URL + '/search?query=' + query, this.defaultOptions())
       .then((response) => {
         return response.json();
       })
-      .then((responseData) => {
-        JukappActions.completedSearch(responseData["videos"])
-      });
+      .then(JukappActions.completedSearch);
   },
 
   queueVideo: function(video) {
@@ -125,8 +127,20 @@ var JukappApi = {
       }))
   },
 
+  fetchQueuedVideos: function() {
+    fetch(JUKAPP_URL + "/queued_videos", this.defaultOptions())
+      .then((response) => {
+        return response.json();
+      })
+      .then(JukappActions.loadedQueuedVideos)
+      .catch((response) => {
+        console.log("Queued videos error", response)
+        AlertIOS.alert("Queued videos error" + response)
+      });
+  },
+
   fetchFavorites: function() {
-    fetch(JUKAPP_URL + "/favorites", this.defaultOptions())
+    return fetch(JUKAPP_URL + "/favorites", this.defaultOptions())
       .then((response) => {
         return response.json();
       })
@@ -161,7 +175,7 @@ var JukappApi = {
     options['method'] = 'DELETE'
     options['body'] = this.videoOptions(video);
 
-    return fetch(JUKAPP_URL + "/favorites", options)
+    fetch(JUKAPP_URL + "/favorites", options)
       .then((response) => {
         if (response.status == 200) {
           this.fetchFavorites();
@@ -173,6 +187,25 @@ var JukappApi = {
         console.log("Favorites error", response)
         AlertIOS.alert("Favorites error" + response)
       });
+  },
+
+  addEventListener: function(onEvent) {
+    eventListener = DeviceEventEmitter.addListener(
+      'EventSourceMessage', function(message) {
+        if (message.event != 'heartbeat') {
+          onEvent(message);
+        }
+      });
+
+    EventSource.connectWithURL(JUKAPP_URL + "/events?channels[]=queue-" + JukappStore.getCurrentRoom());
+  },
+
+  removeEventListener: function() {
+    EventSource.close();
+
+    if (eventListener) {
+      eventListener.remove();
+    }
   }
 }
 

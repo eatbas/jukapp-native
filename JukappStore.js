@@ -15,6 +15,7 @@ var user;
 var favorites = [];
 var rooms = [];
 var searchResults = [];
+var queuedVideos = [];
 
 function joinedRoom(roomId) {
   currentRoom = roomId;
@@ -69,7 +70,7 @@ var JukappStore = assign({}, EventEmitter.prototype, {
 
   isFavoriteVideo: function(video) {
     for (var id in favorites) {
-      if (favorites[id].youtube_id == video.youtube_id) {
+      if (favorites[id]["video"].youtube_id == video.youtube_id) {
         return true;
       }
     }
@@ -93,6 +94,10 @@ var JukappStore = assign({}, EventEmitter.prototype, {
 
   getSearchResults: function() {
     return searchResults;
+  },
+
+  getQueuedVideos: function() {
+    return queuedVideos;
   },
 
   getFavorites: function() {
@@ -134,6 +139,12 @@ Dispatcher.register(function(action) {
       loggedIn(action.user);
       JukappStore.emitChange();
       break;
+
+    case 'loaded-queued-videos':
+      queuedVideos = action.queuedVideos;
+      JukappStore.emitChange();
+      break;
+
 
     case 'loaded-favorites':
       favorites = action.favorites;

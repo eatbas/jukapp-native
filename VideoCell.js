@@ -32,6 +32,17 @@ var VideoCell = React.createClass ({
 
   render: function() {
     var video = this.props.video;
+    var playCount;
+
+    if (video["video_events"]) {
+      var videoEvent = video["video_events"].find((events) => events["room_id"] == JukappStore.getCurrentRoom());
+      if (videoEvent) playCount = videoEvent["play_count"];
+    }
+
+    if (!playCount) {
+      playCount = 0;
+    }
+
     var image = { uri: 'http://img.youtube.com/vi/' + video.youtube_id + '/default.jpg' }
     var secondaryButton = this.renderFavoriteButton();
 
@@ -48,7 +59,7 @@ var VideoCell = React.createClass ({
 
           <View style={styles.rowData}>
             <Text style={styles.title}>{video.title}</Text>
-            <Text style={styles.details}>1234 VIEWS</Text>
+            <Text style={styles.details}>{playCount} VIEWS</Text>
           </View>
 
           {secondaryButton}
