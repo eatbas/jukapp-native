@@ -199,7 +199,7 @@ var JukappApi = {
         }
       });
 
-    EventSource.connectWithURL("https://jukapp-api.herokuapp.com/events?channels[]=queue-1");
+    EventSource.connectWithURL(JUKAPP_URL + "/events?channels[]=queue-" + JukappStore.getCurrentRoom());
   },
 
   removeEventListener: function() {
