@@ -29,8 +29,6 @@ var JukappActions = {
   },
 
   loadedQueuedVideos: function(queuedVideos) {
-    console.log(queuedVideos);
-
     Dispatcher.dispatch({
       actionType: 'loaded-queued-videos',
       queuedVideos: queuedVideos

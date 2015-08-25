@@ -41,7 +41,16 @@ var Jukapp = React.createClass({
   _handleNextButtonPress: function() {
     this.refs.nav.push({
         component: FavoritesListView,
-        title: 'Favorites'
+        title: 'Favorites',
+        rightButtonTitle: 'Search',
+        onRightButtonPress: this._handleSearchButtonPress
+    });
+  },
+
+  _handleSearchButtonPress: function() {
+    this.refs.nav.push({
+      component: SearchResultsListView,
+      title: "Search"
     });
   },
 

@@ -36,7 +36,11 @@ var VideoCell = React.createClass ({
 
     if (video["video_events"]) {
       var videoEvent = video["video_events"].find((events) => events["room_id"] == JukappStore.getCurrentRoom());
-      playCount = videoEvent["play_count"];
+      if (videoEvent) playCount = videoEvent["play_count"];
+    }
+
+    if (!playCount) {
+      playCount = 0;
     }
 
     var image = { uri: 'http://img.youtube.com/vi/' + video.youtube_id + '/default.jpg' }

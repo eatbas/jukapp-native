@@ -68,13 +68,11 @@ var JukappApi = {
   },
 
   searchVideo: function(query) {
-    fetch(JUKAPP_URL + '/search?query=' + query)
+    fetch(JUKAPP_URL + '/search?query=' + query, this.defaultOptions())
       .then((response) => {
         return response.json();
       })
-      .then((responseData) => {
-        JukappActions.completedSearch(responseData["videos"])
-      });
+      .then(JukappActions.completedSearch);
   },
 
   queueVideo: function(video) {
