@@ -70,7 +70,7 @@ var JukappStore = assign({}, EventEmitter.prototype, {
 
   isFavoriteVideo: function(video) {
     for (var id in favorites) {
-      if (favorites[id].youtube_id == video.youtube_id) {
+      if (favorites[id]["video"].youtube_id == video.youtube_id) {
         return true;
       }
     }

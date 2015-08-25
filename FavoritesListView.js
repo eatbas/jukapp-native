@@ -41,7 +41,7 @@ var FavoritesListView = React.createClass ({
 
   renderRow: function(rowData, sectionID, rowID) {
     return (
-      <VideoCell video={rowData} />
+      <VideoCell video={rowData["video"]} />
     )
   },
 
