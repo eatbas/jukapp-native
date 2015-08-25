@@ -94,6 +94,13 @@ var styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+    shadowColor: '#000000',
+    shadowRadius: 3,
+    shadowOpacity: 0.5,
+    shadowOffset: {
+      height: 1,
+      width: 0
+    }
   },
 });
 
