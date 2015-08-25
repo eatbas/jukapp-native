@@ -12,6 +12,8 @@ var SearchResultsListView = require('./SearchResultsListView')
 var FavoritesListView = require('./FavoritesListView')
 var LoginView = require('./LoginView')
 var RoomView = require('./RoomView')
+var MenuView = require('./MenuView');
+var SideMenu = require('react-native-side-menu');
 
 var {
   AppRegistry,
@@ -40,22 +42,13 @@ var Jukapp = React.createClass({
 
   _handleNextButtonPress: function() {
     this.refs.nav.push({
-        component: FavoritesListView,
-        title: 'Favorites',
-        rightButtonTitle: 'Search',
-        onRightButtonPress: this._handleSearchButtonPress
-    });
-  },
-
-  _handleSearchButtonPress: function() {
-    this.refs.nav.push({
       component: SearchResultsListView,
       title: "Search"
     });
   },
 
   _handleBackButtonPress: function() {
-    JukappActions.leftRoom();
+    this.refs.sideMenu.toggleMenu();
   },
 
   render: function() {
@@ -64,18 +57,25 @@ var Jukapp = React.createClass({
     }
 
     return (
-      <NavigatorIOS
-        style={styles.container}
-        ref='nav'
-        initialRoute={{
-          component: RoomView,
-          title: 'Queue',
-          rightButtonTitle: 'Favorites',
-          onRightButtonPress: this._handleNextButtonPress,
-          leftButtonTitle: 'Leave',
-          onLeftButtonPress: this._handleBackButtonPress,
-        }}
-      />)
+      <SideMenu
+        ref='sideMenu'
+        menu={<MenuView navigator={this.refs.nav} />}
+        touchToClose={true}
+      >
+        <NavigatorIOS
+          style={styles.container}
+          ref='nav'
+          initialRoute={{
+            component: RoomView,
+            title: 'Queue',
+            rightButtonTitle: 'Search',
+            onRightButtonPress: this._handleNextButtonPress,
+            leftButtonTitle: 'Menu',
+            onLeftButtonPress: this._handleBackButtonPress,
+          }}
+        />
+      </SideMenu>
+    );
   },
 
   renderRoomsList: function() {

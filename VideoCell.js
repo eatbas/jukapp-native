@@ -7,10 +7,6 @@ var JukappApi = require('./JukappApi');
 var FavoriteButton = require('./FavoriteButton');
 
 var {
-  Icon
-} = require('react-native-icons');
-
-var {
   StyleSheet,
   Text,
   View,
