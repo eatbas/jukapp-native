@@ -89,7 +89,7 @@ var JukappStore = assign({}, EventEmitter.prototype, {
   },
 
   getCurrentRoom: function() {
-    if (currentRoom) return currentRoom.id;
+    return currentRoom;
   },
 
   getSearchResults: function() {

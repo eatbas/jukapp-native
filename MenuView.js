@@ -38,13 +38,28 @@ var MenuView = React.createClass({
 
         <View style={styles.header}>
           <Icon
-            name='fontawesome|music'
+            name='fontawesome|rss'
             size={20}
             color='black'
             style={styles.icon}
           />
-          <Text style={styles.headerMainText}>Room Name</Text>
+          <Text style={styles.headerMainText}>{JukappStore.getCurrentRoom().name}</Text>
         </View>
+
+        <TouchableHighlight
+          style={styles.item}
+          underlayColor="#ebeeee"
+        >
+          <View style={styles.itemContent}>
+            <Icon
+              name='fontawesome|home'
+              size={20}
+              color='black'
+              style={styles.icon}
+            />
+            <Text style={styles.itemTitle}>Room</Text>
+          </View>
+        </TouchableHighlight>
 
         <TouchableHighlight
           style={styles.item}
@@ -59,6 +74,21 @@ var MenuView = React.createClass({
               style={styles.icon}
             />
             <Text style={styles.itemTitle}>Favorites</Text>
+          </View>
+        </TouchableHighlight>
+
+        <TouchableHighlight
+          style={styles.item}
+          underlayColor="#ebeeee"
+        >
+          <View style={styles.itemContent}>
+            <Icon
+              name='fontawesome|user'
+              size={20}
+              color='black'
+              style={styles.icon}
+            />
+            <Text style={styles.itemTitle}>My Account</Text>
           </View>
         </TouchableHighlight>
 
@@ -84,7 +114,6 @@ var MenuView = React.createClass({
 
 var styles = StyleSheet.create({
   container: {
-    paddingTop: 48,
     flexDirection: 'column',
     flex: 1
   },
@@ -97,10 +126,11 @@ var styles = StyleSheet.create({
 
   header: {
     padding: 16,
-    height: 55,
+    height: 120,
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    alignItems: 'center'
+    alignItems: 'center',
+    backgroundColor: '#F4F7F7',
   },
 
   headerMainText: {

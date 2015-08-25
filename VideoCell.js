@@ -31,7 +31,7 @@ var VideoCell = React.createClass ({
     var playCount;
 
     if (video["video_events"]) {
-      var videoEvent = video["video_events"].find((events) => events["room_id"] == JukappStore.getCurrentRoom());
+      var videoEvent = video["video_events"].find((events) => events["room_id"] == JukappStore.getCurrentRoom().id);
       if (videoEvent) playCount = videoEvent["play_count"];
     }
 
