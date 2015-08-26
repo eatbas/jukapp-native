@@ -32,6 +32,11 @@ var MenuView = React.createClass({
     this.props.navigator.replace({id: 'search'});
   },
 
+  account: function() {
+    this.props.menuActions.close();
+    this.props.navigator.replace({id: 'account'});
+  },
+
   leave: function() {
     this.props.menuActions.close();
 
@@ -102,6 +107,7 @@ var MenuView = React.createClass({
 
         <TouchableHighlight
           style={styles.item}
+          onPress={this.account}
           underlayColor="#ebeeee"
         >
           <View style={styles.itemContent}>

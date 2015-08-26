@@ -10,7 +10,7 @@ var JukappStore = require('./JukappStore')
 var JukappActions = require('./JukappActions');
 var SearchResultsListView = require('./SearchResultsListView')
 var FavoritesListView = require('./FavoritesListView')
-var LoginView = require('./LoginView')
+var AccountView = require('./AccountView')
 var RoomView = require('./RoomView')
 var MenuView = require('./MenuView');
 var SideMenu = require('react-native-side-menu');
@@ -85,6 +85,10 @@ var Jukapp = React.createClass({
       case 'search':
         scene = <SearchResultsListView />;
         title = 'Search';
+        break;
+      case 'account':
+        scene = <AccountView />;
+        title = 'My Account';
         break;
     }
 

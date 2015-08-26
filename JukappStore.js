@@ -22,6 +22,11 @@ function joinedRoom(room) {
   syncStorage();
 }
 
+function loggedOut() {
+  user = null;
+  syncStorage();
+}
+
 function leftRoom() {
   currentRoom = null;
   syncStorage();
@@ -137,6 +142,11 @@ Dispatcher.register(function(action) {
 
     case 'logged-in':
       loggedIn(action.user);
+      JukappStore.emitChange();
+      break;
+
+    case 'logged-out':
+      loggedOut();
       JukappStore.emitChange();
       break;
 

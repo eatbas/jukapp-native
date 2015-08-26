@@ -28,6 +28,12 @@ var JukappActions = {
     });
   },
 
+  loggedOut: function(user) {
+    Dispatcher.dispatch({
+      actionType: 'logged-out'
+    });
+  },
+
   loadedQueuedVideos: function(queuedVideos) {
     Dispatcher.dispatch({
       actionType: 'loaded-queued-videos',
