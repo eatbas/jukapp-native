@@ -14,7 +14,6 @@ var {
 
 var eventListener;
 
-
 var JukappApi = {
   defaultOptions: function() {
     var currentRoom = JukappStore.getCurrentRoom();
@@ -68,11 +67,22 @@ var JukappApi = {
   },
 
   searchVideo: function(query) {
-    fetch(JUKAPP_URL + '/search?query=' + query, this.defaultOptions())
+    var videos = [];
+
+    return fetch(JUKAPP_URL + '/search?query=' + query, this.defaultOptions())
       .then((response) => {
         return response.json();
       })
-      .then(JukappActions.completedSearch);
+      .then((responseData) => {
+        for (var searchResult of responseData) {
+          if (searchResult.id) videos.push(searchResult);
+        }
+
+        return this.fetchFavorites();
+      })
+      .then((responseData) => {
+        return this.checkFavorites(videos, responseData);
+      });
   },
 
   queueVideo: function(video) {
@@ -110,41 +120,78 @@ var JukappApi = {
           return response.json();
           console.log('Successfully logged in')
         } else {
-          return Promise.reject(new Error);
           console.log('Could not log in')
+          return Promise.reject(new Error);
         }
       })
       .then((responseData => {
         if (!responseData) return;
+
         var user = {
           username: responseData["username"],
           authToken: responseData["authentication_token"]
         };
 
         JukappActions.loggedIn(user);
-
-        this.fetchFavorites();
       }))
   },
 
   fetchQueuedVideos: function() {
-    fetch(JUKAPP_URL + "/queued_videos", this.defaultOptions())
+    var videos = [];
+
+    return fetch(JUKAPP_URL + "/queued_videos", this.defaultOptions())
       .then((response) => {
         return response.json();
       })
-      .then(JukappActions.loadedQueuedVideos)
+      .then((responseData) => {
+        for (var queuedVideo of responseData) {
+          videos.push(queuedVideo.video);
+        }
+
+        return this.fetchFavorites();
+      })
+      .then((responseData) => {
+        return this.checkFavorites(videos, responseData);
+      })
       .catch((response) => {
         console.log("Queued videos error", response)
         AlertIOS.alert("Queued videos error" + response)
       });
   },
 
+  checkFavorites: function(videos, favorites) {
+    for (var video of videos) {
+      for (var favoriteVideo of favorites) {
+        if (video.id == favoriteVideo.id) video["isFavorite"] = true;
+      }
+      if (!video.isFavorite) video["isFavorite"] = false;
+    }
+
+    return videos;
+  },
+
   fetchFavorites: function() {
+    if (!JukappStore.isLoggedIn()) {
+      return new Promise((fulfill, reject) => {
+        fulfill([]);
+      });
+    }
+
     return fetch(JUKAPP_URL + "/favorites", this.defaultOptions())
       .then((response) => {
         return response.json();
       })
-      .then(JukappActions.loadedFavorites)
+      .then((responseData) => {
+        var videos = [];
+        for (var favoriteVideo of responseData) {
+          var video = favoriteVideo.video;
+          video["isFavorite"] = true;
+
+          videos.push(video);
+        }
+
+        return videos;
+      })
       .catch((response) => {
         console.log("Favorites error", response)
         AlertIOS.alert("Favorites error" + response)
@@ -159,7 +206,7 @@ var JukappApi = {
     fetch(JUKAPP_URL + "/favorites", options)
       .then((response) => {
         if (response.status == 201) {
-          this.fetchFavorites();
+          console.log('Successfully favorited video')
         } else {
           console.log('Could not favorite video')
         }
@@ -178,7 +225,7 @@ var JukappApi = {
     fetch(JUKAPP_URL + "/favorites", options)
       .then((response) => {
         if (response.status == 200) {
-          this.fetchFavorites();
+          console.log('Successfully unfavorited video')
         } else {
           console.log('Could not unfavorite video')
         }

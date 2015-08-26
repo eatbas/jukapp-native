@@ -23,7 +23,7 @@ var VideoCell = React.createClass ({
 
     var video = this.props.video
 
-    return(<FavoriteButton isFavorite={JukappStore.isFavoriteVideo(video)} video={video} />);
+    return(<FavoriteButton video={video} onFavoriteToggled={this.props.onFavoriteToggled} />);
   },
 
   render: function() {

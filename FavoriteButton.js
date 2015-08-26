@@ -14,25 +14,15 @@ var {
 
 var FavoriteButton = React.createClass ({
 
-  getInitialState: function() {
-    return {
-      isFavorite: this.props.isFavorite,
-    };
-  },
-
   handleButtonPress: function() {
     var video = this.props.video
-    this.state.isFavorite ? JukappApi.unfavoriteVideo(video) : JukappApi.favoriteVideo(video);
-  },
+    video.isFavorite ? JukappApi.unfavoriteVideo(video) : JukappApi.favoriteVideo(video);
 
-  componentWillReceiveProps: function() {
-    this.setState({
-      isFavorite: this.props.isFavorite
-    });
+    this.props.onFavoriteToggled();
   },
 
   render: function() {
-    var icon = this.state.isFavorite ? 'fontawesome|star' : 'fontawesome|star-o';
+    var icon = this.props.video.isFavorite ? 'fontawesome|star' : 'fontawesome|star-o';
 
     return (
       <TouchableHighlight

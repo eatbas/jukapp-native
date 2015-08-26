@@ -36,7 +36,7 @@ var AccountView = React.createClass ({
 
   render: function() {
     if(!this.state.isLoggedIn) {
-      return (<LoginView />);
+      return (<LoginView onLogin={this._onChange} />);
     }
 
     return (

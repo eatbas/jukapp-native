@@ -4,6 +4,7 @@ var React = require('react-native');
 var SearchBar = require('react-native-search-bar');
 var VideoCell = require('./VideoCell.js')
 var JukappStore = require('./JukappStore');
+var JukappActions = require('./JukappActions');
 var JukappApi = require('./JukappApi');
 
 var {
@@ -20,7 +21,7 @@ var SearchResultsListView = React.createClass ({
     var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => true});
 
     return {
-      dataSource: dataSource.cloneWithRows(JukappStore.getSearchResults())
+      dataSource: dataSource.cloneWithRows(JukappStore.getSearchResults()),
     };
   },
 
@@ -32,15 +33,26 @@ var SearchResultsListView = React.createClass ({
     JukappStore.removeChangeListener(this._onChange);
   },
 
-  renderFooter: function() {
+  _renderFooter: function() {
     if (this.state.loading) {
       return <ActivityIndicatorIOS />;
     }
   },
 
-  renderRow: function(rowData, sectionID, rowID) {
+  _onChange: function() {
+    this.setState({
+      loading: false,
+      dataSource: this.state.dataSource.cloneWithRows(JukappStore.getSearchResults())
+    });
+  },
+
+  _refreshList: function() {
+    JukappApi.searchVideo(this.state.query).done(JukappActions.completedSearch);
+  },
+
+  _renderRow: function(rowData, sectionID, rowID) {
     return (
-      <VideoCell video={rowData} />
+      <VideoCell video={rowData} onFavoriteToggled={this._refreshList}/>
     )
   },
 
@@ -50,8 +62,12 @@ var SearchResultsListView = React.createClass ({
         <SearchBar
           placeholder='Search on YouTube'
           onSearchButtonPress={(query) => {
-            this.setState({loading: true});
-            JukappApi.searchVideo(query);
+            this.setState({
+              loading: true,
+              query: query,
+            });
+
+            JukappApi.searchVideo(query).done(JukappActions.completedSearch);
           }}
           onCancelButtonPress={() => {
             console.log('onCancelButtonPress')
@@ -62,21 +78,14 @@ var SearchResultsListView = React.createClass ({
           style={styles.listView}
           contentContainerStyle={styles.listViewContent}
           dataSource={this.state.dataSource}
-          renderRow={this.renderRow}
-          renderFooter={this.renderFooter}
+          renderRow={this._renderRow}
+          renderFooter={this._renderFooter}
           automaticallyAdjustContentInsets={false}
         />
 
       </View>
     );
-  },
-
-  _onChange: function() {
-    this.setState({
-      loading: false,
-      dataSource: this.state.dataSource.cloneWithRows(JukappStore.getSearchResults())
-    });
-  },
+  }
 });
 
 var styles = StyleSheet.create({
