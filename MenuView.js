@@ -1,7 +1,6 @@
 'use strict';
 
 var React = require('react-native');
-var FavoritesListView = require('./FavoritesListView');
 var MenuItemView = require('./MenuItemView');
 var JukappStore = require('./JukappStore');
 var JukappActions = require('./JukappActions');
@@ -14,7 +13,6 @@ var {
   StyleSheet,
   View,
   Text,
-  TouchableHighlight
 } = React;
 
 var MenuView = React.createClass({
@@ -86,12 +84,6 @@ var styles = StyleSheet.create({
     flex: 1
   },
 
-  icon: {
-    height: 20,
-    width: 20,
-    marginRight: 16,
-  },
-
   header: {
     padding: 16,
     height: 120,
@@ -104,22 +96,6 @@ var styles = StyleSheet.create({
   headerMainText: {
     fontWeight: 'bold',
     fontSize: 18,
-  },
-
-  item: {
-    padding: 16,
-    height: 48,
-    justifyContent: 'center',
-  },
-
-  itemContent: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-
-  itemTitle: {
-    fontSize: 14,
   },
 });
 
