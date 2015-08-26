@@ -2,87 +2,86 @@
 
 var React = require('react-native');
 var SearchBar = require('react-native-search-bar');
-var Jukapp = require('./Jukapp');
 var VideoCell = require('./VideoCell.js')
+var JukappStore = require('./JukappStore');
+var JukappActions = require('./JukappActions');
+var JukappApi = require('./JukappApi');
 
 var {
-  AppRegistry,
   StyleSheet,
-  Text,
   View,
-  Image,
   ListView,
   TouchableHighlight,
-  ActivityIndicatorIOS,
-  TextInput
+  ActivityIndicatorIOS
 } = React;
 
 var SearchResultsListView = React.createClass ({
 
   getInitialState: function() {
+    var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => true});
+
     return {
-      dataSource: new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2})
+      dataSource: dataSource.cloneWithRows(JukappStore.getSearchResults()),
     };
   },
 
-  _handleBackButtonPress: function() {
-    this.props.navigator.pop();
+  componentDidMount: function() {
+    JukappStore.addChangeListener(this._onChange);
   },
 
-  _handleNextButtonPress: function() {
-    this.props.navigator.push(nextRoute);
+  componentWillUnmount: function() {
+    JukappStore.removeChangeListener(this._onChange);
   },
 
-  renderFooter: function() {
+  _renderFooter: function() {
     if (this.state.loading) {
       return <ActivityIndicatorIOS />;
     }
   },
 
-  renderRow: function(rowData, sectionID, rowID) {
+  _onChange: function() {
+    this.setState({
+      loading: false,
+      dataSource: this.state.dataSource.cloneWithRows(JukappStore.getSearchResults())
+    });
+  },
+
+  _refreshList: function() {
+    JukappApi.searchVideo(this.state.query).done(JukappActions.completedSearch);
+  },
+
+  _renderRow: function(rowData, sectionID, rowID) {
     return (
-      <VideoCell video={rowData} />
+      <VideoCell video={rowData} onFavoriteToggled={this._refreshList}/>
     )
   },
 
   render: function() {
-    if (this.state.query !== null) {
-      var searchResults =
-        <ListView
-          style={styles.listView}
-          contentContainerStyle={styles.listViewContent}
-          dataSource={this.state.dataSource}
-          renderRow={this.renderRow}
-          renderFooter={this.renderFooter}
-          automaticallyAdjustContentInsets={false}
-        />
-    }
-
     return (
       <View style={styles.container}>
         <SearchBar
           placeholder='Search on YouTube'
-          onSearchButtonPress={(text) => {
-            var url = "/search?query=" + text
-            Jukapp.fetch(url)
-              .then((responseData) => {
-                this.setState({
-                  query: url,
-                  dataSource: this.state.dataSource.cloneWithRows(responseData["videos"])
-                });
-              })
-              .done(() => {
-                this.setState({
-                  loading: false
-                })
-              });
+          onSearchButtonPress={(query) => {
+            this.setState({
+              loading: true,
+              query: query,
+            });
+
+            JukappApi.searchVideo(query).done(JukappActions.completedSearch);
           }}
           onCancelButtonPress={() => {
             console.log('onCancelButtonPress')
           }}
         />
 
-        {searchResults}
+        <ListView
+          style={styles.listView}
+          contentContainerStyle={styles.listViewContent}
+          dataSource={this.state.dataSource}
+          renderRow={this._renderRow}
+          renderFooter={this._renderFooter}
+          automaticallyAdjustContentInsets={false}
+        />
 
       </View>
     );
@@ -93,7 +92,6 @@ var styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#EEF2F2',
-    marginTop: 64,
   },
   listView: {
     backgroundColor: '#EEF2F2',
