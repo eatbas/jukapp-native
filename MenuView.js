@@ -2,6 +2,7 @@
 
 var React = require('react-native');
 var FavoritesListView = require('./FavoritesListView');
+var MenuItemView = require('./MenuItemView');
 var JukappStore = require('./JukappStore');
 var JukappActions = require('./JukappActions');
 
@@ -17,29 +18,7 @@ var {
 } = React;
 
 var MenuView = React.createClass({
-  room: function() {
-    this.props.menuActions.close();
-    this.props.navigator.replace({id: 'room'});
-  },
-
-  favorites: function() {
-    this.props.menuActions.close();
-    this.props.navigator.replace({id: 'favorites'});
-  },
-
-  search: function() {
-    this.props.menuActions.close();
-    this.props.navigator.replace({id: 'search'});
-  },
-
-  account: function() {
-    this.props.menuActions.close();
-    this.props.navigator.replace({id: 'account'});
-  },
-
-  leave: function() {
-    this.props.menuActions.close();
-
+  _leaveRoom: function() {
     JukappActions.leftRoom();
   },
 
@@ -57,85 +36,45 @@ var MenuView = React.createClass({
           <Text style={styles.headerMainText}>{JukappStore.getCurrentRoom().name}</Text>
         </View>
 
-        <TouchableHighlight
-          style={styles.item}
-          onPress={this.room}
-          underlayColor="#ebeeee"
-        >
-          <View style={styles.itemContent}>
-            <Icon
-              name='fontawesome|home'
-              size={20}
-              color='black'
-              style={styles.icon}
-            />
-            <Text style={styles.itemTitle}>Room</Text>
-          </View>
-        </TouchableHighlight>
+        <MenuItemView
+          scene='room'
+          title='Room'
+          icon='fontawesome|home'
+          navigator={this.props.navigator}
+          menuActions={this.props.menuActions}
+        />
 
-        <TouchableHighlight
-          style={styles.item}
-          onPress={this.search}
-          underlayColor="#ebeeee"
-        >
-          <View style={styles.itemContent}>
-            <Icon
-              name='fontawesome|search'
-              size={20}
-              color='black'
-              style={styles.icon}
-            />
-            <Text style={styles.itemTitle}>Search</Text>
-          </View>
-        </TouchableHighlight>
+        <MenuItemView
+          scene='search'
+          title='Search'
+          icon='fontawesome|search'
+          navigator={this.props.navigator}
+          menuActions={this.props.menuActions}
+        />
 
-        <TouchableHighlight
-          style={styles.item}
-          onPress={this.favorites}
-          underlayColor="#ebeeee"
-        >
-          <View style={styles.itemContent}>
-            <Icon
-              name='fontawesome|star'
-              size={20}
-              color='black'
-              style={styles.icon}
-            />
-            <Text style={styles.itemTitle}>Favorites</Text>
-          </View>
-        </TouchableHighlight>
+        <MenuItemView
+          scene='favorites'
+          title='Favorites'
+          icon='fontawesome|star'
+          navigator={this.props.navigator}
+          menuActions={this.props.menuActions}
+        />
 
-        <TouchableHighlight
-          style={styles.item}
-          onPress={this.account}
-          underlayColor="#ebeeee"
-        >
-          <View style={styles.itemContent}>
-            <Icon
-              name='fontawesome|user'
-              size={20}
-              color='black'
-              style={styles.icon}
-            />
-            <Text style={styles.itemTitle}>My Account</Text>
-          </View>
-        </TouchableHighlight>
+        <MenuItemView
+          scene='account'
+          title='My Account'
+          icon='fontawesome|user'
+          navigator={this.props.navigator}
+          menuActions={this.props.menuActions}
+        />
 
-        <TouchableHighlight
-          style={styles.item}
-          onPress={this.leave}
-          underlayColor="#ebeeee"
-        >
-          <View style={styles.itemContent}>
-            <Icon
-              name='fontawesome|sign-out'
-              size={20}
-              color='black'
-              style={styles.icon}
-            />
-            <Text style={styles.itemTitle}>Leave Room</Text>
-          </View>
-        </TouchableHighlight>
+        <MenuItemView
+          title='Leave Room'
+          icon='fontawesome|sign-out'
+          navigator={this.props.navigator}
+          onPress={this._leaveRoom}
+          menuActions={this.props.menuActions}
+        />
       </View>
     );
   }
