@@ -17,8 +17,13 @@ var rooms = [];
 var searchResults = [];
 var queuedVideos = [];
 
-function joinedRoom(roomId) {
-  currentRoom = roomId;
+function joinedRoom(room) {
+  currentRoom = room;
+  syncStorage();
+}
+
+function loggedOut() {
+  user = null;
   syncStorage();
 }
 
@@ -35,7 +40,7 @@ function loggedIn(loginUser) {
 function syncStorage() {
   var store = JSON.stringify({
     user: user,
-    room_id: currentRoom
+    room: currentRoom
   });
 
   AsyncStorage.setItem(JUKAPP_STORE_KEY, store);
@@ -49,8 +54,8 @@ var JukappStore = assign({}, EventEmitter.prototype, {
       var store = JSON.parse(value);
       if (store) {
         console.log(store);
-        if (store.room_id) {
-          currentRoom = store.room_id;
+        if (store.room) {
+          currentRoom = store.room;
         }
 
         if (store.user) {
@@ -126,7 +131,7 @@ Dispatcher.register(function(action) {
       break;
 
     case 'joined-room':
-      joinedRoom(action.room.id);
+      joinedRoom(action.room);
       JukappStore.emitChange();
       break;
 
@@ -137,6 +142,11 @@ Dispatcher.register(function(action) {
 
     case 'logged-in':
       loggedIn(action.user);
+      JukappStore.emitChange();
+      break;
+
+    case 'logged-out':
+      loggedOut();
       JukappStore.emitChange();
       break;
 

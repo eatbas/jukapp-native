@@ -63,6 +63,7 @@ var FavoritesListView = React.createClass ({
         dataSource={this.state.dataSource}
         renderRow={this.renderRow}
         renderFooter={this.renderFooter}
+        automaticallyAdjustContentInsets={false}
       />
     );
   },

@@ -28,7 +28,7 @@ var JukappApi = {
     };
 
     if (currentRoom) {
-      options['headers']['X-Room-ID'] = currentRoom;
+      options['headers']['X-Room-ID'] = currentRoom.id;
     }
 
     if (user) {
@@ -197,7 +197,7 @@ var JukappApi = {
         }
       });
 
-    EventSource.connectWithURL(JUKAPP_URL + "/events?channels[]=queue-" + JukappStore.getCurrentRoom());
+    EventSource.connectWithURL(JUKAPP_URL + "/events?channels[]=queue-" + JukappStore.getCurrentRoom().id);
   },
 
   removeEventListener: function() {
