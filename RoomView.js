@@ -24,25 +24,18 @@ var RoomView = React.createClass({
 
     return {
       dataSource: dataSource.cloneWithRows(JukappStore.getQueuedVideos()),
-      isLoggedIn: JukappStore.isLoggedIn(),
       loading: true
     };
   },
 
   componentDidMount: function() {
     JukappApi.addEventListener((message) => {
-      JukappApi.fetchQueuedVideos();
+      this._refreshList();
     });
 
     JukappStore.addChangeListener(this._onChange);
 
-    if (this.state.isLoggedIn) {
-      JukappApi.fetchFavorites().done(() => {
-        JukappApi.fetchQueuedVideos();
-      });
-    } else {
-      JukappApi.fetchQueuedVideos();
-    }
+    this._refreshList();
   },
 
   componentWillUnmount: function() {
@@ -50,46 +43,37 @@ var RoomView = React.createClass({
     JukappApi.removeEventListener();
   },
 
-  _handleBackButtonPress: function() {
-    this.props.navigator.pop();
+  _refreshList: function() {
+    JukappApi.fetchQueuedVideos().done(JukappActions.loadedQueuedVideos);
   },
 
   _onChange: function() {
-
-
     this.setState({
       dataSource: this.state.dataSource.cloneWithRows(JukappStore.getQueuedVideos()),
-      isLoggedIn: JukappStore.isLoggedIn(),
       loading: false,
-      video: JukappStore.getQueuedVideos()[0]
     })
   },
 
-  renderRow: function(rowData, sectionID, rowID) {
+  _renderRow: function(rowData, sectionID, rowID) {
     return (
-      <VideoCell video={rowData["video"]} />
-    )
+      <VideoCell video={rowData} onFavoriteToggled={this._refreshList} />
+    );
   },
 
-  renderFooter: function() {
+  _renderFooter: function() {
     if (this.state.loading) {
       return <ActivityIndicatorIOS />;
     }
   },
 
   render: function() {
-    var image = null
-    if (this.state.video) {
-      image = {uri: 'http://img.youtube.com/vi/' + this.state.video.youtube_id + '/default.jpg' }
-    }
-
     return (
       <ListView
         style={styles.container}
         contentContainerStyle={styles.listViewContent}
         dataSource={this.state.dataSource}
-        renderRow={this.renderRow}
-        renderFooter={this.renderFooter}
+        renderRow={this._renderRow}
+        renderFooter={this._renderFooter}
         automaticallyAdjustContentInsets={false}
       />
     );

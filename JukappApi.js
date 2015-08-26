@@ -128,15 +128,37 @@ var JukappApi = {
   },
 
   fetchQueuedVideos: function() {
-    fetch(JUKAPP_URL + "/queued_videos", this.defaultOptions())
+    var videos = [];
+
+    return fetch(JUKAPP_URL + "/queued_videos", this.defaultOptions())
       .then((response) => {
         return response.json();
       })
-      .then(JukappActions.loadedQueuedVideos)
+      .then((responseData) => {
+        for (var queuedVideo of responseData) {
+          videos.push(queuedVideo.video);
+        }
+
+        return this.fetchFavorites();
+      })
+      .then((responseData) => {
+        return this.checkFavorites(videos, responseData);
+      })
       .catch((response) => {
         console.log("Queued videos error", response)
         AlertIOS.alert("Queued videos error" + response)
       });
+  },
+
+  checkFavorites: function(videos, favorites) {
+    for (var video of videos) {
+      for (var favoriteVideo of favorites) {
+        if (video.id == favoriteVideo.video_id) video["isFavorite"] = true;
+      }
+      if (!video.isFavorite) video["isFavorite"] = false;
+    }
+
+    return videos;
   },
 
   fetchFavorites: function() {
@@ -144,7 +166,6 @@ var JukappApi = {
       .then((response) => {
         return response.json();
       })
-      .then(JukappActions.loadedFavorites)
       .catch((response) => {
         console.log("Favorites error", response)
         AlertIOS.alert("Favorites error" + response)

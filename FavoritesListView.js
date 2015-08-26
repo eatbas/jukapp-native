@@ -27,7 +27,7 @@ var FavoritesListView = React.createClass ({
   componentDidMount: function() {
     JukappStore.addChangeListener(this._onChange);
     if (this.state.isLoggedIn) {
-      JukappApi.fetchFavorites();
+      JukappApi.fetchFavorites().done(JukappActions.loadedFavorites);
     }
   },
 
