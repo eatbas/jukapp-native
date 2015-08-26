@@ -14,7 +14,6 @@ var {
 
 var eventListener;
 
-
 var JukappApi = {
   defaultOptions: function() {
     var currentRoom = JukappStore.getCurrentRoom();
@@ -68,11 +67,22 @@ var JukappApi = {
   },
 
   searchVideo: function(query) {
-    fetch(JUKAPP_URL + '/search?query=' + query, this.defaultOptions())
+    var videos = [];
+
+    return fetch(JUKAPP_URL + '/search?query=' + query, this.defaultOptions())
       .then((response) => {
         return response.json();
       })
-      .then(JukappActions.completedSearch);
+      .then((responseData) => {
+        for (var searchResult of responseData) {
+          if (searchResult.id) videos.push(searchResult);
+        }
+
+        return this.fetchFavorites();
+      })
+      .then((responseData) => {
+        return this.checkFavorites(videos, responseData);
+      });
   },
 
   queueVideo: function(video) {
