@@ -110,20 +110,19 @@ var JukappApi = {
           return response.json();
           console.log('Successfully logged in')
         } else {
-          return Promise.reject(new Error);
           console.log('Could not log in')
+          return Promise.reject(new Error);
         }
       })
       .then((responseData => {
         if (!responseData) return;
+
         var user = {
           username: responseData["username"],
           authToken: responseData["authentication_token"]
         };
 
         JukappActions.loggedIn(user);
-
-        this.fetchFavorites();
       }))
   },
 
@@ -153,7 +152,7 @@ var JukappApi = {
   checkFavorites: function(videos, favorites) {
     for (var video of videos) {
       for (var favoriteVideo of favorites) {
-        if (video.id == favoriteVideo.video_id) video["isFavorite"] = true;
+        if (video.id == favoriteVideo.id) video["isFavorite"] = true;
       }
       if (!video.isFavorite) video["isFavorite"] = false;
     }
@@ -162,9 +161,26 @@ var JukappApi = {
   },
 
   fetchFavorites: function() {
+    if (!JukappStore.isLoggedIn()) {
+      return new Promise((fulfill, reject) => {
+        fulfill([]);
+      });
+    }
+
     return fetch(JUKAPP_URL + "/favorites", this.defaultOptions())
       .then((response) => {
         return response.json();
+      })
+      .then((responseData) => {
+        var videos = [];
+        for (var favoriteVideo of responseData) {
+          var video = favoriteVideo.video;
+          video["isFavorite"] = true;
+
+          videos.push(video);
+        }
+
+        return videos;
       })
       .catch((response) => {
         console.log("Favorites error", response)
@@ -180,7 +196,7 @@ var JukappApi = {
     fetch(JUKAPP_URL + "/favorites", options)
       .then((response) => {
         if (response.status == 201) {
-          this.fetchFavorites();
+          console.log('Successfully favorited video')
         } else {
           console.log('Could not favorite video')
         }
@@ -199,7 +215,7 @@ var JukappApi = {
     fetch(JUKAPP_URL + "/favorites", options)
       .then((response) => {
         if (response.status == 200) {
-          this.fetchFavorites();
+          console.log('Successfully unfavorited video')
         } else {
           console.log('Could not unfavorite video')
         }

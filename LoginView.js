@@ -22,13 +22,17 @@ var LoginView = React.createClass ({
     };
   },
 
-  onLogin: function() {
+  onLoginRequested: function() {
     JukappApi.login(this.state.username, this.state.password)
      .catch((response) => {
         this.setState({loginError: true});
       })
       .done(() => {
         this.setState({loading: false});
+
+        if (JukappStore.isLoggedIn()) {
+          this.props.onLogin();
+        }
       });
 
     this.setState({loading: true});
@@ -93,7 +97,7 @@ var LoginView = React.createClass ({
             placeholder='Password'
             style={styles.textbox}
             secureTextEntry={true}
-            onSubmitEditing={this.onLogin}
+            onSubmitEditing={this.onLoginRequested}
             onChange={(event) => {
               this.setState({
                 password: event.nativeEvent.text
@@ -104,7 +108,7 @@ var LoginView = React.createClass ({
           <TouchableHighlight
             underlayColor="#66BB6A"
             style={styles.button}
-            onPress={this.onLogin}>
+            onPress={this.onLoginRequested}>
             <Text style={styles.buttonText}>Login</Text>
           </TouchableHighlight>
         </View>

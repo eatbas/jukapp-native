@@ -26,9 +26,7 @@ var FavoritesListView = React.createClass ({
 
   componentDidMount: function() {
     JukappStore.addChangeListener(this._onChange);
-    if (this.state.isLoggedIn) {
-      JukappApi.fetchFavorites().done(JukappActions.loadedFavorites);
-    }
+    this._refreshList();
   },
 
   componentWillUnmount: function() {
@@ -41,7 +39,7 @@ var FavoritesListView = React.createClass ({
 
   renderRow: function(rowData, sectionID, rowID) {
     return (
-      <VideoCell video={rowData["video"]} />
+      <VideoCell video={rowData} onFavoriteToggled={this._refreshList} />
     )
   },
 
@@ -51,9 +49,13 @@ var FavoritesListView = React.createClass ({
     }
   },
 
+  _refreshList: function() {
+    JukappApi.fetchFavorites().done(JukappActions.loadedFavorites);
+  },
+
   render: function() {
     if(!this.state.isLoggedIn) {
-      return (<LoginView />);
+      return (<LoginView onLogin={this._refreshList} />);
     }
 
     return (
