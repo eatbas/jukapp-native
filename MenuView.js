@@ -84,6 +84,12 @@ var styles = StyleSheet.create({
     flex: 1
   },
 
+  icon: {
+    height: 20,
+    width: 20,
+    marginRight: 16,
+  },
+
   header: {
     padding: 16,
     height: 120,
