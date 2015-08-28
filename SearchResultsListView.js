@@ -20,8 +20,11 @@ var SearchResultsListView = React.createClass ({
   getInitialState: function() {
     var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => true});
 
+    console.log(JukappStore.getLastQuery())
+
     return {
       dataSource: dataSource.cloneWithRows(JukappStore.getSearchResults()),
+      query: JukappStore.getLastQuery()
     };
   },
 
@@ -47,7 +50,10 @@ var SearchResultsListView = React.createClass ({
   },
 
   _refreshList: function() {
-    JukappApi.searchVideo(this.state.query).done(JukappActions.completedSearch);
+    JukappApi.searchVideo(this.state.query)
+      .done((searchResults) => {
+        JukappActions.completedSearch(searchResults, this.state.query);
+      });
   },
 
   _renderRow: function(rowData, sectionID, rowID) {
@@ -65,9 +71,12 @@ var SearchResultsListView = React.createClass ({
             this.setState({
               loading: true,
               query: query,
-            });
+            })
 
-            JukappApi.searchVideo(query).done(JukappActions.completedSearch);
+            JukappApi.searchVideo(query)
+              .done((searchResults) => {
+                JukappActions.completedSearch(searchResults, query);
+              });
           }}
           onCancelButtonPress={() => {
             console.log('onCancelButtonPress')

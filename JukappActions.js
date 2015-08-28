@@ -48,10 +48,11 @@ var JukappActions = {
     });
   },
 
-  completedSearch: function(searchResults) {
+  completedSearch: function(searchResults, query) {
     Dispatcher.dispatch({
       actionType: 'completed-search',
-      searchResults: searchResults
+      searchResults: searchResults,
+      query: query
     });
   }
 };

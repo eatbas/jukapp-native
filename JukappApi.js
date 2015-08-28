@@ -74,9 +74,7 @@ var JukappApi = {
         return response.json();
       })
       .then((responseData) => {
-        for (var searchResult of responseData) {
-          if (searchResult.id) videos.push(searchResult);
-        }
+        videos = responseData;
 
         return this.fetchFavorites();
       })
