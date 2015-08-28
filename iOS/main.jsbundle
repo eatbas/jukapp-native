@@ -45378,8 +45378,11 @@ var SearchResultsListView=React.createClass({displayName:'SearchResultsListView'
 getInitialState:function(){
 var dataSource=new ListView.DataSource({rowHasChanged:function(r1,r2){return true;}});
 
+console.log(JukappStore.getLastQuery());
+
 return {
-dataSource:dataSource.cloneWithRows(JukappStore.getSearchResults())};},
+dataSource:dataSource.cloneWithRows(JukappStore.getSearchResults()),
+query:JukappStore.getLastQuery()};},
 
 
 
@@ -45404,8 +45407,11 @@ dataSource:this.state.dataSource.cloneWithRows(JukappStore.getSearchResults())})
 
 
 
-_refreshList:function(){
-JukappApi.searchVideo(this.state.query).done(JukappActions.completedSearch);},
+_refreshList:function(){var _this=this;
+JukappApi.searchVideo(this.state.query).
+done(function(searchResults){
+JukappActions.completedSearch(searchResults,_this.state.query);});},
+
 
 
 _renderRow:function(rowData,sectionID,rowID){
@@ -45414,18 +45420,21 @@ React.createElement(VideoCell,{video:rowData,onFavoriteToggled:this._refreshList
 
 
 
-render:function(){var _this=this;
+render:function(){var _this2=this;
 return (
 React.createElement(View,{style:styles.container},
 React.createElement(SearchBar,{
 placeholder:'Search on YouTube',
 onSearchButtonPress:function(query){
-_this.setState({
+_this2.setState({
 loading:true,
 query:query});
 
 
-JukappApi.searchVideo(query).done(JukappActions.completedSearch);},
+JukappApi.searchVideo(query).
+done(function(searchResults){
+JukappActions.completedSearch(searchResults,query);});},
+
 
 onCancelButtonPress:function(){
 console.log('onCancelButtonPress');}}),
@@ -45698,10 +45707,11 @@ favorites:favorites});},
 
 
 
-completedSearch:function(searchResults){
+completedSearch:function(searchResults,query){
 Dispatcher.dispatch({
 actionType:'completed-search',
-searchResults:searchResults});}};
+searchResults:searchResults,
+query:query});}};
 
 
 
@@ -46023,6 +46033,7 @@ var favorites=[];
 var rooms=[];
 var searchResults=[];
 var queuedVideos=[];
+var lastQuery;
 
 function joinedRoom(room){
 currentRoom = room;
@@ -46108,6 +46119,10 @@ getSearchResults:function(){
 return searchResults;},
 
 
+getLastQuery:function(){
+return lastQuery;},
+
+
 getQueuedVideos:function(){
 return queuedVideos;},
 
@@ -46170,6 +46185,8 @@ break;
 
 case 'completed-search':
 searchResults = action.searchResults;
+console.log('ac ' + action.query);
+lastQuery = action.query;
 JukappStore.emitChange();
 break;
 
@@ -46596,9 +46613,7 @@ then(function(response){
 return response.json();}).
 
 then(function(responseData){
-for(var searchResult of responseData) {
-if(searchResult.id)videos.push(searchResult);}
-
+videos = responseData;
 
 return _this.fetchFavorites();}).
 
