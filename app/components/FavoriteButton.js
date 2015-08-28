@@ -1,7 +1,7 @@
 'use strict';
 
 var React = require('react-native');
-var JukappApi = require('./JukappApi');
+var JukappApi = require('../JukappApi');
 
 var {
   Icon

@@ -1,9 +1,8 @@
 'use strict';
 
 var React = require('react-native');
-var JukappActions = require('./JukappActions');
-var JukappStore = require('./JukappStore');
-var JukappApi = require('./JukappApi');
+var JukappActions = require('../../JukappActions');
+var JukappStore = require('../stores/JukappStore');
 var LoginView = require('./LoginView');
 
 var {

@@ -1,12 +1,10 @@
 'use strict';
 
 var React = require('react-native');
-var SearchResultsListView = require('./SearchResultsListView');
-var FavoritesListView = require('./FavoritesListView');
-var JukappActions = require('./JukappActions');
-var JukappStore = require('./JukappStore');
-var VideoCell = require('./VideoCell');
-var JukappApi = require('./JukappApi');
+var JukappActions = require('../../JukappActions');
+var JukappStore = require('../stores/JukappStore');
+var VideoCell = require('../videos/VideoCell');
+var JukappApi = require('../JukappApi');
 
 var {
   StyleSheet,

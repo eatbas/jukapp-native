@@ -5,14 +5,13 @@
 'use strict';
 
 var React = require('react-native');
-var RoomsListView = require('./RoomsListView')
-var JukappStore = require('./JukappStore')
-var JukappActions = require('./JukappActions');
-var SearchResultsListView = require('./SearchResultsListView')
-var FavoritesListView = require('./FavoritesListView')
-var AccountView = require('./AccountView')
-var RoomView = require('./RoomView')
-var MenuView = require('./MenuView');
+var RoomsListView = require('./app/rooms/RoomsListView');
+var JukappStore = require('./app/stores/JukappStore');
+var SearchResultsListView = require('./app/videos/SearchResultsListView');
+var FavoritesListView = require('./app/favorites/FavoritesListView');
+var AccountView = require('./app/accounts/AccountView');
+var RoomView = require('./app/rooms/RoomView');
+var MenuView = require('./app/components/MenuView');
 var SideMenu = require('react-native-side-menu');
 
 var {

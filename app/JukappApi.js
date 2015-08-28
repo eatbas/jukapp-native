@@ -1,8 +1,8 @@
 'use strict';
 
 var React = require('react-native');
-var JukappActions = require('./JukappActions');
-var JukappStore = require('./JukappStore');
+var JukappActions = require('../JukappActions');
+var JukappStore = require('./stores/JukappStore');
 var EventSource = require('NativeModules').RNEventSource;
 
 var JUKAPP_URL = 'https://jukapp-api.herokuapp.com'

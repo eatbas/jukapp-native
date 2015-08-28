@@ -1,5 +1,5 @@
 var React = require('react-native');
-var Dispatcher = require('./Dispatcher');
+var Dispatcher = require('../../Dispatcher');
 var EventEmitter = require('events').EventEmitter;
 var {
   AsyncStorage

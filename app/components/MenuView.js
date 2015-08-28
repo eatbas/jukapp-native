@@ -2,8 +2,8 @@
 
 var React = require('react-native');
 var MenuItemView = require('./MenuItemView');
-var JukappStore = require('./JukappStore');
-var JukappActions = require('./JukappActions');
+var JukappStore = require('../stores/JukappStore');
+var JukappActions = require('../../JukappActions');
 
 var {
   Icon

@@ -1,10 +1,9 @@
 'use strict';
 
 var React = require('react-native');
-var JukappActions = require('./JukappActions');
-var JukappStore = require('./JukappStore');
-var JukappApi = require('./JukappApi');
-var FavoriteButton = require('./FavoriteButton');
+var JukappStore = require('../stores/JukappStore');
+var JukappApi = require('../JukappApi');
+var FavoriteButton = require('../components/FavoriteButton');
 
 var {
   StyleSheet,
