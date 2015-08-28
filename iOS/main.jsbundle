@@ -1395,55 +1395,199 @@ throw new TypeError(
 
 var index=findIndex.call(this,predicate,context);
 return index === -1?undefined:this[index];}});}})();
-__d('Jukapp/index.ios.js',["react-native/Libraries/react-native/react-native.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
+__d('Jukapp/index.ios.js',["react-native/Libraries/react-native/react-native.js","Jukapp/RoomsListView.js","Jukapp/JukappStore.js","Jukapp/JukappActions.js","Jukapp/SearchResultsListView.js","Jukapp/FavoritesListView.js","Jukapp/AccountView.js","Jukapp/RoomView.js","Jukapp/MenuView.js","react-native-side-menu/index.js","react-native-icons/index.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
 
 
 
 
 
-var React=require('react-native/Libraries/react-native/react-native.js');var 
+var React=require('react-native/Libraries/react-native/react-native.js');
+var RoomsListView=require('Jukapp/RoomsListView.js');
+var JukappStore=require('Jukapp/JukappStore.js');
+var JukappActions=require('Jukapp/JukappActions.js');
+var SearchResultsListView=require('Jukapp/SearchResultsListView.js');
+var FavoritesListView=require('Jukapp/FavoritesListView.js');
+var AccountView=require('Jukapp/AccountView.js');
+var RoomView=require('Jukapp/RoomView.js');
+var MenuView=require('Jukapp/MenuView.js');
+var SideMenu=require('react-native-side-menu/index.js');var _require=
+
+
+
+require('react-native-icons/index.js');var Icon=_require.Icon;var 
+
 
 AppRegistry=
 
 
 
-React.AppRegistry;var StyleSheet=React.StyleSheet;var Text=React.Text;var View=React.View;
+
+
+React.AppRegistry;var StyleSheet=React.StyleSheet;var View=React.View;var Navigator=React.Navigator;var Text=React.Text;var TouchableHighlight=React.TouchableHighlight;
 
 var Jukapp=React.createClass({displayName:'Jukapp',
-render:function(){
+getInitialState:function(){
+return {
+isInRoom:JukappStore.isInRoom(),
+isLoggedIn:JukappStore.isLoggedIn()};},
+
+
+
+componentDidMount:function(){
+JukappStore.initialize();
+JukappStore.addChangeListener(this._onChange);},
+
+
+componentWillUnmount:function(){
+JukappStore.removeChangeListener(this._onChange);},
+
+
+_handleNextButtonPress:function(){
+this.refs.nav.push({
+component:SearchResultsListView,
+title:"Search"});},
+
+
+
+_menuButton:function(){var _this=this;
+return (
+React.createElement(TouchableHighlight,{
+onPress:function(){return _this.refs.sideMenu.toggleMenu();},
+activeOpacity:0.3,
+underlayColor:'#607D8B',
+style:styles.headerLeftView},
+
+React.createElement(Icon,{
+name:'fontawesome|bars',
+size:20,
+color:'black',
+style:styles.headerLeftButtonIcon})));},
+
+
+
+
+
+_renderScene:function(route,nav){
+var scene,title;
+
+switch(route.id){
+case 'favorites':
+scene = React.createElement(FavoritesListView,null);
+title = 'Favorites';
+break;
+case 'room':
+scene = React.createElement(RoomView,null);
+title = 'Room';
+break;
+case 'search':
+scene = React.createElement(SearchResultsListView,null);
+title = 'Search';
+break;
+case 'account':
+scene = React.createElement(AccountView,null);
+title = 'My Account';
+break;}
+
+
 return (
 React.createElement(View,{style:styles.container},
-React.createElement(Text,{style:styles.welcome},'Welcome to React Native!'),
-
-
-React.createElement(Text,{style:styles.instructions},'To get started, edit index.ios.js'),
-
-
-React.createElement(Text,{style:styles.instructions},'Press Cmd+R to reload,',
-'\n','Cmd+D or shake for dev menu')));}});
+React.createElement(View,{style:styles.header},
+this._menuButton(),
+React.createElement(Text,{style:styles.headerText},title),
+React.createElement(View,{style:styles.headerRightView})),
 
 
 
+scene));},
+
+
+
+
+render:function(){
+if(!this.state.isInRoom){
+return this.renderRoomsList();}
+
+
+return (
+React.createElement(SideMenu,{
+ref:'sideMenu',
+menu:React.createElement(MenuView,{navigator:this.refs.nav}),
+touchToClose:true},
+
+React.createElement(View,{style:styles.shadow},
+React.createElement(Navigator,{
+ref:'nav',
+initialRoute:{id:'room'},
+renderScene:this._renderScene}))));},
+
+
+
+
+
+
+renderRoomsList:function(){
+return React.createElement(RoomsListView,null);},
+
+
+_onChange:function(){
+this.setState({
+isInRoom:JukappStore.isInRoom(),
+isLoggedIn:JukappStore.isLoggedIn()});}});
 
 
 
 
 var styles=StyleSheet.create({
-container:{
+shadow:{
 flex:1,
-justifyContent:'center',
-alignItems:'center',
-backgroundColor:'#F5FCFF'},
+shadowColor:'#000000',
+shadowRadius:3,
+shadowOpacity:0.5,
+shadowOffset:{
+height:1,
+width:0}},
 
-welcome:{
-fontSize:20,
-textAlign:'center',
-margin:10},
 
-instructions:{
+
+container:{
+flex:1},
+
+
+header:{
+height:64,
+backgroundColor:"#607D8B",
+flexDirection:'row',
+justifyContent:'center'},
+
+
+headerLeftView:{
+width:60},
+
+
+headerRightView:{
+width:60},
+
+
+headerLeftButtonIcon:{
+width:20,
+height:20,
+marginTop:30,
+marginLeft:20},
+
+
+headeRightButtonImage:{
+marginTop:30,
+marginRight:20,
+width:20,
+height:15},
+
+
+headerText:{
+flex:2,
+fontSize:18,
+fontWeight:'bold',
 textAlign:'center',
-color:'#333333',
-marginBottom:5}});
+marginTop:30}});
 
 
 
@@ -45089,6 +45233,3030 @@ makeNativeSimulator(eventType);}
 
 
 module.exports = ReactTestUtils;
+});
+__d('Jukapp/RoomsListView.js',["react-native/Libraries/react-native/react-native.js","Jukapp/SearchResultsListView.js","Jukapp/FavoritesListView.js","Jukapp/JukappStore.js","Jukapp/JukappApi.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
+
+var React=require('react-native/Libraries/react-native/react-native.js');
+var SearchResultsListView=require('Jukapp/SearchResultsListView.js');
+var FavoritesListView=require('Jukapp/FavoritesListView.js');
+var JukappStore=require('Jukapp/JukappStore.js');
+var JukappApi=require('Jukapp/JukappApi.js');var 
+
+
+StyleSheet=
+
+
+
+
+
+React.StyleSheet;var Text=React.Text;var View=React.View;var ListView=React.ListView;var TouchableHighlight=React.TouchableHighlight;var ActivityIndicatorIOS=React.ActivityIndicatorIOS;
+
+var RoomsListView=React.createClass({displayName:'RoomsListView',
+
+getInitialState:function(){
+var dataSource=new ListView.DataSource({rowHasChanged:function(r1,r2){return r1 !== r2;}});
+
+return {
+dataSource:dataSource.cloneWithRows(JukappStore.getRooms()),
+loading:true};},
+
+
+
+componentDidMount:function(){
+JukappStore.addChangeListener(this._onChange);
+JukappApi.fetchRooms();},
+
+
+componentWillUnmount:function(){
+JukappStore.removeChangeListener(this._onChange);},
+
+
+_onChange:function(){
+this.setState({
+dataSource:this.state.dataSource.cloneWithRows(JukappStore.getRooms()),
+loading:false});},
+
+
+
+renderRow:function(rowData,sectionID,rowID){
+return (
+React.createElement(TouchableHighlight,{
+underlayColor:'#CFD6D6',
+style:{marginBottom:10},
+onPress:function(){
+JukappApi.joinRoom(rowData.id);}},
+
+
+React.createElement(View,{style:styles.cell},
+React.createElement(Text,{style:styles.title},rowData.name),
+React.createElement(Text,{style:styles.details},'1234 USERS'))));},
+
+
+
+
+
+renderFooter:function(){
+if(this.state.loading){
+return React.createElement(ActivityIndicatorIOS,null);}},
+
+
+
+render:function(){
+return (
+React.createElement(ListView,{
+style:styles.listView,
+renderRow:this.renderRow,
+dataSource:this.state.dataSource,
+renderFooter:this.renderFooter}));}});
+
+
+
+
+
+var styles=StyleSheet.create({
+listView:{
+backgroundColor:'#EEF2F2',
+padding:10},
+
+
+cell:{
+flexDirection:'column',
+backgroundColor:'white',
+padding:6,
+height:72,
+justifyContent:'space-around',
+borderRadius:4,
+shadowColor:'#000000',
+shadowRadius:1,
+shadowOpacity:0.3,
+shadowOffset:{
+height:1,
+width:0},
+
+flex:1},
+
+
+title:{
+color:'black',
+fontSize:16,
+fontWeight:'bold',
+textAlign:'left',
+paddingTop:4,
+paddingLeft:10},
+
+
+details:{
+color:'#9FA7A7',
+fontSize:14,
+textAlign:'left',
+paddingBottom:4,
+paddingLeft:10}});
+
+
+
+module.exports = RoomsListView;
+});
+__d('Jukapp/SearchResultsListView.js',["react-native/Libraries/react-native/react-native.js","react-native-search-bar/SearchBar.js","Jukapp/VideoCell.js","Jukapp/JukappStore.js","Jukapp/JukappActions.js","Jukapp/JukappApi.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
+
+var React=require('react-native/Libraries/react-native/react-native.js');
+var SearchBar=require('react-native-search-bar/SearchBar.js');
+var VideoCell=require('Jukapp/VideoCell.js');
+var JukappStore=require('Jukapp/JukappStore.js');
+var JukappActions=require('Jukapp/JukappActions.js');
+var JukappApi=require('Jukapp/JukappApi.js');var 
+
+
+StyleSheet=
+
+
+
+
+React.StyleSheet;var View=React.View;var ListView=React.ListView;var TouchableHighlight=React.TouchableHighlight;var ActivityIndicatorIOS=React.ActivityIndicatorIOS;
+
+var SearchResultsListView=React.createClass({displayName:'SearchResultsListView',
+
+getInitialState:function(){
+var dataSource=new ListView.DataSource({rowHasChanged:function(r1,r2){return true;}});
+
+return {
+dataSource:dataSource.cloneWithRows(JukappStore.getSearchResults())};},
+
+
+
+componentDidMount:function(){
+JukappStore.addChangeListener(this._onChange);},
+
+
+componentWillUnmount:function(){
+JukappStore.removeChangeListener(this._onChange);},
+
+
+_renderFooter:function(){
+if(this.state.loading){
+return React.createElement(ActivityIndicatorIOS,null);}},
+
+
+
+_onChange:function(){
+this.setState({
+loading:false,
+dataSource:this.state.dataSource.cloneWithRows(JukappStore.getSearchResults())});},
+
+
+
+_refreshList:function(){
+JukappApi.searchVideo(this.state.query).done(JukappActions.completedSearch);},
+
+
+_renderRow:function(rowData,sectionID,rowID){
+return (
+React.createElement(VideoCell,{video:rowData,onFavoriteToggled:this._refreshList}));},
+
+
+
+render:function(){var _this=this;
+return (
+React.createElement(View,{style:styles.container},
+React.createElement(SearchBar,{
+placeholder:'Search on YouTube',
+onSearchButtonPress:function(query){
+_this.setState({
+loading:true,
+query:query});
+
+
+JukappApi.searchVideo(query).done(JukappActions.completedSearch);},
+
+onCancelButtonPress:function(){
+console.log('onCancelButtonPress');}}),
+
+
+
+React.createElement(ListView,{
+style:styles.listView,
+contentContainerStyle:styles.listViewContent,
+dataSource:this.state.dataSource,
+renderRow:this._renderRow,
+renderFooter:this._renderFooter,
+automaticallyAdjustContentInsets:false})));}});
+
+
+
+
+
+
+
+var styles=StyleSheet.create({
+container:{
+flex:1,
+backgroundColor:'#EEF2F2'},
+
+listView:{
+backgroundColor:'#EEF2F2',
+padding:10},
+
+listViewContent:{
+justifyContent:'center'}});
+
+
+
+module.exports = SearchResultsListView;
+});
+__d('react-native-search-bar/SearchBar.js',["react-native/Libraries/react-native/react-native.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _extends=Object.assign || function(target){for(var i=1;i < arguments.length;i++) {var source=arguments[i];for(var key in source) {if(Object.prototype.hasOwnProperty.call(source,key)){target[key] = source[key];}}}return target;};var NativeModules,PropTypes,RNSearchBar,React,SearchBar;
+
+React = require('react-native/Libraries/react-native/react-native.js');
+
+RNSearchBar = React.requireNativeComponent('RNSearchBar',null);
+
+PropTypes = React.PropTypes;
+
+NativeModules = React.NativeModules;
+
+SearchBar = React.createClass({displayName:'SearchBar',
+propTypes:{
+placeholder:PropTypes.string,
+text:PropTypes.string,
+tintColor:PropTypes.string,
+showsCancelButton:PropTypes.bool,
+onChange:PropTypes.func,
+onChangeText:PropTypes.func,
+onFocus:PropTypes.func,
+onSearchButtonPress:PropTypes.func,
+onCancelButtonPress:PropTypes.func,
+hideBackground:PropTypes.bool},
+
+_onChange:function(e){
+var base,base1;
+if(typeof (base = this.props).onChange === "function"){
+base.onChange(e);}
+
+return typeof (base1 = this.props).onChangeText === "function"?base1.onChangeText(e.nativeEvent.text):void 0;},
+
+_onPress:function(e){
+var base,base1,button;
+button = e.nativeEvent.button;
+if(button === 'search'){
+return typeof (base = this.props).onSearchButtonPress === "function"?base.onSearchButtonPress(e.nativeEvent.searchText):void 0;}else 
+if(button === 'cancel'){
+return typeof (base1 = this.props).onCancelButtonPress === "function"?base1.onCancelButtonPress():void 0;}},
+
+
+render:function(){
+return React.createElement(RNSearchBar,_extends({
+style:{height:NativeModules.RNSearchBarManager.ComponentHeight},
+onChange:this._onChange,
+onPress:this._onPress},
+this.props));}});
+
+
+
+
+module.exports = SearchBar;
+});
+__d('Jukapp/VideoCell.js',["react-native/Libraries/react-native/react-native.js","Jukapp/JukappActions.js","Jukapp/JukappStore.js","Jukapp/JukappApi.js","Jukapp/FavoriteButton.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
+
+var React=require('react-native/Libraries/react-native/react-native.js');
+var JukappActions=require('Jukapp/JukappActions.js');
+var JukappStore=require('Jukapp/JukappStore.js');
+var JukappApi=require('Jukapp/JukappApi.js');
+var FavoriteButton=require('Jukapp/FavoriteButton.js');var 
+
+
+StyleSheet=
+
+
+
+
+React.StyleSheet;var Text=React.Text;var View=React.View;var Image=React.Image;var TouchableHighlight=React.TouchableHighlight;
+
+var VideoCell=React.createClass({displayName:'VideoCell',
+
+renderFavoriteButton:function(){
+if(!JukappStore.isLoggedIn()){
+return;}
+
+
+var video=this.props.video;
+
+return React.createElement(FavoriteButton,{video:video,onFavoriteToggled:this.props.onFavoriteToggled});},
+
+
+render:function(){
+var video=this.props.video;
+var playCount;
+
+if(video["video_events"]){
+var videoEvent=video["video_events"].find(function(events){return events["room_id"] == JukappStore.getCurrentRoom().id;});
+if(videoEvent)playCount = videoEvent["play_count"];}
+
+
+if(!playCount){
+playCount = 0;}
+
+
+var image={uri:'http://img.youtube.com/vi/' + video.youtube_id + '/default.jpg'};
+var secondaryButton=this.renderFavoriteButton();
+
+return (
+React.createElement(TouchableHighlight,{
+underlayColor:'#CFD6D6',
+style:{marginBottom:10},
+onPress:function(){
+JukappApi.queueVideo(video);}},
+
+
+React.createElement(View,{style:styles.cell},
+React.createElement(Image,{source:image,style:styles.videoImage}),
+
+React.createElement(View,{style:styles.rowData},
+React.createElement(Text,{style:styles.title},video.title),
+React.createElement(Text,{style:styles.details},playCount,' VIEWS')),
+
+
+secondaryButton)));}});
+
+
+
+
+
+
+var styles=StyleSheet.create({
+
+cell:{
+flexDirection:'row',
+backgroundColor:'white',
+padding:16,
+height:96,
+justifyContent:'flex-start',
+borderRadius:4,
+shadowColor:'#000000',
+shadowRadius:1,
+shadowOpacity:0.3,
+shadowOffset:{
+height:1,
+width:0}},
+
+
+
+secondaryButton:{
+justifyContent:'center',
+marginTop:16,
+marginBottom:16},
+
+
+star:{
+height:40,
+width:40,
+shadowColor:'#000000',
+shadowRadius:1,
+shadowOpacity:0.3,
+shadowOffset:{
+height:1,
+width:0}},
+
+
+
+rowData:{
+flexDirection:'column',
+paddingLeft:16,
+justifyContent:'space-around',
+flex:1},
+
+
+title:{
+color:'black',
+fontSize:14,
+fontWeight:'bold',
+textAlign:'left',
+paddingTop:4},
+
+
+details:{
+color:'#9FA7A7',
+fontSize:12,
+textAlign:'left',
+paddingBottom:4},
+
+
+videoImage:{
+alignSelf:'flex-start',
+width:64,
+height:64}});
+
+
+
+
+module.exports = VideoCell;
+});
+__d('Jukapp/JukappActions.js',["Jukapp/Dispatcher.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var Dispatcher=require('Jukapp/Dispatcher.js');
+
+var JukappActions={
+loadedRooms:function(rooms){
+Dispatcher.dispatch({
+actionType:'loaded-rooms',
+rooms:rooms});},
+
+
+
+joinedRoom:function(room){
+Dispatcher.dispatch({
+actionType:'joined-room',
+room:room});},
+
+
+
+leftRoom:function(){
+Dispatcher.dispatch({
+actionType:'left-room'});},
+
+
+
+loggedIn:function(user){
+Dispatcher.dispatch({
+actionType:'logged-in',
+user:user});},
+
+
+
+loggedOut:function(user){
+Dispatcher.dispatch({
+actionType:'logged-out'});},
+
+
+
+loadedQueuedVideos:function(queuedVideos){
+Dispatcher.dispatch({
+actionType:'loaded-queued-videos',
+queuedVideos:queuedVideos});},
+
+
+
+loadedFavorites:function(favorites){
+Dispatcher.dispatch({
+actionType:'loaded-favorites',
+favorites:favorites});},
+
+
+
+completedSearch:function(searchResults){
+Dispatcher.dispatch({
+actionType:'completed-search',
+searchResults:searchResults});}};
+
+
+
+
+module.exports = JukappActions;
+});
+__d('Jukapp/Dispatcher.js',["flux/index.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var Dispatcher=require('flux/index.js').Dispatcher;
+
+module.exports = new Dispatcher();
+});
+__d('flux/index.js',["Dispatcher"],function(global, require, requireDynamic, requireLazy, module, exports) {  module.
+
+
+
+
+
+
+
+
+exports.Dispatcher = require('Dispatcher');
+});
+__d('Dispatcher',["invariant"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.__esModule = true;
+
+function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}
+
+var invariant=require('invariant');
+
+var _prefix='ID_';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var Dispatcher=(function(){
+function Dispatcher(){
+_classCallCheck(this,Dispatcher);
+
+this._callbacks = {};
+this._isDispatching = false;
+this._isHandled = {};
+this._isPending = {};
+this._lastID = 1;}
+
+
+
+
+
+
+
+Dispatcher.prototype.register = function register(callback){
+var id=_prefix + this._lastID++;
+this._callbacks[id] = callback;
+return id;};
+
+
+
+
+
+
+Dispatcher.prototype.unregister = function unregister(id){
+!this._callbacks[id]?process.env.NODE_ENV !== 'production'?invariant(false,'Dispatcher.unregister(...): `%s` does not map to a registered callback.',id):invariant(false):undefined;
+delete this._callbacks[id];};
+
+
+
+
+
+
+
+
+Dispatcher.prototype.waitFor = function waitFor(ids){
+!this._isDispatching?process.env.NODE_ENV !== 'production'?invariant(false,'Dispatcher.waitFor(...): Must be invoked while dispatching.'):invariant(false):undefined;
+for(var ii=0;ii < ids.length;ii++) {
+var id=ids[ii];
+if(this._isPending[id]){
+!this._isHandled[id]?process.env.NODE_ENV !== 'production'?invariant(false,'Dispatcher.waitFor(...): Circular dependency detected while ' + 'waiting for `%s`.',id):invariant(false):undefined;
+continue;}
+
+!this._callbacks[id]?process.env.NODE_ENV !== 'production'?invariant(false,'Dispatcher.waitFor(...): `%s` does not map to a registered callback.',id):invariant(false):undefined;
+this._invokeCallback(id);}};
+
+
+
+
+
+
+
+Dispatcher.prototype.dispatch = function dispatch(payload){
+!!this._isDispatching?process.env.NODE_ENV !== 'production'?invariant(false,'Dispatch.dispatch(...): Cannot dispatch in the middle of a dispatch.'):invariant(false):undefined;
+this._startDispatching(payload);
+try{
+for(var id in this._callbacks) {
+if(this._isPending[id]){
+continue;}
+
+this._invokeCallback(id);}}finally 
+
+{
+this._stopDispatching();}};
+
+
+
+
+
+
+
+Dispatcher.prototype.isDispatching = function isDispatching(){
+return this._isDispatching;};
+
+
+
+
+
+
+
+
+
+Dispatcher.prototype._invokeCallback = function _invokeCallback(id){
+this._isPending[id] = true;
+this._callbacks[id](this._pendingPayload);
+this._isHandled[id] = true;};
+
+
+
+
+
+
+
+
+Dispatcher.prototype._startDispatching = function _startDispatching(payload){
+for(var id in this._callbacks) {
+this._isPending[id] = false;
+this._isHandled[id] = false;}
+
+this._pendingPayload = payload;
+this._isDispatching = true;};
+
+
+
+
+
+
+
+
+Dispatcher.prototype._stopDispatching = function _stopDispatching(){
+delete this._pendingPayload;
+this._isDispatching = false;};
+
+
+return Dispatcher;})();
+
+
+module.exports = Dispatcher;
+});
+__d('invariant',[],function(global, require, requireDynamic, requireLazy, module, exports) {  "use strict";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var invariant=function(condition,format,a,b,c,d,e,f){
+if(process.env.NODE_ENV !== 'production'){
+if(format === undefined){
+throw new Error('invariant requires an error message argument');}}
+
+
+
+if(!condition){
+var error;
+if(format === undefined){
+error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');}else 
+{
+var args=[a,b,c,d,e,f];
+var argIndex=0;
+error = new Error('Invariant Violation: ' + format.replace(/%s/g,function(){
+return args[argIndex++];}));}
+
+
+
+error.framesToPop = 1;
+throw error;}};
+
+
+
+module.exports = invariant;
+});
+__d('Jukapp/JukappStore.js',["react-native/Libraries/react-native/react-native.js","Jukapp/Dispatcher.js","events/events.js","object-assign/index.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var React=require('react-native/Libraries/react-native/react-native.js');
+var Dispatcher=require('Jukapp/Dispatcher.js');
+var EventEmitter=require('events/events.js').EventEmitter;var 
+
+AsyncStorage=
+React.AsyncStorage;
+
+var assign=require('object-assign/index.js');
+
+var CHANGE_EVENT='change';
+var JUKAPP_STORE_KEY='@JukappStore:key';
+
+var currentRoom;
+var user;
+var favorites=[];
+var rooms=[];
+var searchResults=[];
+var queuedVideos=[];
+
+function joinedRoom(room){
+currentRoom = room;
+syncStorage();}
+
+
+function loggedOut(){
+user = null;
+syncStorage();}
+
+
+function leftRoom(){
+currentRoom = null;
+syncStorage();}
+
+
+function loggedIn(loginUser){
+user = loginUser;
+syncStorage();}
+
+
+function syncStorage(){
+var store=JSON.stringify({
+user:user,
+room:currentRoom});
+
+
+AsyncStorage.setItem(JUKAPP_STORE_KEY,store);}
+
+
+var JukappStore=assign({},EventEmitter.prototype,{
+
+initialize:function(){
+
+AsyncStorage.getItem(JUKAPP_STORE_KEY).then(function(value){
+var store=JSON.parse(value);
+if(store){
+console.log(store);
+if(store.room){
+currentRoom = store.room;}
+
+
+if(store.user){
+user = store.user;}}});},
+
+
+
+
+
+isInRoom:function(){
+return !!currentRoom;},
+
+
+isLoggedIn:function(){
+return !!user;},
+
+
+isFavoriteVideo:function(video){
+for(var id in favorites) {
+if(favorites[id]["video"].youtube_id == video.youtube_id){
+return true;}}
+
+
+
+return false;},
+
+
+getUser:function(){
+if(this.isLoggedIn()){
+return user;}},
+
+
+
+getRooms:function(){
+return rooms;},
+
+
+getCurrentRoom:function(){
+return currentRoom;},
+
+
+getSearchResults:function(){
+return searchResults;},
+
+
+getQueuedVideos:function(){
+return queuedVideos;},
+
+
+getFavorites:function(){
+return favorites;},
+
+
+emitChange:function(){
+this.emit(CHANGE_EVENT);},
+
+
+addChangeListener:function(callback){
+this.on(CHANGE_EVENT,callback);},
+
+
+removeChangeListener:function(callback){
+this.removeListener(CHANGE_EVENT,callback);}});
+
+
+
+
+Dispatcher.register(function(action){
+switch(action.actionType){
+case 'loaded-rooms':
+rooms = action.rooms;
+JukappStore.emitChange();
+break;
+
+case 'joined-room':
+joinedRoom(action.room);
+JukappStore.emitChange();
+break;
+
+case 'left-room':
+leftRoom();
+JukappStore.emitChange();
+break;
+
+case 'logged-in':
+loggedIn(action.user);
+JukappStore.emitChange();
+break;
+
+case 'logged-out':
+loggedOut();
+JukappStore.emitChange();
+break;
+
+case 'loaded-queued-videos':
+queuedVideos = action.queuedVideos;
+JukappStore.emitChange();
+break;
+
+
+case 'loaded-favorites':
+favorites = action.favorites;
+JukappStore.emitChange();
+break;
+
+case 'completed-search':
+searchResults = action.searchResults;
+JukappStore.emitChange();
+break;
+
+default:}});
+
+
+
+
+module.exports = JukappStore;
+});
+__d('events/events.js',[],function(global, require, requireDynamic, requireLazy, module, exports) {  function 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EventEmitter(){
+this._events = this._events || {};
+this._maxListeners = this._maxListeners || undefined;}
+
+module.exports = EventEmitter;
+
+
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+
+
+
+EventEmitter.defaultMaxListeners = 10;
+
+
+
+EventEmitter.prototype.setMaxListeners = function(n){
+if(!isNumber(n) || n < 0 || isNaN(n))
+throw TypeError('n must be a positive number');
+this._maxListeners = n;
+return this;};
+
+
+EventEmitter.prototype.emit = function(type){
+var er,handler,len,args,i,listeners;
+
+if(!this._events)
+this._events = {};
+
+
+if(type === 'error'){
+if(!this._events.error || 
+isObject(this._events.error) && !this._events.error.length){
+er = arguments[1];
+if(er instanceof Error){
+throw er;}
+
+throw TypeError('Uncaught, unspecified "error" event.');}}
+
+
+
+handler = this._events[type];
+
+if(isUndefined(handler))
+return false;
+
+if(isFunction(handler)){
+switch(arguments.length){
+
+case 1:
+handler.call(this);
+break;
+case 2:
+handler.call(this,arguments[1]);
+break;
+case 3:
+handler.call(this,arguments[1],arguments[2]);
+break;
+
+default:
+len = arguments.length;
+args = new Array(len - 1);
+for(i = 1;i < len;i++) 
+args[i - 1] = arguments[i];
+handler.apply(this,args);}}else 
+
+if(isObject(handler)){
+len = arguments.length;
+args = new Array(len - 1);
+for(i = 1;i < len;i++) 
+args[i - 1] = arguments[i];
+
+listeners = handler.slice();
+len = listeners.length;
+for(i = 0;i < len;i++) 
+listeners[i].apply(this,args);}
+
+
+return true;};
+
+
+EventEmitter.prototype.addListener = function(type,listener){
+var m;
+
+if(!isFunction(listener))
+throw TypeError('listener must be a function');
+
+if(!this._events)
+this._events = {};
+
+
+
+if(this._events.newListener)
+this.emit('newListener',type,
+isFunction(listener.listener)?
+listener.listener:listener);
+
+if(!this._events[type])
+
+this._events[type] = listener;else 
+if(isObject(this._events[type]))
+
+this._events[type].push(listener);else 
+
+
+this._events[type] = [this._events[type],listener];
+
+
+if(isObject(this._events[type]) && !this._events[type].warned){
+var m;
+if(!isUndefined(this._maxListeners)){
+m = this._maxListeners;}else 
+{
+m = EventEmitter.defaultMaxListeners;}
+
+
+if(m && m > 0 && this._events[type].length > m){
+this._events[type].warned = true;
+console.error('(node) warning: possible EventEmitter memory ' + 
+'leak detected. %d listeners added. ' + 
+'Use emitter.setMaxListeners() to increase limit.',
+this._events[type].length);
+if(typeof console.trace === 'function'){
+
+console.trace();}}}
+
+
+
+
+return this;};
+
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type,listener){
+if(!isFunction(listener))
+throw TypeError('listener must be a function');
+
+var fired=false;
+
+function g(){
+this.removeListener(type,g);
+
+if(!fired){
+fired = true;
+listener.apply(this,arguments);}}
+
+
+
+g.listener = listener;
+this.on(type,g);
+
+return this;};
+
+
+
+EventEmitter.prototype.removeListener = function(type,listener){
+var list,position,length,i;
+
+if(!isFunction(listener))
+throw TypeError('listener must be a function');
+
+if(!this._events || !this._events[type])
+return this;
+
+list = this._events[type];
+length = list.length;
+position = -1;
+
+if(list === listener || 
+isFunction(list.listener) && list.listener === listener){
+delete this._events[type];
+if(this._events.removeListener)
+this.emit('removeListener',type,listener);}else 
+
+if(isObject(list)){
+for(i = length;i-- > 0;) {
+if(list[i] === listener || 
+list[i].listener && list[i].listener === listener){
+position = i;
+break;}}
+
+
+
+if(position < 0)
+return this;
+
+if(list.length === 1){
+list.length = 0;
+delete this._events[type];}else 
+{
+list.splice(position,1);}
+
+
+if(this._events.removeListener)
+this.emit('removeListener',type,listener);}
+
+
+return this;};
+
+
+EventEmitter.prototype.removeAllListeners = function(type){
+var key,listeners;
+
+if(!this._events)
+return this;
+
+
+if(!this._events.removeListener){
+if(arguments.length === 0)
+this._events = {};else 
+if(this._events[type])
+delete this._events[type];
+return this;}
+
+
+
+if(arguments.length === 0){
+for(key in this._events) {
+if(key === 'removeListener')continue;
+this.removeAllListeners(key);}
+
+this.removeAllListeners('removeListener');
+this._events = {};
+return this;}
+
+
+listeners = this._events[type];
+
+if(isFunction(listeners)){
+this.removeListener(type,listeners);}else 
+{
+
+while(listeners.length) 
+this.removeListener(type,listeners[listeners.length - 1]);}
+
+delete this._events[type];
+
+return this;};
+
+
+EventEmitter.prototype.listeners = function(type){
+var ret;
+if(!this._events || !this._events[type])
+ret = [];else 
+if(isFunction(this._events[type]))
+ret = [this._events[type]];else 
+
+ret = this._events[type].slice();
+return ret;};
+
+
+EventEmitter.listenerCount = function(emitter,type){
+var ret;
+if(!emitter._events || !emitter._events[type])
+ret = 0;else 
+if(isFunction(emitter._events[type]))
+ret = 1;else 
+
+ret = emitter._events[type].length;
+return ret;};
+
+
+function isFunction(arg){
+return typeof arg === 'function';}
+
+
+function isNumber(arg){
+return typeof arg === 'number';}
+
+
+function isObject(arg){
+return typeof arg === 'object' && arg !== null;}
+
+
+function isUndefined(arg){
+return arg === void 0;}
+});
+__d('object-assign/index.js',[],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
+var propIsEnumerable=Object.prototype.propertyIsEnumerable;
+
+function ToObject(val){
+if(val == null){
+throw new TypeError('Object.assign cannot be called with null or undefined');}
+
+
+return Object(val);}
+
+
+function ownEnumerableKeys(obj){
+var keys=Object.getOwnPropertyNames(obj);
+
+if(Object.getOwnPropertySymbols){
+keys = keys.concat(Object.getOwnPropertySymbols(obj));}
+
+
+return keys.filter(function(key){
+return propIsEnumerable.call(obj,key);});}
+
+
+
+module.exports = Object.assign || function(target,source){
+var from;
+var keys;
+var to=ToObject(target);
+
+for(var s=1;s < arguments.length;s++) {
+from = arguments[s];
+keys = ownEnumerableKeys(Object(from));
+
+for(var i=0;i < keys.length;i++) {
+to[keys[i]] = from[keys[i]];}}
+
+
+
+return to;};
+});
+__d('Jukapp/JukappApi.js',["NativeModules","react-native/Libraries/react-native/react-native.js","Jukapp/JukappActions.js","Jukapp/JukappStore.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
+
+var React=require('react-native/Libraries/react-native/react-native.js');
+var JukappActions=require('Jukapp/JukappActions.js');
+var JukappStore=require('Jukapp/JukappStore.js');
+var EventSource=require('NativeModules').RNEventSource;
+
+var JUKAPP_URL='https://jukapp-api.herokuapp.com';var 
+
+
+AlertIOS=
+
+React.AlertIOS;var DeviceEventEmitter=React.DeviceEventEmitter;
+
+var eventListener;
+
+var JukappApi={
+defaultOptions:function(){
+var currentRoom=JukappStore.getCurrentRoom();
+var user=JukappStore.getUser();
+
+var options={
+headers:{
+'Content-Type':'application/json',
+'Accept':'application/json'}};
+
+
+
+if(currentRoom){
+options['headers']['X-Room-ID'] = currentRoom.id;}
+
+
+if(user){
+options['headers']['X-Username'] = user.username;
+options['headers']['X-AuthToken'] = user.authToken;}
+
+
+return options;},
+
+
+videoOptions:function(video){
+return JSON.stringify({
+youtube_id:video.youtube_id,
+title:video.title});},
+
+
+
+fetchRooms:function(){
+fetch(JUKAPP_URL + '/rooms',this.defaultOptions()).
+then(function(response){
+return response.json();}).
+
+then(JukappActions.loadedRooms);},
+
+
+joinRoom:function(roomId){
+fetch(JUKAPP_URL + '/rooms/' + roomId + '/join',this.defaultOptions()).
+then(function(response){
+return response.json();}).
+
+then(JukappActions.joinedRoom).
+catch(function(response){
+JukappActions.leftRoom();
+console.log('Join error',response);
+AlertIOS.alert('Join error' + response);});},
+
+
+
+searchVideo:function(query){var _this=this;
+var videos=[];
+
+return fetch(JUKAPP_URL + '/search?query=' + query,this.defaultOptions()).
+then(function(response){
+return response.json();}).
+
+then(function(responseData){
+for(var searchResult of responseData) {
+if(searchResult.id)videos.push(searchResult);}
+
+
+return _this.fetchFavorites();}).
+
+then(function(responseData){
+return _this.checkFavorites(videos,responseData);});},
+
+
+
+queueVideo:function(video){
+var options=this.defaultOptions();
+options['method'] = 'POST';
+options['body'] = this.videoOptions(video);
+
+fetch(JUKAPP_URL + "/queue",options).
+then(function(response){
+if(response.status == 201){
+console.log('Successfully queued video');}else 
+{
+console.log('Could not queue video');}}).
+
+
+catch(function(response){
+console.log("Queue error",response);
+AlertIOS.alert("Queue error" + response);});},
+
+
+
+login:function(username,password){
+var options=this.defaultOptions();
+options['method'] = 'POST';
+options['body'] = JSON.stringify({
+user:{
+username:username,
+password:password}});
+
+
+
+return fetch(JUKAPP_URL + "/users/sign_in",options).
+then(function(response){
+if(response.status == 201){
+return response.json();
+console.log('Successfully logged in');}else 
+{
+console.log('Could not log in');
+return Promise.reject(new Error());}}).
+
+
+then(function(responseData){
+if(!responseData)return;
+
+var user={
+username:responseData["username"],
+authToken:responseData["authentication_token"]};
+
+
+JukappActions.loggedIn(user);});},
+
+
+
+fetchQueuedVideos:function(){var _this2=this;
+var videos=[];
+
+return fetch(JUKAPP_URL + "/queued_videos",this.defaultOptions()).
+then(function(response){
+return response.json();}).
+
+then(function(responseData){
+for(var queuedVideo of responseData) {
+videos.push(queuedVideo.video);}
+
+
+return _this2.fetchFavorites();}).
+
+then(function(responseData){
+return _this2.checkFavorites(videos,responseData);}).
+
+catch(function(response){
+console.log("Queued videos error",response);
+AlertIOS.alert("Queued videos error" + response);});},
+
+
+
+checkFavorites:function(videos,favorites){
+for(var video of videos) {
+for(var favoriteVideo of favorites) {
+if(video.id == favoriteVideo.id)video["isFavorite"] = true;}
+
+if(!video.isFavorite)video["isFavorite"] = false;}
+
+
+return videos;},
+
+
+fetchFavorites:function(){
+if(!JukappStore.isLoggedIn()){
+return new Promise(function(fulfill,reject){
+fulfill([]);});}
+
+
+
+return fetch(JUKAPP_URL + "/favorites",this.defaultOptions()).
+then(function(response){
+return response.json();}).
+
+then(function(responseData){
+var videos=[];
+for(var favoriteVideo of responseData) {
+var video=favoriteVideo.video;
+video["isFavorite"] = true;
+
+videos.push(video);}
+
+
+return videos;}).
+
+catch(function(response){
+console.log("Favorites error",response);
+AlertIOS.alert("Favorites error" + response);});},
+
+
+
+favoriteVideo:function(video){
+var options=this.defaultOptions();
+options['method'] = 'POST';
+options['body'] = this.videoOptions(video);
+
+fetch(JUKAPP_URL + "/favorites",options).
+then(function(response){
+if(response.status == 201){
+console.log('Successfully favorited video');}else 
+{
+console.log('Could not favorite video');}}).
+
+
+catch(function(response){
+console.log("Favorites error",response);
+AlertIOS.alert("Favorites error" + response);});},
+
+
+
+unfavoriteVideo:function(video){
+var options=this.defaultOptions();
+options['method'] = 'DELETE';
+options['body'] = this.videoOptions(video);
+
+fetch(JUKAPP_URL + "/favorites",options).
+then(function(response){
+if(response.status == 200){
+console.log('Successfully unfavorited video');}else 
+{
+console.log('Could not unfavorite video');}}).
+
+
+catch(function(response){
+console.log("Favorites error",response);
+AlertIOS.alert("Favorites error" + response);});},
+
+
+
+addEventListener:function(onEvent){
+eventListener = DeviceEventEmitter.addListener(
+'EventSourceMessage',function(message){
+if(message.event != 'heartbeat'){
+onEvent(message);}});
+
+
+
+EventSource.connectWithURL(JUKAPP_URL + "/events?channels[]=queue-" + JukappStore.getCurrentRoom().id);},
+
+
+removeEventListener:function(){
+EventSource.close();
+
+if(eventListener){
+eventListener.remove();}}};
+
+
+
+
+
+module.exports = JukappApi;
+});
+__d('Jukapp/FavoriteButton.js',["react-native/Libraries/react-native/react-native.js","Jukapp/JukappApi.js","react-native-icons/index.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
+
+var React=require('react-native/Libraries/react-native/react-native.js');
+var JukappApi=require('Jukapp/JukappApi.js');var _require=
+
+
+
+require('react-native-icons/index.js');var Icon=_require.Icon;var 
+
+
+StyleSheet=
+
+React.StyleSheet;var TouchableHighlight=React.TouchableHighlight;
+
+var FavoriteButton=React.createClass({displayName:'FavoriteButton',
+
+handleButtonPress:function(){
+var video=this.props.video;
+video.isFavorite?JukappApi.unfavoriteVideo(video):JukappApi.favoriteVideo(video);
+
+this.props.onFavoriteToggled();},
+
+
+render:function(){
+var icon=this.props.video.isFavorite?'fontawesome|star':'fontawesome|star-o';
+
+return (
+React.createElement(TouchableHighlight,{
+underlayColor:'#ebeeee',
+style:styles.secondaryButton,
+onPress:this.handleButtonPress},
+React.createElement(Icon,{
+name:icon,
+size:20,
+color:'black',
+style:styles.star})));}});
+
+
+
+
+
+
+var styles=StyleSheet.create({
+
+secondaryButton:{
+justifyContent:'center',
+marginTop:16,
+marginBottom:16},
+
+
+star:{
+height:40,
+width:40,
+shadowColor:'#000000',
+shadowRadius:1,
+shadowOpacity:0.3,
+shadowOffset:{
+height:1,
+width:0}}});
+
+
+
+
+
+module.exports = FavoriteButton;
+});
+__d('react-native-icons/index.js',["SMXIconImage","SMXTabBarIOS","SMXLoadingImage"],function(global, require, requireDynamic, requireLazy, module, exports) {  module.exports = {
+Icon:require('SMXIconImage'),
+TabBarIOS:require('SMXTabBarIOS'),
+Spinner:require('SMXLoadingImage')};
+});
+__d('SMXIconImage',["react-native/Libraries/react-native/react-native.js","react-native-icons/shim-assert.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';var _extends=Object.assign || function(target){for(var i=1;i < arguments.length;i++) {var source=arguments[i];for(var key in source) {if(Object.prototype.hasOwnProperty.call(source,key)){target[key] = source[key];}}}return target;};
+
+
+
+
+
+
+var React=require('react-native/Libraries/react-native/react-native.js');var 
+StyleSheet=React.StyleSheet;var View=React.View;var requireNativeComponent=React.requireNativeComponent;
+var shimAssert=require('react-native-icons/shim-assert.js');
+
+var ICON_REF='icon';
+
+var SMXIconImage=React.createClass({displayName:'SMXIconImage',
+propTypes:{
+name:React.PropTypes.string,
+size:React.PropTypes.number,
+color:React.PropTypes.string,
+
+
+
+
+
+accessible:React.PropTypes.bool,
+
+
+
+accessibilityLabel:React.PropTypes.string,
+
+
+
+
+
+testID:React.PropTypes.string,
+icon:React.PropTypes.object},
+
+
+setNativeProps:function(props){
+this.refs[ICON_REF].setNativeProps(props);},
+
+
+render:function(){
+var style=[styles.base,this.props.style];
+shimAssert.basic(style,'style must be initialized');
+
+var name=this.props.name;
+shimAssert.basic(name,'name must be initialized');
+
+var size=this.props.size;
+shimAssert.basic(size,'size must be initialized');
+
+var color=this.props.color;
+
+var nativeProps=Object.assign({},this.props);
+nativeProps.style = style;
+nativeProps.icon = {
+name:name,
+size:size,
+color:color};
+
+
+return React.createElement(SMXIconImageView,_extends({},nativeProps,{ref:ICON_REF}));}});
+
+
+
+var styles=StyleSheet.create({
+base:{
+overflow:'hidden'}});
+
+
+
+var SMXIconImageView=requireNativeComponent('FAKIconImage',SMXIconImage);
+
+module.exports = SMXIconImage;
+});
+__d('react-native-icons/shim-assert.js',[],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
+
+
+module.exports = {
+
+basic:function(object,text){
+
+if(!object){
+throw Error(text);}}};
+});
+__d('SMXTabBarIOS',["SMXTabBarItemIOS","react-native/Libraries/react-native/react-native.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';var _extends=Object.assign || function(target){for(var i=1;i < arguments.length;i++) {var source=arguments[i];for(var key in source) {if(Object.prototype.hasOwnProperty.call(source,key)){target[key] = source[key];}}}return target;};
+
+
+
+
+
+
+var React=require('react-native/Libraries/react-native/react-native.js');var 
+StyleSheet=React.StyleSheet;var requireNativeComponent=React.requireNativeComponent;var PropTypes=React.PropTypes;
+var SMXTabBarIconItemIOS=require('SMXTabBarItemIOS');
+
+var SMXTabBarIOS=React.createClass({displayName:'SMXTabBarIOS',
+propTypes:{
+tintColor:PropTypes.string,
+barTintColor:PropTypes.string,
+translucent:PropTypes.bool},
+
+
+statics:{
+Item:SMXTabBarIconItemIOS},
+
+
+render:function(){
+var nativeProps={
+tintColor:this.props.tintColor,
+barTintColor:this.props.barTintColor,
+translucent:this.props.translucent};
+
+
+return (
+React.createElement(SMXIconTabBar,_extends({style:[styles.tabGroup,this.props.style]},nativeProps),
+this.props.children));}});
+
+
+
+
+
+var styles=StyleSheet.create({
+tabGroup:{
+flex:1}});
+
+
+
+var SMXIconTabBar=requireNativeComponent('SMXTabBar',SMXTabBarIOS);
+
+module.exports = SMXTabBarIOS;
+});
+__d('SMXTabBarItemIOS',["react-native/Libraries/react-native/react-native.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}
+
+
+
+
+
+
+var React=require('react-native/Libraries/react-native/react-native.js');var 
+Image=React.Image;var StyleSheet=React.StyleSheet;var View=React.View;var requireNativeComponent=React.requireNativeComponent;var PropTypes=React.PropTypes;var Dimensions=React.Dimensions;
+
+var onlyChild=React.Children.only;var 
+
+
+StaticContainer=(function(_React$Component){_inherits(StaticContainer,_React$Component);function StaticContainer(){_classCallCheck(this,StaticContainer);_get(Object.getPrototypeOf(StaticContainer.prototype),'constructor',this).apply(this,arguments);}_createClass(StaticContainer,[{key:'shouldComponentUpdate',value:
+
+function shouldComponentUpdate(nextProps){
+return !!nextProps.shouldUpdate;}},{key:'render',value:
+
+
+function render(){
+var child=this.props.children;
+return child === null || child === false?null:onlyChild(child);}}]);return StaticContainer;})(React.Component);
+
+
+
+
+var SmixxTabBarItemIOS=React.createClass({displayName:'SmixxTabBarItemIOS',
+propTypes:{
+onPress:PropTypes.func.isRequired,
+selected:PropTypes.bool.isRequired,
+badgeValue:PropTypes.string,
+title:PropTypes.string,
+icon:PropTypes.object},
+
+
+getInitialState:function(){
+return {
+hasBeenSelected:false};},
+
+
+
+componentWillMount:function(){
+if(this.props.selected){
+this.setState({hasBeenSelected:true});}},
+
+
+
+componentWillReceiveProps:function(nextProps){
+if(this.state.hasBeenSelected || nextProps.selected){
+this.setState({hasBeenSelected:true});}},
+
+
+
+render:function(){
+var tabContents=null;
+
+
+if(this.state.hasBeenSelected){
+tabContents = 
+React.createElement(StaticContainer,{shouldUpdate:this.props.selected},
+this.props.children);}else 
+
+
+{
+tabContents = React.createElement(View,null);}
+
+
+var icon={name:this.props.iconName,size:this.props.iconSize?this.props.iconSize:28};
+
+return (
+React.createElement(SmixxTabBarItem,{
+icon:icon,
+selectedIcon:icon,
+onPress:this.props.onPress,
+selected:this.props.selected,
+badgeValue:this.props.badgeValue,
+title:this.props.title,
+style:[styles.tab,this.props.style]},
+tabContents));}});
+
+
+
+
+
+var styles=StyleSheet.create({
+tab:{
+position:'absolute',
+top:0,
+right:0,
+bottom:0,
+left:0}});
+
+
+
+var SmixxTabBarItem=requireNativeComponent('SMXTabBarItem',SmixxTabBarItemIOS);
+module.exports = SmixxTabBarItemIOS;
+});
+__d('SMXLoadingImage',["react-native/Libraries/react-native/react-native.js","react-native-icons/shim-assert.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';var _extends=Object.assign || function(target){for(var i=1;i < arguments.length;i++) {var source=arguments[i];for(var key in source) {if(Object.prototype.hasOwnProperty.call(source,key)){target[key] = source[key];}}}return target;};
+
+
+
+
+
+
+var React=require('react-native/Libraries/react-native/react-native.js');var 
+StyleSheet=React.StyleSheet;var View=React.View;var requireNativeComponent=React.requireNativeComponent;var Animated=React.Animated;var Easing=React.Easing;
+
+var shimAssert=require('react-native-icons/shim-assert.js');
+
+var SMXLoadingImage=React.createClass({displayName:'SMXLoadingImage',
+propTypes:{
+name:React.PropTypes.string,
+size:React.PropTypes.number,
+color:React.PropTypes.string,
+
+
+
+
+
+accessible:React.PropTypes.bool,
+
+
+
+accessibilityLabel:React.PropTypes.string,
+
+
+
+
+
+testID:React.PropTypes.string,
+icon:React.PropTypes.object},
+
+
+getInitialState:function(){
+return {
+angle:new Animated.Value(0)};},
+
+
+
+setNativeProps:function(props){},
+
+
+
+_animate:function(){
+this.state.angle.setValue(0);
+this._anim = Animated.timing(this.state.angle,{
+toValue:360,
+duration:1200,
+easing:Easing.linear}).
+start(this._animate);},
+
+
+componentDidMount:function(){
+this._animate();},
+
+
+render:function(){
+var transformStyle={
+transform:[
+{
+rotate:this.state.angle.interpolate({
+inputRange:[0,360],
+outputRange:['0deg','360deg']})}]};
+
+
+
+
+
+var style=[styles.base,this.props.style];
+
+shimAssert.basic(style,'style must be initialized');
+
+var name=this.props.name;
+shimAssert.basic(name,'name must be initialized');
+
+var size=this.props.size;
+shimAssert.basic(size,'size must be initialized');
+
+var color=this.props.color;
+
+var nativeProps=Object.assign({},this.props);
+nativeProps.icon = {
+name:name,
+size:size,
+color:color};
+
+
+return React.createElement(Animated.View,{style:[styles.base,style,transformStyle]},
+React.createElement(SMXLoadingImageView,_extends({style:{backgroundColor:'transparent'}},nativeProps)));}});
+
+
+
+
+
+var styles=StyleSheet.create({
+base:{
+overflow:'hidden'}});
+
+
+var SMXLoadingImageView=requireNativeComponent('FAKIconImage',SMXLoadingImage);
+
+module.exports = SMXLoadingImage;
+});
+__d('Jukapp/FavoritesListView.js',["react-native/Libraries/react-native/react-native.js","Jukapp/JukappActions.js","Jukapp/JukappStore.js","Jukapp/VideoCell.js","Jukapp/JukappApi.js","Jukapp/LoginView.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
+
+var React=require('react-native/Libraries/react-native/react-native.js');
+var JukappActions=require('Jukapp/JukappActions.js');
+var JukappStore=require('Jukapp/JukappStore.js');
+var VideoCell=require('Jukapp/VideoCell.js');
+var JukappApi=require('Jukapp/JukappApi.js');
+var LoginView=require('Jukapp/LoginView.js');var 
+
+
+StyleSheet=
+
+
+React.StyleSheet;var ListView=React.ListView;var ActivityIndicatorIOS=React.ActivityIndicatorIOS;
+
+var FavoritesListView=React.createClass({displayName:'FavoritesListView',
+getInitialState:function(){
+var dataSource=new ListView.DataSource({rowHasChanged:function(r1,r2){return r1 !== r2;}});
+
+return {
+dataSource:dataSource.cloneWithRows(JukappStore.getFavorites()),
+isLoggedIn:JukappStore.isLoggedIn(),
+loading:true};},
+
+
+
+componentDidMount:function(){
+JukappStore.addChangeListener(this._onChange);
+this._refreshList();},
+
+
+componentWillUnmount:function(){
+JukappStore.removeChangeListener(this._onChange);},
+
+
+_handleBackButtonPress:function(){
+this.props.navigator.pop();},
+
+
+renderRow:function(rowData,sectionID,rowID){
+return (
+React.createElement(VideoCell,{video:rowData,onFavoriteToggled:this._refreshList}));},
+
+
+
+renderFooter:function(){
+if(this.state.loading){
+return React.createElement(ActivityIndicatorIOS,null);}},
+
+
+
+_refreshList:function(){
+JukappApi.fetchFavorites().done(JukappActions.loadedFavorites);},
+
+
+render:function(){
+if(!this.state.isLoggedIn){
+return React.createElement(LoginView,{onLogin:this._refreshList});}
+
+
+return (
+React.createElement(ListView,{
+style:styles.container,
+contentContainerStyle:styles.listViewContent,
+dataSource:this.state.dataSource,
+renderRow:this.renderRow,
+renderFooter:this.renderFooter,
+automaticallyAdjustContentInsets:false}));},
+
+
+
+
+_onChange:function(){
+this.setState({
+dataSource:this.state.dataSource.cloneWithRows(JukappStore.getFavorites()),
+isLoggedIn:JukappStore.isLoggedIn(),
+loading:false});}});
+
+
+
+
+var styles=StyleSheet.create({
+container:{
+padding:10,
+backgroundColor:'#EEF2F2'},
+
+
+listViewContent:{
+justifyContent:'center'}});
+
+
+
+module.exports = FavoritesListView;
+});
+__d('Jukapp/LoginView.js',["react-native/Libraries/react-native/react-native.js","Jukapp/JukappActions.js","Jukapp/JukappStore.js","Jukapp/JukappApi.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
+
+var React=require('react-native/Libraries/react-native/react-native.js');
+var JukappActions=require('Jukapp/JukappActions.js');
+var JukappStore=require('Jukapp/JukappStore.js');
+var JukappApi=require('Jukapp/JukappApi.js');var 
+
+
+StyleSheet=
+
+
+
+
+
+React.StyleSheet;var Text=React.Text;var View=React.View;var TouchableHighlight=React.TouchableHighlight;var TextInput=React.TextInput;var ActivityIndicatorIOS=React.ActivityIndicatorIOS;
+
+var LoginView=React.createClass({displayName:'LoginView',
+getInitialState:function(){
+return {
+loading:false,
+loginError:false};},
+
+
+
+onLoginRequested:function(){var _this=this;
+JukappApi.login(this.state.username,this.state.password).
+catch(function(response){
+_this.setState({loginError:true});}).
+
+done(function(){
+_this.setState({loading:false});
+
+if(JukappStore.isLoggedIn()){
+_this.props.onLogin();}});
+
+
+
+this.setState({loading:true});},
+
+
+render:function(){var _this2=this;
+var header=null;
+
+if(this.state.loading){
+header = 
+React.createElement(View,{style:styles.headerContainer},
+React.createElement(Text,{style:[styles.noticeText,{paddingRight:16}]},'Trying to login'),
+
+
+React.createElement(ActivityIndicatorIOS,null));}else 
+
+
+if(this.state.loginError){
+header = 
+React.createElement(View,{style:styles.headerContainer},
+React.createElement(Text,{style:styles.noticeText},'Login failed'));}else 
+
+
+
+
+{
+header = 
+React.createElement(View,{style:styles.headerContainer},
+React.createElement(Text,{style:styles.noticeText},'Please login to continue'));}
+
+
+
+
+
+
+return (
+React.createElement(View,{style:styles.page},
+React.createElement(View,{style:styles.loginContainer},
+
+header,
+
+React.createElement(TextInput,{
+placeholder:'Username',
+style:styles.textbox,
+autoFocus:true,
+autoCorrect:false,
+autoCapitalize:'none',
+returnKeyType:'next',
+enablesReturnKeyAutomatically:true,
+onSubmitEditing:function(){
+_this2.refs.passwordInput.focus();},
+
+onChange:function(event){
+_this2.setState({
+username:event.nativeEvent.text});}}),
+
+
+
+
+React.createElement(TextInput,{
+ref:'passwordInput',
+placeholder:'Password',
+style:styles.textbox,
+secureTextEntry:true,
+onSubmitEditing:this.onLoginRequested,
+onChange:function(event){
+_this2.setState({
+password:event.nativeEvent.text});}}),
+
+
+
+
+React.createElement(TouchableHighlight,{
+underlayColor:'#66BB6A',
+style:styles.button,
+onPress:this.onLoginRequested},
+React.createElement(Text,{style:styles.buttonText},'Login')))));}});
+
+
+
+
+
+
+
+var styles=StyleSheet.create({
+page:{
+flex:1,
+backgroundColor:'#EEF2F2'},
+
+
+loginContainer:{
+flex:1,
+alignSelf:'center',
+justifyContent:'center',
+padding:20,
+marginBottom:250,
+flexDirection:'column'},
+
+
+headerContainer:{
+alignSelf:'center',
+flexDirection:'row',
+marginBottom:16,
+justifyContent:'center'},
+
+
+noticeText:{
+color:'rgba(0,0,0,0.87)',
+fontSize:16,
+fontWeight:'bold'},
+
+
+textbox:{
+alignSelf:'center',
+height:32,
+width:150,
+borderWidth:1,
+borderColor:'#0f0f0f',
+borderRadius:4,
+fontSize:16,
+margin:8,
+padding:8},
+
+
+button:{
+margin:8,
+alignSelf:'center',
+justifyContent:'center',
+width:75,
+height:40,
+backgroundColor:'#8BC34A',
+padding:16,
+borderRadius:4,
+shadowColor:'#000000',
+shadowRadius:1,
+shadowOpacity:0.3,
+shadowOffset:{
+height:1,
+width:0}},
+
+
+
+buttonText:{
+color:'rgba(0,0,0,0.87)',
+fontSize:16,
+fontWeight:'bold',
+textAlign:'left'}});
+
+
+
+module.exports = LoginView;
+});
+__d('Jukapp/AccountView.js',["react-native/Libraries/react-native/react-native.js","Jukapp/JukappActions.js","Jukapp/JukappStore.js","Jukapp/JukappApi.js","Jukapp/LoginView.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
+
+var React=require('react-native/Libraries/react-native/react-native.js');
+var JukappActions=require('Jukapp/JukappActions.js');
+var JukappStore=require('Jukapp/JukappStore.js');
+var JukappApi=require('Jukapp/JukappApi.js');
+var LoginView=require('Jukapp/LoginView.js');var 
+
+
+StyleSheet=
+
+
+
+React.StyleSheet;var View=React.View;var Text=React.Text;var TouchableHighlight=React.TouchableHighlight;
+
+var AccountView=React.createClass({displayName:'AccountView',
+getInitialState:function(){
+return {
+isLoggedIn:JukappStore.isLoggedIn()};},
+
+
+
+componentDidMount:function(){
+JukappStore.addChangeListener(this._onChange);},
+
+
+componentWillUnmount:function(){
+JukappStore.removeChangeListener(this._onChange);},
+
+
+_onChange:function(){
+this.setState({
+isLoggedIn:JukappStore.isLoggedIn()});},
+
+
+
+render:function(){
+if(!this.state.isLoggedIn){
+return React.createElement(LoginView,{onLogin:this._onChange});}
+
+
+return (
+React.createElement(View,{style:styles.container},
+React.createElement(Text,null,'Logged in as ',JukappStore.getUser().username),
+React.createElement(TouchableHighlight,{
+underlayColor:'#66BB6A',
+style:styles.button,
+onPress:function(){
+JukappActions.loggedOut();}},
+
+
+React.createElement(Text,{style:styles.buttonText},'Logout'))));}});
+
+
+
+
+
+
+var styles=StyleSheet.create({
+container:{
+flex:1,
+backgroundColor:'#EEF2F2',
+alignItems:'center',
+justifyContent:'center'},
+
+
+button:{
+margin:8,
+alignSelf:'center',
+alignItems:'center',
+justifyContent:'center',
+width:150,
+height:40,
+backgroundColor:'#F44336',
+padding:16,
+borderRadius:4,
+shadowColor:'#000000',
+shadowRadius:1,
+shadowOpacity:0.3,
+shadowOffset:{
+height:1,
+width:0}},
+
+
+
+buttonText:{
+color:'rgba(0,0,0,0.87)',
+fontSize:16,
+fontWeight:'bold',
+textAlign:'left'}});
+
+
+
+module.exports = AccountView;
+});
+__d('Jukapp/RoomView.js',["react-native/Libraries/react-native/react-native.js","Jukapp/SearchResultsListView.js","Jukapp/FavoritesListView.js","Jukapp/JukappActions.js","Jukapp/JukappStore.js","Jukapp/VideoCell.js","Jukapp/JukappApi.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
+
+var React=require('react-native/Libraries/react-native/react-native.js');
+var SearchResultsListView=require('Jukapp/SearchResultsListView.js');
+var FavoritesListView=require('Jukapp/FavoritesListView.js');
+var JukappActions=require('Jukapp/JukappActions.js');
+var JukappStore=require('Jukapp/JukappStore.js');
+var VideoCell=require('Jukapp/VideoCell.js');
+var JukappApi=require('Jukapp/JukappApi.js');var 
+
+
+StyleSheet=
+
+
+
+
+
+React.StyleSheet;var View=React.View;var Image=React.Image;var Text=React.Text;var ListView=React.ListView;var ActivityIndicatorIOS=React.ActivityIndicatorIOS;
+
+var RoomView=React.createClass({displayName:'RoomView',
+
+getInitialState:function(){
+var dataSource=new ListView.DataSource({rowHasChanged:function(r1,r2){return r1 !== r2;}});
+
+return {
+dataSource:dataSource.cloneWithRows(JukappStore.getQueuedVideos()),
+loading:true};},
+
+
+
+componentDidMount:function(){var _this=this;
+JukappApi.addEventListener(function(message){
+_this._refreshList();});
+
+
+JukappStore.addChangeListener(this._onChange);
+
+this._refreshList();},
+
+
+componentWillUnmount:function(){
+JukappStore.removeChangeListener(this._onChange);
+JukappApi.removeEventListener();},
+
+
+_refreshList:function(){
+JukappApi.fetchQueuedVideos().done(JukappActions.loadedQueuedVideos);},
+
+
+_onChange:function(){
+this.setState({
+dataSource:this.state.dataSource.cloneWithRows(JukappStore.getQueuedVideos()),
+loading:false});},
+
+
+
+_renderRow:function(rowData,sectionID,rowID){
+return (
+React.createElement(VideoCell,{video:rowData,onFavoriteToggled:this._refreshList}));},
+
+
+
+_renderFooter:function(){
+if(this.state.loading){
+return React.createElement(ActivityIndicatorIOS,null);}},
+
+
+
+render:function(){
+return (
+React.createElement(ListView,{
+style:styles.container,
+contentContainerStyle:styles.listViewContent,
+dataSource:this.state.dataSource,
+renderRow:this._renderRow,
+renderFooter:this._renderFooter,
+automaticallyAdjustContentInsets:false}));}});
+
+
+
+
+
+var styles=StyleSheet.create({
+container:{
+padding:10,
+backgroundColor:'#EEF2F2'},
+
+
+listViewContent:{
+justifyContent:'center'}});
+
+
+
+module.exports = RoomView;
+});
+__d('Jukapp/MenuView.js',["react-native/Libraries/react-native/react-native.js","Jukapp/MenuItemView.js","Jukapp/JukappStore.js","Jukapp/JukappActions.js","react-native-icons/index.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
+
+var React=require('react-native/Libraries/react-native/react-native.js');
+var MenuItemView=require('Jukapp/MenuItemView.js');
+var JukappStore=require('Jukapp/JukappStore.js');
+var JukappActions=require('Jukapp/JukappActions.js');var _require=
+
+
+
+require('react-native-icons/index.js');var Icon=_require.Icon;var 
+
+
+StyleSheet=
+
+
+React.StyleSheet;var View=React.View;var Text=React.Text;
+
+var MenuView=React.createClass({displayName:'MenuView',
+_leaveRoom:function(){
+JukappActions.leftRoom();},
+
+
+render:function(){
+return (
+React.createElement(View,{style:styles.container},
+
+React.createElement(View,{style:styles.header},
+React.createElement(Icon,{
+name:'fontawesome|rss',
+size:20,
+color:'black',
+style:styles.icon}),
+
+React.createElement(Text,{style:styles.headerMainText},JukappStore.getCurrentRoom().name)),
+
+
+React.createElement(MenuItemView,{
+scene:'room',
+title:'Room',
+icon:'fontawesome|home',
+navigator:this.props.navigator,
+menuActions:this.props.menuActions}),
+
+
+React.createElement(MenuItemView,{
+scene:'search',
+title:'Search',
+icon:'fontawesome|search',
+navigator:this.props.navigator,
+menuActions:this.props.menuActions}),
+
+
+React.createElement(MenuItemView,{
+scene:'favorites',
+title:'Favorites',
+icon:'fontawesome|star',
+navigator:this.props.navigator,
+menuActions:this.props.menuActions}),
+
+
+React.createElement(MenuItemView,{
+scene:'account',
+title:'My Account',
+icon:'fontawesome|user',
+navigator:this.props.navigator,
+menuActions:this.props.menuActions}),
+
+
+React.createElement(MenuItemView,{
+title:'Leave Room',
+icon:'fontawesome|sign-out',
+navigator:this.props.navigator,
+onPress:this._leaveRoom,
+menuActions:this.props.menuActions})));}});
+
+
+
+
+
+
+var styles=StyleSheet.create({
+container:{
+flexDirection:'column',
+flex:1},
+
+
+icon:{
+height:20,
+width:20,
+marginRight:16},
+
+
+header:{
+padding:16,
+height:120,
+flexDirection:'row',
+justifyContent:'flex-start',
+alignItems:'center',
+backgroundColor:'#F4F7F7'},
+
+
+headerMainText:{
+fontWeight:'bold',
+fontSize:18}});
+
+
+
+module.exports = MenuView;
+});
+__d('Jukapp/MenuItemView.js',["react-native/Libraries/react-native/react-native.js","react-native-icons/index.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
+
+var React=require('react-native/Libraries/react-native/react-native.js');var _require=
+
+
+
+require('react-native-icons/index.js');var Icon=_require.Icon;var 
+
+
+StyleSheet=
+
+
+
+React.StyleSheet;var View=React.View;var Text=React.Text;var TouchableHighlight=React.TouchableHighlight;
+
+var MenuItemView=React.createClass({displayName:'MenuItemView',
+_onPress:function(){
+this.props.menuActions.close();
+
+if(this.props.onPress){
+this.props.onPress();}else 
+{
+if(this.props.navigator.getCurrentRoutes()[0].id != this.props.scene){
+this.props.navigator.replace({
+id:this.props.scene,
+title:this.props.title});}}},
+
+
+
+
+
+render:function(){
+return (
+React.createElement(TouchableHighlight,{
+style:styles.item,
+onPress:this._onPress,
+underlayColor:'#ebeeee'},
+
+React.createElement(View,{style:styles.itemContent},
+React.createElement(Icon,{
+name:this.props.icon,
+size:20,
+color:'black',
+style:styles.icon}),
+
+React.createElement(Text,{style:styles.itemTitle},this.props.title))));}});
+
+
+
+
+
+
+var styles=StyleSheet.create({
+icon:{
+height:20,
+width:20,
+marginRight:16},
+
+
+item:{
+padding:16,
+height:48,
+justifyContent:'center'},
+
+
+itemContent:{
+flex:1,
+flexDirection:'row',
+alignItems:'center'},
+
+
+itemTitle:{
+fontSize:14}});
+
+
+
+module.exports = MenuItemView;
+});
+__d('react-native-side-menu/index.js',["react-native-side-menu/styles.js","react-native-side-menu/animations.js","react-native/Libraries/react-native/react-native.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _extends=Object.assign || function(target){for(var i=1;i < arguments.length;i++) {var source=arguments[i];for(var key in source) {if(Object.prototype.hasOwnProperty.call(source,key)){target[key] = source[key];}}}return target;};var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}const styles=require('react-native-side-menu/styles.js');
+const queueAnimation=require('react-native-side-menu/animations.js');
+const React=require('react-native/Libraries/react-native/react-native.js');const 
+Dimensions=React.Dimensions;
+const deviceScreen=Dimensions.get('window');const 
+
+
+PanResponder=
+
+
+
+React.PanResponder;const View=React.View;const TouchableWithoutFeedback=React.TouchableWithoutFeedback;const Component=React.Component;
+
+
+
+
+
+
+const openMenuOffset=deviceScreen.width * 2 / 3;
+
+
+
+
+
+const hiddenMenuOffset=0;
+
+
+
+
+
+
+const barrierForward=deviceScreen.width / 4;
+
+
+
+
+
+
+
+function shouldOpenMenu(dx){
+return dx > barrierForward;}var 
+
+
+SideMenu=(function(_Component){_inherits(SideMenu,_Component);
+function SideMenu(props){_classCallCheck(this,SideMenu);
+_get(Object.getPrototypeOf(SideMenu.prototype),'constructor',this).call(this,props);
+
+
+
+
+this.isOpen = false;
+
+
+
+
+
+
+this.left = 0;
+
+
+
+
+
+
+this.prevLeft = 0;}_createClass(SideMenu,[{key:'componentWillMount',value:
+
+
+
+
+
+
+
+function componentWillMount(){
+this.responder = PanResponder.create({
+onMoveShouldSetPanResponder:this.handleMoveShouldSetPanResponder.bind(this),
+onPanResponderMove:this.handlePanResponderMove.bind(this),
+onPanResponderRelease:this.handlePanResponderEnd.bind(this)});}},{key:'updatePosition',value:
+
+
+
+
+
+
+
+
+function updatePosition(){
+this.sideMenu.setNativeProps({left:this.left});}},{key:'gesturesAreEnabled',value:
+
+
+
+
+
+
+function gesturesAreEnabled(){var 
+disableGestures=this.props.disableGestures;
+
+if(typeof disableGestures === 'function'){
+return !disableGestures();}else 
+{
+return !disableGestures;}}},{key:'handleMoveShouldSetPanResponder',value:
+
+
+
+
+
+
+
+function handleMoveShouldSetPanResponder(e,gestureState){
+if(this.gesturesAreEnabled()){
+const x=Math.round(Math.abs(gestureState.dx));
+const y=Math.round(Math.abs(gestureState.dy));
+
+return x > this.props.toleranceX && y < this.props.toleranceY;}else 
+{
+return false;}}},{key:'handlePanResponderMove',value:
+
+
+
+
+
+
+
+
+
+function handlePanResponderMove(e,gestureState){
+this.left = this.prevLeft + gestureState.dx;
+
+if(this.menuPositionMultiplier() * this.left > 0){
+this.updatePosition();}}},{key:'menuPositionMultiplier',value:
+
+
+
+
+
+
+
+function menuPositionMultiplier(){
+return this.props.menuPosition === 'right'?-1:1;}},{key:'openMenu',value:
+
+
+
+
+
+
+function openMenu(){
+queueAnimation(this.props.animation);
+
+this.left = this.menuPositionMultiplier() * (
+this.props.openMenuOffset || openMenuOffset);
+
+this.updatePosition();
+this.prevLeft = this.left;
+
+if(!this.isOpen){
+this.props.onChange(this.isOpen);
+
+this.isOpen = true;
+
+
+if(this.props.touchToClose){
+this.forceUpdate();}}}},{key:'closeMenu',value:
+
+
+
+
+
+
+
+
+function closeMenu(){
+queueAnimation(this.props.animation);
+this.left = this.menuPositionMultiplier() * (
+this.props.hiddenMenuOffset || hiddenMenuOffset);
+
+this.updatePosition();
+this.prevLeft = this.left;
+
+if(this.isOpen){
+this.props.onChange(this.isOpen);
+
+this.isOpen = false;
+
+if(this.props.touchToClose){
+this.forceUpdate();}}}},{key:'toggleMenu',value:
+
+
+
+
+
+
+
+
+function toggleMenu(){
+if(this.isOpen){
+this.closeMenu();}else 
+{
+this.openMenu();}}},{key:'handlePanResponderEnd',value:
+
+
+
+
+
+
+
+
+
+function handlePanResponderEnd(e,gestureState){
+const shouldOpen=this.menuPositionMultiplier() * (
+this.left + gestureState.dx);
+
+if(shouldOpenMenu(shouldOpen)){
+this.openMenu();}else 
+{
+this.closeMenu();}
+
+
+this.updatePosition();
+this.prevLeft = this.left;}},{key:'handleOverlayPress',value:
+
+
+function handleOverlayPress(e){
+this.closeMenu();}},{key:'getContentView',value:
+
+
+
+
+
+
+function getContentView(){var _this=this;
+const menuActions=this.getMenuActions();
+
+var overlay=null;
+
+if(this.isOpen && this.props.touchToClose){
+overlay = 
+React.createElement(TouchableWithoutFeedback,{onPress:this.handleOverlayPress.bind(this)},
+React.createElement(View,{style:styles.overlay}));}
+
+
+
+
+const children=React.Children.map(this.props.children,
+function(child){return React.cloneElement(child,{menuActions:menuActions});});
+
+return (
+React.createElement(View,_extends({
+style:styles.frontView,
+ref:function(sideMenu){return _this.sideMenu = sideMenu;}},
+this.responder.panHandlers),
+children,
+overlay));}},{key:'getMenuActions',value:
+
+
+
+
+
+
+
+
+
+function getMenuActions(){
+return {
+close:this.closeMenu.bind(this),
+toggle:this.toggleMenu.bind(this),
+open:this.openMenu.bind(this)};}},{key:'getMenuView',value:
+
+
+
+
+
+
+
+
+
+function getMenuView(){
+const menuActions=this.getMenuActions();
+
+return (
+React.createElement(View,{style:styles.menu},
+React.addons.cloneWithProps(this.props.menu,{menuActions:menuActions})));}},{key:'render',value:
+
+
+
+
+
+
+
+
+function render(){
+return (
+React.createElement(View,{style:styles.container},
+this.getMenuView(),
+this.getContentView()));}}]);return SideMenu;})(Component);
+
+
+
+
+
+SideMenu.propTypes = {
+toleranceX:React.PropTypes.number,
+toleranceY:React.PropTypes.number,
+onChange:React.PropTypes.func,
+touchToClose:React.PropTypes.bool,
+disableGestures:React.PropTypes.oneOf([React.PropTypes.func,React.PropTypes.bool])};
+
+
+SideMenu.defaultProps = {
+toleranceY:10,
+toleranceX:10,
+onChange:function(){return {};},
+touchToClose:false};
+
+
+module.exports = SideMenu;
+});
+__d('react-native-side-menu/styles.js',["react-native/Libraries/react-native/react-native.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var React=require('react-native/Libraries/react-native/react-native.js');
+var deviceScreen=require('Dimensions').get('window');var 
+
+
+StyleSheet=
+React.StyleSheet;
+
+module.exports = StyleSheet.create({
+container:{
+flex:1,
+justifyContent:'center',
+alignItems:'center'},
+
+menu:{
+flex:1,
+backgroundColor:'transparent',
+position:'absolute',
+top:0,
+left:0,
+width:deviceScreen.width,
+height:deviceScreen.height},
+
+frontView:{
+flex:1,
+position:'absolute',
+left:0,
+top:0,
+backgroundColor:'transparent',
+width:deviceScreen.width,
+height:deviceScreen.height},
+
+overlay:{
+position:'absolute',
+top:0,
+left:0,
+bottom:0,
+right:0,
+backgroundColor:'transparent'}});
+});
+__d('react-native-side-menu/animations.js',["react-native/Libraries/react-native/react-native.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var LayoutAnimation=require('react-native/Libraries/react-native/react-native.js').LayoutAnimation;
+var DEFAULT_ANIMATION='linear';
+
+var animations={
+layout:{
+spring:{
+duration:500,
+create:{
+duration:300,
+type:LayoutAnimation.Types.easeInEaseOut,
+property:LayoutAnimation.Properties.opacity},
+
+update:{
+type:LayoutAnimation.Types.spring,
+springDamping:0.7,
+property:LayoutAnimation.Properties.opacity}},
+
+
+linear:{
+duration:300,
+create:{
+type:LayoutAnimation.Types.linear,
+property:LayoutAnimation.Properties.opacity},
+
+update:{
+type:LayoutAnimation.Types.linear,
+springDamping:0.7,
+property:LayoutAnimation.Properties.opacity}},
+
+
+easeInEaseOut:{
+duration:300,
+create:{
+type:LayoutAnimation.Types.easeInEaseOut,
+property:LayoutAnimation.Properties.scaleXY},
+
+update:{
+delay:100,
+type:LayoutAnimation.Types.easeInEaseOut,
+property:LayoutAnimation.Properties.opacity}}}};
+
+
+
+
+
+var layoutAnimationConfigs={
+'spring':animations.layout.spring,
+'linear':animations.layout.linear,
+'easeInOut':animations.layout.easeInEaseOut};
+
+
+module.exports = function setAnimation(animation){
+var _animation=layoutAnimationConfigs[animation];
+if(!_animation){
+_animation = layoutAnimationConfigs[DEFAULT_ANIMATION];}
+
+
+LayoutAnimation.configureNext(_animation);};
 });
 ;require("Jukapp/index.ios.js");
 //@ sourceMappingURL=/index.ios.map
