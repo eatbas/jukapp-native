@@ -1,14 +1,11 @@
 var React = require('react-native');
-var Dispatcher = require('../../Dispatcher');
-var EventEmitter = require('events').EventEmitter;
+var Store = require('./Store');
+
 var {
   AsyncStorage
 } = React;
 
-var assign = require('object-assign');
-
-var CHANGE_EVENT = 'change';
-var JUKAPP_STORE_KEY = '@JukappStore:key'
+var JUKAPP_STORE_KEY = '@JukappStore:key';
 
 var currentRoom;
 var user;
@@ -18,164 +15,127 @@ var searchResults = [];
 var queuedVideos = [];
 var lastQuery;
 
-function joinedRoom(room) {
-  currentRoom = room;
-  syncStorage();
-}
-
-function loggedOut() {
-  user = null;
-  syncStorage();
-}
-
-function leftRoom() {
-  currentRoom = null;
-  syncStorage();
-}
-
-function loggedIn(loginUser) {
-  user = loginUser;
-  syncStorage();
-}
-
-function syncStorage() {
+// HAS TO GO
+var syncStorage = () => {
   var store = JSON.stringify({
-    user: user,
-    room: currentRoom
+    room: currentRoom,
+    user
   });
 
   AsyncStorage.setItem(JUKAPP_STORE_KEY, store);
-}
+};
 
-var JukappStore = assign({}, EventEmitter.prototype, {
+var JukappStore = new Store((register: Function) => {
 
-  initialize: function() {
-    // AsyncStorage.removeItem(JUKAPP_STORE_KEY);
-    AsyncStorage.getItem(JUKAPP_STORE_KEY).then((value) => {
-      var store = JSON.parse(value);
-      if (store) {
-        console.log(store);
-        if (store.room) {
-          currentRoom = store.room;
+  register({
+    initialize() {
+      AsyncStorage.removeItem(JUKAPP_STORE_KEY);
+      AsyncStorage.getItem(JUKAPP_STORE_KEY).then((value) => {
+        var store = JSON.parse(value);
+        if (store) {
+          console.log(store);
+          if (store.room) {
+            currentRoom = store.room;
+          }
+
+          if (store.user) {
+            user = store.user;
+          }
         }
+      });
+    },
 
-        if (store.user) {
-          user = store.user;
-        }
-      }
-    });
-  },
+    joinRoom(action) {
+      currentRoom = action.room;
+      syncStorage();
+    },
 
-  isInRoom: function() {
-    return !!currentRoom
-  },
+    leaveRoom() {
+      currentRoom = null;
+      syncStorage();
+    },
 
-  isLoggedIn: function() {
-    return !!user;
-  },
+    login(action) {
+      user = action.user;
+      syncStorage();
+    },
 
-  isFavoriteVideo: function(video) {
-    for (var id in favorites) {
-      if (favorites[id]["video"].youtube_id == video.youtube_id) {
-        return true;
-      }
-    }
+    logout() {
+      user = null;
+      syncStorage();
+    },
 
-    return false;
-  },
-
-  getUser: function() {
-    if (this.isLoggedIn()) {
-      return user;
-    }
-  },
-
-  getRooms: function() {
-    return rooms;
-  },
-
-  getCurrentRoom: function() {
-    return currentRoom;
-  },
-
-  getSearchResults: function() {
-    return searchResults;
-  },
-
-  getLastQuery: function() {
-    return lastQuery;
-  },
-
-  getQueuedVideos: function() {
-    return queuedVideos;
-  },
-
-  getFavorites: function() {
-    return favorites;
-  },
-
-  emitChange: function() {
-    this.emit(CHANGE_EVENT);
-  },
-
-  addChangeListener: function(callback) {
-    this.on(CHANGE_EVENT, callback);
-  },
-
-  removeChangeListener: function(callback) {
-    this.removeListener(CHANGE_EVENT, callback);
-  }
-});
-
-// Register callback to handle all updates
-Dispatcher.register(function(action) {
-  switch(action.actionType) {
-    case 'loaded-rooms':
+    loadRooms(action) {
       rooms = action.rooms;
-      JukappStore.emitChange();
-      break;
+    },
 
-    case 'joined-room':
-      joinedRoom(action.room);
-      JukappStore.emitChange();
-      break;
-
-    case 'left-room':
-      leftRoom();
-      JukappStore.emitChange();
-      break;
-
-    case 'logged-in':
-      loggedIn(action.user);
-      JukappStore.emitChange();
-      break;
-
-    case 'logged-out':
-      loggedOut();
-      JukappStore.emitChange();
-      break;
-
-    case 'loaded-queued-videos':
+    loadQueuedVideos(action) {
       queuedVideos = action.queuedVideos;
-      JukappStore.emitChange();
-      break;
+    },
 
-
-    case 'loaded-favorites':
+    loadFavorites(action) {
       favorites = action.favorites;
-      JukappStore.emitChange();
-      break;
+    },
 
-    case 'completed-search':
+    loadSearchResults(action) {
       searchResults = action.searchResults;
-      console.log('ac ' + action.query);
       lastQuery = action.query;
-      JukappStore.emitChange();
-      break;
+    }
+  });
 
-    default:
-      // no op
-  }
+  return {
+    inRoom() {
+      return !!currentRoom;
+    },
+
+    currentRoom() {
+      return currentRoom;
+    },
+
+    loggedIn() {
+      return !!user;
+    },
+
+    currentUser() {
+      // try loggedIn()
+      if (user) {
+        return user;
+      }
+    },
+
+    // HAS TO GO
+    isFavoriteVideo(video) {
+      for (var id in favorites) {
+        if (favorites[id]['video'].youtube_id == video.youtube_id) {
+          return true;
+        }
+      }
+
+      return false;
+    },
+
+    // https://github.com/Shopify/shopify-native/blob/9c673cce1026b8f08ebe398ec894f08e83fd093f/app/stores/OrderFulfillmentLineItemsStore.js#L25
+    // try get rooms()
+    getRooms() {
+      return rooms;
+    },
+
+    getSearchResults() {
+      return searchResults;
+    },
+
+    getLastQuery() {
+      return lastQuery;
+    },
+
+    getQueuedVideos() {
+      return queuedVideos;
+    },
+
+    getFavorites() {
+      return favorites;
+    }
+  };
 });
 
 module.exports = JukappStore;

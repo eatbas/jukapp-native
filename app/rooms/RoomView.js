@@ -43,7 +43,7 @@ class RoomView extends Component {
   _fetchData() {
     JukappApi.fetchQueuedVideos().done((queuedVideos) => {
       Dispatcher.dispatch({
-        actionType: 'loaded-queued-videos',
+        type: 'loadQueuedVideos',
         queuedVideos
       });
     });

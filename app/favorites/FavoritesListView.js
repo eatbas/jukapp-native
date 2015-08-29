@@ -1,5 +1,3 @@
-'use strict';
-
 var React = require('react-native');
 var Dispatcher = require('../../Dispatcher');
 var JukappStore = require('../stores/JukappStore');
@@ -22,7 +20,7 @@ class FavoritesListView extends Component {
 
     this.state = {
       dataSource: dataSource.cloneWithRows(JukappStore.getFavorites()),
-      isLoggedIn: JukappStore.isLoggedIn(),
+      loggedIn: JukappStore.loggedIn(),
       loading: true
     };
   }
@@ -51,7 +49,7 @@ class FavoritesListView extends Component {
   _fetchData() {
     JukappApi.fetchFavorites().done((favorites) => {
       Dispatcher.dispatch({
-        actionType: 'loaded-favorites',
+        type: 'loadFavorites',
         favorites
       });
     });
@@ -60,13 +58,13 @@ class FavoritesListView extends Component {
   _onChange() {
     this.setState({
       dataSource: this.state.dataSource.cloneWithRows(JukappStore.getFavorites()),
-      isLoggedIn: JukappStore.isLoggedIn(),
+      loggedIn: JukappStore.loggedIn(),
       loading: false
     });
   }
 
   render() {
-    if(!this.state.isLoggedIn) {
+    if(!this.state.loggedIn) {
       return (<LoginView onLogin={this._fetchData.bind(this)} />);
     }
 

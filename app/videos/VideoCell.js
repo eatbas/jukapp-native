@@ -1,5 +1,3 @@
-'use strict';
-
 var React = require('react-native');
 var JukappStore = require('../stores/JukappStore');
 var JukappApi = require('../JukappApi');
@@ -18,7 +16,7 @@ var {
 class VideoCell extends Component {
 
   renderFavoriteButton() {
-    if (!JukappStore.isLoggedIn()) {
+    if (!JukappStore.loggedIn()) {
       return;
     }
 
@@ -30,7 +28,7 @@ class VideoCell extends Component {
     var playCount = 0;
 
     if (video['video_events']) {
-      var videoEvent = video['video_events'].find((events) => events['room_id'] == JukappStore.getCurrentRoom().id);
+      var videoEvent = video['video_events'].find((events) => events['room_id'] == JukappStore.currentRoom().id);
       if (videoEvent) playCount = videoEvent['play_count'];
     }
 

@@ -16,7 +16,7 @@ class AccountView extends Component {
     super(props);
 
     this.state = {
-      isLoggedIn: JukappStore.isLoggedIn()
+      loggedIn: JukappStore.loggedIn()
     };
   }
 
@@ -30,24 +30,24 @@ class AccountView extends Component {
 
   _onChange() {
     this.setState({
-      isLoggedIn: JukappStore.isLoggedIn()
+      loggedIn: JukappStore.loggedIn()
     });
   }
 
   render() {
-    if(!this.state.isLoggedIn) {
+    if(!this.state.loggedIn) {
       return (<LoginView onLogin={this._onChange.bind(this)} />);
     }
 
     return (
       <View style={styles.container} >
-        <Text>Logged in as {JukappStore.getUser().username}</Text>
+        <Text>Logged in as {JukappStore.currentUser().username}</Text>
         <TouchableHighlight
           underlayColor="#66BB6A"
           style={styles.button}
           onPress={() => {
             Dispatcher.dispatch({
-              actionType: 'logged-out'
+              type: 'logout'
             });
           }}
         >

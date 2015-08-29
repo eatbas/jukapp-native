@@ -33,7 +33,7 @@ class LoginView extends Component {
       .done(() => {
         this.setState({loading: false});
 
-        if (JukappStore.isLoggedIn()) {
+        if (JukappStore.loggedIn()) {
           this.props.onLogin();
         }
       });

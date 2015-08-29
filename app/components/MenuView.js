@@ -20,7 +20,7 @@ class MenuView extends Component {
 
   _leaveRoom() {
     Dispatcher.dispatch({
-      actionType: 'left-room'
+      type: 'leaveRoom'
     });
   }
 
@@ -45,7 +45,7 @@ class MenuView extends Component {
             color='black'
             style={styles.icon}
           />
-          <Text style={styles.headerMainText}>{JukappStore.getCurrentRoom().name}</Text>
+          <Text style={styles.headerMainText}>{JukappStore.currentRoom().name}</Text>
         </View>
         <View style={styles.content}>
           {this._renderMenuItems()}

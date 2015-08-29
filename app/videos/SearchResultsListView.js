@@ -1,5 +1,3 @@
-'use strict';
-
 var React = require('react-native');
 var SearchBar = require('react-native-search-bar');
 var VideoCell = require('./VideoCell.js');
@@ -54,7 +52,7 @@ class SearchResultsListView extends Component {
     JukappApi.searchVideo(this.state.query)
       .done((searchResults) => {
         Dispatcher.dispatch({
-          actionType: 'completed-search',
+          type: 'loadSearchResults',
           searchResults,
           query: this.state.query
         });
@@ -81,7 +79,7 @@ class SearchResultsListView extends Component {
             JukappApi.searchVideo(query)
               .done((searchResults) => {
                 Dispatcher.dispatch({
-                  actionType: 'completed-search',
+                  type: 'loadSearchResults',
                   searchResults,
                   query
                 });

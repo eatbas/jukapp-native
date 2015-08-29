@@ -14,8 +14,8 @@ var eventListener;
 
 var JukappApi = {
   defaultOptions() {
-    var currentRoom = JukappStore.getCurrentRoom();
-    var user = JukappStore.getUser();
+    var currentRoom = JukappStore.currentRoom();
+    var user = JukappStore.currentUser();
 
     var options = {
       headers: {
@@ -49,7 +49,7 @@ var JukappApi = {
         return response.json();
       })
       .then((rooms) => {
-        return Dispatcher.dispatch({actionType: 'loaded-rooms', rooms});
+        return Dispatcher.dispatch({type: 'loadRooms', rooms});
       });
   },
 
@@ -58,11 +58,14 @@ var JukappApi = {
       .then((response) => {
         return response.json();
       })
-      .then(() => {
-        return Dispatcher.dispatch({actionType: 'joined-room'});
+      .then((responseData) => {
+        return Dispatcher.dispatch({
+          type: 'joinRoom',
+          room: responseData
+        });
       })
       .catch((response) => {
-        Dispatcher.dispatch({actionType: 'left-room'});
+        Dispatcher.dispatch({type: 'leaveRoom'});
         console.log('Join error', response);
         AlertIOS.alert('Join error' + response);
       });
@@ -114,8 +117,8 @@ var JukappApi = {
     return fetch(JUKAPP_URL + '/users/sign_in', options)
       .then((response) => {
         if (response.status == 201) {
-          return response.json();
           console.log('Successfully logged in');
+          return response.json();
         } else {
           console.log('Could not log in');
           return Promise.reject(new Error);
@@ -129,7 +132,7 @@ var JukappApi = {
           authToken: responseData['authentication_token']
         };
 
-        Dispatcher.dispatch({actionType: 'logged-in', user});
+        Dispatcher.dispatch({type: 'login', user});
       }));
   },
 
@@ -151,8 +154,8 @@ var JukappApi = {
         return this.checkFavorites(videos, responseData);
       })
       .catch((response) => {
-        console.log('Queued videos error', response)
-        AlertIOS.alert('Queued videos error' + response)
+        console.log('Queued videos error', response);
+        AlertIOS.alert('Queued videos error' + response);
       });
   },
 
@@ -168,7 +171,7 @@ var JukappApi = {
   },
 
   fetchFavorites() {
-    if (!JukappStore.isLoggedIn()) {
+    if (!JukappStore.loggedIn()) {
       return new Promise((fulfill) => {
         fulfill([]);
       });
@@ -197,7 +200,7 @@ var JukappApi = {
 
   favoriteVideo(video) {
     var options = this.defaultOptions();
-    options['method'] = 'POST'
+    options['method'] = 'POST';
     options['body'] = this.videoOptions(video);
 
     fetch(JUKAPP_URL + '/favorites', options)
@@ -241,7 +244,7 @@ var JukappApi = {
         }
       });
 
-    EventSource.connectWithURL(JUKAPP_URL + '/events?channels[]=queue-' + JukappStore.getCurrentRoom().id);
+    EventSource.connectWithURL(JUKAPP_URL + '/events?channels[]=queue-' + JukappStore.currentRoom().id);
   },
 
   removeEventListener() {
