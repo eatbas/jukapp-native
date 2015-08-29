@@ -12,11 +12,14 @@ var {
   StyleSheet,
   View,
   Text,
-  PropTypes
+  PropTypes,
+  TouchableHighlight
 } = React;
 
 class MenuView extends Component {
+
   _leaveRoom() {
+    // should call dispatcher
     JukappActions.leftRoom();
   }
 
@@ -34,7 +37,6 @@ class MenuView extends Component {
   render() {
     return (
       <View style={styles.container}>
-
         <View style={styles.header}>
           <Icon
             name='fontawesome|rss'
@@ -44,7 +46,19 @@ class MenuView extends Component {
           />
           <Text style={styles.headerMainText}>{JukappStore.getCurrentRoom().name}</Text>
         </View>
-        {this._renderMenuItems()}
+        <View style={styles.content}>
+          {this._renderMenuItems()}
+        </View>
+        <View style={styles.footer}>
+          <TouchableHighlight
+            style={styles.footerButton}
+            underlayColor="gray"
+            activeOpacity={0.3}
+            onPress={this._leaveRoom}
+          >
+              <Text style={styles.footerButtonText}>Leave Room</Text>
+          </TouchableHighlight>
+        </View>
       </View>
     );
   }
@@ -59,6 +73,28 @@ var styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
     flex: 1
+  },
+
+  content: {
+    flex: 1
+  },
+
+  footer: {
+    height: 48,
+    width: 250,
+    justifyContent: 'center',
+    backgroundColor: 'gray'
+  },
+
+  footerButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1
+  },
+
+  footerButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold'
   },
 
   icon: {

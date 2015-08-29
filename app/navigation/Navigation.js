@@ -59,7 +59,7 @@ var NavigatorRouteMapper = {
       <TouchableHighlight
         onPress={() => Router.sideMenu.toggleMenu()}
         activeOpacity={0.3}
-        underlayColor='#607D8B'
+        underlayColor='#33ADFF'
         style={styles.headerLeftView}
       >
         <Icon
