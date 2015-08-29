@@ -27,12 +27,12 @@ class RoomView extends Component {
   componentDidMount() {
     JukappApi.addEventListener((message) => {
       console.log(message);
-      this._refreshList();
+      this._fetchData();
     });
 
     JukappStore.addChangeListener(this._onChange.bind(this));
 
-    this._refreshList();
+    this._fetchData();
   }
 
   componentWillUnmount() {
@@ -40,7 +40,7 @@ class RoomView extends Component {
     JukappApi.removeEventListener();
   }
 
-  _refreshList() {
+  _fetchData() {
     JukappApi.fetchQueuedVideos().done(JukappActions.loadedQueuedVideos);
   }
 
@@ -53,7 +53,7 @@ class RoomView extends Component {
 
   _renderRow(video) {
     return (
-      <VideoCell video={video} onFavoriteToggled={this._refreshList.bind(this)} />
+      <VideoCell video={video} onFavoriteToggled={this._fetchData.bind(this)} />
     );
   }
 

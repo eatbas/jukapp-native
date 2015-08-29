@@ -8,54 +8,61 @@ var JukappApi = require('../JukappApi');
 var LoginView = require('../accounts/LoginView');
 
 var {
+  Component,
   StyleSheet,
   ListView,
   ActivityIndicatorIOS
 } = React;
 
-var FavoritesListView = React.createClass ({
-  getInitialState: function() {
+class FavoritesListView extends Component {
+  constructor(props) {
+    super(props);
+
     var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
-    return {
+    this.state = {
       dataSource: dataSource.cloneWithRows(JukappStore.getFavorites()),
       isLoggedIn: JukappStore.isLoggedIn(),
       loading: true
     };
-  },
+  }
 
-  componentDidMount: function() {
-    JukappStore.addChangeListener(this._onChange);
-    this._refreshList();
-  },
+  componentDidMount() {
+    JukappStore.addChangeListener(this._onChange.bind(this));
+    this._fetchData();
+  }
 
-  componentWillUnmount: function() {
-    JukappStore.removeChangeListener(this._onChange);
-  },
+  componentWillUnmount() {
+    JukappStore.removeChangeListener(this._onChange.bind(this));
+  }
 
-  _handleBackButtonPress: function() {
-    this.props.navigator.pop();
-  },
-
-  renderRow: function(rowData, sectionID, rowID) {
+  _renderRow(video) {
     return (
-      <VideoCell video={rowData} onFavoriteToggled={this._refreshList} />
-    )
-  },
+      <VideoCell video={video} onFavoriteToggled={this._fetchData.bind(this)} />
+    );
+  }
 
-  renderFooter: function() {
+  _renderFooter() {
     if (this.state.loading) {
       return <ActivityIndicatorIOS />;
     }
-  },
+  }
 
-  _refreshList: function() {
+  _fetchData() {
     JukappApi.fetchFavorites().done(JukappActions.loadedFavorites);
-  },
+  }
 
-  render: function() {
+  _onChange() {
+    this.setState({
+      dataSource: this.state.dataSource.cloneWithRows(JukappStore.getFavorites()),
+      isLoggedIn: JukappStore.isLoggedIn(),
+      loading: false
+    });
+  }
+
+  render() {
     if(!this.state.isLoggedIn) {
-      return (<LoginView onLogin={this._refreshList} />);
+      return (<LoginView onLogin={this._fetchData.bind(this)} />);
     }
 
     return (
@@ -63,31 +70,23 @@ var FavoritesListView = React.createClass ({
         style={styles.container}
         contentContainerStyle={styles.listViewContent}
         dataSource={this.state.dataSource}
-        renderRow={this.renderRow}
-        renderFooter={this.renderFooter}
-        automaticallyAdjustContentInsets={false}
+        renderRow={this._renderRow.bind(this)}
+        renderFooter={this._renderFooter.bind(this)}
+        contentInset={{ bottom: 0, top: 40 }}
       />
     );
-  },
-
-  _onChange: function() {
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(JukappStore.getFavorites()),
-      isLoggedIn: JukappStore.isLoggedIn(),
-      loading: false
-    })
-  },
-});
+  }
+}
 
 var styles = StyleSheet.create({
   container: {
     padding: 10,
-    backgroundColor: '#EEF2F2',
+    backgroundColor: '#EEF2F2'
   },
 
   listViewContent: {
-    justifyContent: 'center',
+    justifyContent: 'center'
   }
 });
 
-module.exports = FavoritesListView
+module.exports = FavoritesListView;
