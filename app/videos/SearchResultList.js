@@ -106,7 +106,7 @@ class SearchResultsList extends Component {
 
 var styles = StyleSheet.create({
   container: {
-    paddingTop: 100,
+    paddingTop: 64,
     flex: 1,
     backgroundColor: '#EEF2F2'
   },
