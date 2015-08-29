@@ -2,67 +2,72 @@
 
 var React = require('react-native');
 var SearchBar = require('react-native-search-bar');
-var VideoCell = require('./VideoCell.js')
+var VideoCell = require('./VideoCell.js');
 var JukappStore = require('../stores/JukappStore');
-var JukappActions = require('../../JukappActions');
+var Dispatcher = require('../../Dispatcher');
 var JukappApi = require('../JukappApi');
 
 var {
+  Component,
   StyleSheet,
   View,
   ListView,
-  TouchableHighlight,
   ActivityIndicatorIOS
 } = React;
 
-var SearchResultsListView = React.createClass ({
+class SearchResultsListView extends Component {
 
-  getInitialState: function() {
+  constructor(props) {
+    super(props);
+
+    // fix this
     var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => true});
 
-    console.log(JukappStore.getLastQuery())
-
-    return {
+    this.state = {
       dataSource: dataSource.cloneWithRows(JukappStore.getSearchResults()),
       query: JukappStore.getLastQuery()
     };
-  },
+  }
 
-  componentDidMount: function() {
-    JukappStore.addChangeListener(this._onChange);
-  },
+  componentDidMount() {
+    JukappStore.addChangeListener(this._onChange.bind(this));
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     JukappStore.removeChangeListener(this._onChange);
-  },
+  }
 
-  _renderFooter: function() {
+  _renderFooter() {
     if (this.state.loading) {
       return <ActivityIndicatorIOS />;
     }
-  },
+  }
 
-  _onChange: function() {
+  _onChange() {
     this.setState({
       loading: false,
       dataSource: this.state.dataSource.cloneWithRows(JukappStore.getSearchResults())
     });
-  },
+  }
 
-  _refreshList: function() {
+  _refreshList() {
     JukappApi.searchVideo(this.state.query)
       .done((searchResults) => {
-        JukappActions.completedSearch(searchResults, this.state.query);
+        Dispatcher.dispatch({
+          actionType: 'completed-search',
+          searchResults,
+          query: this.state.query
+        });
       });
-  },
+  }
 
-  _renderRow: function(rowData, sectionID, rowID) {
+  _renderRow(video) {
     return (
-      <VideoCell video={rowData} onFavoriteToggled={this._refreshList}/>
-    )
-  },
+      <VideoCell video={video} onFavoriteToggled={this._refreshList.bind(this)}/>
+    );
+  }
 
-  render: function() {
+  render() {
     return (
       <View style={styles.container}>
         <SearchBar
@@ -70,16 +75,20 @@ var SearchResultsListView = React.createClass ({
           onSearchButtonPress={(query) => {
             this.setState({
               loading: true,
-              query: query,
-            })
+              query
+            });
 
             JukappApi.searchVideo(query)
               .done((searchResults) => {
-                JukappActions.completedSearch(searchResults, query);
+                Dispatcher.dispatch({
+                  actionType: 'completed-search',
+                  searchResults,
+                  query
+                });
               });
           }}
           onCancelButtonPress={() => {
-            console.log('onCancelButtonPress')
+            console.log('onCancelButtonPress');
           }}
         />
 
@@ -87,28 +96,31 @@ var SearchResultsListView = React.createClass ({
           style={styles.listView}
           contentContainerStyle={styles.listViewContent}
           dataSource={this.state.dataSource}
-          renderRow={this._renderRow}
-          renderFooter={this._renderFooter}
+          renderRow={this._renderRow.bind(this)}
+          renderFooter={this._renderFooter.bind(this)}
           automaticallyAdjustContentInsets={false}
         />
 
       </View>
     );
   }
-});
+}
 
 var styles = StyleSheet.create({
   container: {
+    paddingTop: 100,
     flex: 1,
-    backgroundColor: '#EEF2F2',
+    backgroundColor: '#EEF2F2'
   },
+
   listView: {
     backgroundColor: '#EEF2F2',
-    padding: 10,
+    padding: 10
   },
+
   listViewContent: {
-    justifyContent: 'center',
-  },
+    justifyContent: 'center'
+  }
 });
 
-module.exports = SearchResultsListView
+module.exports = SearchResultsListView;

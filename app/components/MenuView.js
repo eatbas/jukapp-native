@@ -1,7 +1,7 @@
 var React = require('react-native');
 var MenuItemView = require('./MenuItemView');
 var JukappStore = require('../stores/JukappStore');
-var JukappActions = require('../../JukappActions');
+var Dispatcher = require('../../Dispatcher');
 
 var {
   Icon
@@ -19,8 +19,9 @@ var {
 class MenuView extends Component {
 
   _leaveRoom() {
-    // should call dispatcher
-    JukappActions.leftRoom();
+    Dispatcher.dispatch({
+      actionType: 'left-room'
+    });
   }
 
   _renderMenuItems() {

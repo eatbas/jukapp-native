@@ -1,6 +1,6 @@
 var React = require('react-native');
-var JukappActions = require('../../JukappActions');
 var JukappStore = require('../stores/JukappStore');
+var Dispatcher = require('../../Dispatcher');
 var LoginView = require('./LoginView');
 
 var {
@@ -46,7 +46,9 @@ class AccountView extends Component {
           underlayColor="#66BB6A"
           style={styles.button}
           onPress={() => {
-            JukappActions.loggedOut();
+            Dispatcher.dispatch({
+              actionType: 'logged-out'
+            });
           }}
         >
           <Text style={styles.buttonText}>Logout</Text>

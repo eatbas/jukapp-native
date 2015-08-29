@@ -1,7 +1,7 @@
 'use strict';
 
 var React = require('react-native');
-var JukappActions = require('../../JukappActions');
+var Dispatcher = require('../../Dispatcher');
 var JukappStore = require('../stores/JukappStore');
 var VideoCell = require('../videos/VideoCell');
 var JukappApi = require('../JukappApi');
@@ -49,7 +49,12 @@ class FavoritesListView extends Component {
   }
 
   _fetchData() {
-    JukappApi.fetchFavorites().done(JukappActions.loadedFavorites);
+    JukappApi.fetchFavorites().done((favorites) => {
+      Dispatcher.dispatch({
+        actionType: 'loaded-favorites',
+        favorites
+      });
+    });
   }
 
   _onChange() {

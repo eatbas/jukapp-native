@@ -1,5 +1,5 @@
 var React = require('react-native');
-var JukappActions = require('../../JukappActions');
+var Dispatcher = require('../../Dispatcher');
 var JukappStore = require('../stores/JukappStore');
 var VideoCell = require('../videos/VideoCell');
 var JukappApi = require('../JukappApi');
@@ -41,7 +41,12 @@ class RoomView extends Component {
   }
 
   _fetchData() {
-    JukappApi.fetchQueuedVideos().done(JukappActions.loadedQueuedVideos);
+    JukappApi.fetchQueuedVideos().done((queuedVideos) => {
+      Dispatcher.dispatch({
+        actionType: 'loaded-queued-videos',
+        queuedVideos
+      });
+    });
   }
 
   _onChange() {

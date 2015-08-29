@@ -1,11 +1,9 @@
-'use strict';
-
 var React = require('react-native');
-var JukappActions = require('../JukappActions');
 var JukappStore = require('./stores/JukappStore');
 var EventSource = require('NativeModules').RNEventSource;
+var Dispatcher = require('../Dispatcher');
 
-var JUKAPP_URL = 'https://jukapp-api.herokuapp.com'
+var JUKAPP_URL = 'https://jukapp-api.herokuapp.com';
 
 var {
   AlertIOS,
@@ -15,7 +13,7 @@ var {
 var eventListener;
 
 var JukappApi = {
-  defaultOptions: function() {
+  defaultOptions() {
     var currentRoom = JukappStore.getCurrentRoom();
     var user = JukappStore.getUser();
 
@@ -38,35 +36,39 @@ var JukappApi = {
     return options;
   },
 
-  videoOptions: function(video) {
+  videoOptions(video) {
     return JSON.stringify({
       youtube_id: video.youtube_id,
       title: video.title
     });
   },
 
-  fetchRooms: function() {
+  fetchRooms() {
     fetch(JUKAPP_URL + '/rooms', this.defaultOptions())
       .then((response) => {
         return response.json();
       })
-      .then(JukappActions.loadedRooms);
+      .then((rooms) => {
+        return Dispatcher.dispatch({actionType: 'loaded-rooms', rooms});
+      });
   },
 
-  joinRoom: function(roomId) {
+  joinRoom(roomId) {
     fetch(JUKAPP_URL + '/rooms/' + roomId + '/join', this.defaultOptions())
       .then((response) => {
         return response.json();
       })
-      .then(JukappActions.joinedRoom)
+      .then(() => {
+        return Dispatcher.dispatch({actionType: 'joined-room'});
+      })
       .catch((response) => {
-        JukappActions.leftRoom();
+        Dispatcher.dispatch({actionType: 'left-room'});
         console.log('Join error', response);
         AlertIOS.alert('Join error' + response);
       });
   },
 
-  searchVideo: function(query) {
+  searchVideo(query) {
     var videos = [];
 
     return fetch(JUKAPP_URL + '/search?query=' + query, this.defaultOptions())
@@ -83,42 +85,39 @@ var JukappApi = {
       });
   },
 
-  queueVideo: function(video) {
+  queueVideo(video) {
     var options = this.defaultOptions();
-    options['method'] = 'POST'
+    options['method'] = 'POST';
     options['body'] = this.videoOptions(video);
 
-    fetch(JUKAPP_URL + "/queue", options)
+    fetch(JUKAPP_URL + '/queue', options)
       .then((response) => {
         if (response.status == 201) {
-          console.log('Successfully queued video')
+          console.log('Successfully queued video');
         } else {
-          console.log('Could not queue video')
+          console.log('Could not queue video');
         }
       })
       .catch((response) => {
-        console.log("Queue error", response)
-        AlertIOS.alert("Queue error" + response)
+        console.log('Queue error', response);
+        AlertIOS.alert('Queue error' + response);
       });
   },
 
-  login: function(username, password) {
+  login(username, password) {
     var options = this.defaultOptions();
-    options['method'] = 'POST'
+    options['method'] = 'POST';
     options['body'] = JSON.stringify({
-      user: {
-        username: username,
-        password: password
-      }
+      user: {username, password}
     });
 
-    return fetch(JUKAPP_URL + "/users/sign_in", options)
+    return fetch(JUKAPP_URL + '/users/sign_in', options)
       .then((response) => {
         if (response.status == 201) {
           return response.json();
-          console.log('Successfully logged in')
+          console.log('Successfully logged in');
         } else {
-          console.log('Could not log in')
+          console.log('Could not log in');
           return Promise.reject(new Error);
         }
       })
@@ -126,18 +125,18 @@ var JukappApi = {
         if (!responseData) return;
 
         var user = {
-          username: responseData["username"],
-          authToken: responseData["authentication_token"]
+          username: responseData['username'],
+          authToken: responseData['authentication_token']
         };
 
-        JukappActions.loggedIn(user);
-      }))
+        Dispatcher.dispatch({actionType: 'logged-in', user});
+      }));
   },
 
-  fetchQueuedVideos: function() {
+  fetchQueuedVideos() {
     var videos = [];
 
-    return fetch(JUKAPP_URL + "/queued_videos", this.defaultOptions())
+    return fetch(JUKAPP_URL + '/queued_videos', this.defaultOptions())
       .then((response) => {
         return response.json();
       })
@@ -152,30 +151,30 @@ var JukappApi = {
         return this.checkFavorites(videos, responseData);
       })
       .catch((response) => {
-        console.log("Queued videos error", response)
-        AlertIOS.alert("Queued videos error" + response)
+        console.log('Queued videos error', response)
+        AlertIOS.alert('Queued videos error' + response)
       });
   },
 
-  checkFavorites: function(videos, favorites) {
+  checkFavorites(videos, favorites) {
     for (var video of videos) {
       for (var favoriteVideo of favorites) {
-        if (video.id == favoriteVideo.id) video["isFavorite"] = true;
+        if (video.id == favoriteVideo.id) video['isFavorite'] = true;
       }
-      if (!video.isFavorite) video["isFavorite"] = false;
+      if (!video.isFavorite) video['isFavorite'] = false;
     }
 
     return videos;
   },
 
-  fetchFavorites: function() {
+  fetchFavorites() {
     if (!JukappStore.isLoggedIn()) {
-      return new Promise((fulfill, reject) => {
+      return new Promise((fulfill) => {
         fulfill([]);
       });
     }
 
-    return fetch(JUKAPP_URL + "/favorites", this.defaultOptions())
+    return fetch(JUKAPP_URL + '/favorites', this.defaultOptions())
       .then((response) => {
         return response.json();
       })
@@ -183,7 +182,7 @@ var JukappApi = {
         var videos = [];
         for (var favoriteVideo of responseData) {
           var video = favoriteVideo.video;
-          video["isFavorite"] = true;
+          video['isFavorite'] = true;
 
           videos.push(video);
         }
@@ -191,68 +190,67 @@ var JukappApi = {
         return videos;
       })
       .catch((response) => {
-        console.log("Favorites error", response)
-        AlertIOS.alert("Favorites error" + response)
+        console.log('Favorites error', response);
+        AlertIOS.alert('Favorites error' + response);
       });
   },
 
-  favoriteVideo: function(video) {
+  favoriteVideo(video) {
     var options = this.defaultOptions();
     options['method'] = 'POST'
     options['body'] = this.videoOptions(video);
 
-    fetch(JUKAPP_URL + "/favorites", options)
+    fetch(JUKAPP_URL + '/favorites', options)
       .then((response) => {
         if (response.status == 201) {
-          console.log('Successfully favorited video')
+          console.log('Successfully favorited video');
         } else {
-          console.log('Could not favorite video')
+          console.log('Could not favorite video');
         }
       })
       .catch((response) => {
-        console.log("Favorites error", response)
-        AlertIOS.alert("Favorites error" + response)
+        console.log('Favorites error', response);
+        AlertIOS.alert('Favorites error' + response);
       });
   },
 
-  unfavoriteVideo: function(video) {
+  unfavoriteVideo(video) {
     var options = this.defaultOptions();
-    options['method'] = 'DELETE'
+    options['method'] = 'DELETE';
     options['body'] = this.videoOptions(video);
 
-    fetch(JUKAPP_URL + "/favorites", options)
+    fetch(JUKAPP_URL + '/favorites', options)
       .then((response) => {
         if (response.status == 200) {
-          console.log('Successfully unfavorited video')
+          console.log('Successfully unfavorited video');
         } else {
-          console.log('Could not unfavorite video')
+          console.log('Could not unfavorite video');
         }
       })
       .catch((response) => {
-        console.log("Favorites error", response)
-        AlertIOS.alert("Favorites error" + response)
+        console.log('Favorites error', response);
+        AlertIOS.alert('Favorites error' + response);
       });
   },
 
-  addEventListener: function(onEvent) {
+  addEventListener(onEvent) {
     eventListener = DeviceEventEmitter.addListener(
-      'EventSourceMessage', function(message) {
+      'EventSourceMessage', (message) => {
         if (message.event != 'heartbeat') {
           onEvent(message);
         }
       });
 
-    EventSource.connectWithURL(JUKAPP_URL + "/events?channels[]=queue-" + JukappStore.getCurrentRoom().id);
+    EventSource.connectWithURL(JUKAPP_URL + '/events?channels[]=queue-' + JukappStore.getCurrentRoom().id);
   },
 
-  removeEventListener: function() {
+  removeEventListener() {
     EventSource.close();
 
     if (eventListener) {
       eventListener.remove();
     }
   }
-}
-
+};
 
 module.exports = JukappApi;
