@@ -2,7 +2,7 @@ var React = require('react-native');
 var RoomList = require('./app/rooms/RoomList');
 var JukappStore = require('./app/stores/JukappStore');
 var Navigation = require('./app/navigation/Navigation');
-var Dispatcher = require('./Dispatcher');
+var JukappStorage = require('./JukappStorage');
 
 var {
   AppRegistry
@@ -18,10 +18,11 @@ var Jukapp = React.createClass({
   },
 
   componentDidMount() {
-    // should be done in room list view
-    Dispatcher.dispatch({
-      type: 'initialize'
-    });
+    setTimeout(() => {
+      // KNOWN ISSUE: ScrollView sometimes errs with "Cannot find view with tag #XXX": #1941
+      // https://github.com/facebook/react-native/issues/1941
+      JukappStorage.loadFromStorage();
+    }, 100);
   },
 
   _onChange() {

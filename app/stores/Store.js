@@ -2,6 +2,7 @@ var EventEmitter = require('events').EventEmitter;
 var Dispatcher = require('../../Dispatcher');
 
 var CHANGE_EVENT = 'change';
+var ROOM_CHANGE_EVENT = 'room'; // TOFIX: remove this when removeListener is implemented
 
 class Store extends EventEmitter {
   constructor(definition: Function) {
@@ -28,6 +29,16 @@ class Store extends EventEmitter {
     this.addListener(CHANGE_EVENT, callback);
   }
 
+  addRoomChangeListener(callback: Function) {
+    // TOFIX: remove this when removeListener is implemented
+    this.addListener(ROOM_CHANGE_EVENT, callback);
+  }
+
+  removeRoomChangeListener() {
+    // TOFIX: remove this when removeListener is implemented
+    this.removeAllListeners(ROOM_CHANGE_EVENT);
+  }
+
   removeChangeListener() {
     // TOFIX: for some reason, this does not have its removeListener method.
     this.removeAllListeners(CHANGE_EVENT);
@@ -35,16 +46,17 @@ class Store extends EventEmitter {
 
   changed() {
     this.emit(CHANGE_EVENT);
+    this.emit(ROOM_CHANGE_EVENT); // TOFIX: remove this when removeListener is implemented
   }
 
   static watch(store) {
     return {
       componentDidMount() {
-        store.addChangeListener(this._onChange);
+        store.addRoomChangeListener(this._onChange);
       },
 
       componentWillUnmount() {
-        store.removeChangeListener(this._onChange);
+        store.removeRoomChangeListener(this._onChange);
       }
     };
   }

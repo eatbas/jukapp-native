@@ -44,6 +44,7 @@ var JukappApi = {
   },
 
   fetchRooms() {
+    console.log('fetch');
     fetch(JUKAPP_URL + '/rooms', this.defaultOptions())
       .then((response) => {
         return response.json();
@@ -54,20 +55,9 @@ var JukappApi = {
   },
 
   joinRoom(roomId) {
-    fetch(JUKAPP_URL + '/rooms/' + roomId + '/join', this.defaultOptions())
+    return fetch(JUKAPP_URL + '/rooms/' + roomId + '/join', this.defaultOptions())
       .then((response) => {
         return response.json();
-      })
-      .then((responseData) => {
-        return Dispatcher.dispatch({
-          type: 'joinRoom',
-          room: responseData
-        });
-      })
-      .catch((response) => {
-        Dispatcher.dispatch({type: 'leaveRoom'});
-        console.log('Join error', response);
-        AlertIOS.alert('Join error' + response);
       });
   },
 

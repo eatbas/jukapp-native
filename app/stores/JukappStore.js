@@ -5,8 +5,6 @@ var {
   AsyncStorage
 } = React;
 
-var JUKAPP_STORE_KEY = '@JukappStore:key';
-
 var currentRoom;
 var user;
 var favorites = [];
@@ -15,36 +13,21 @@ var searchResults = [];
 var queuedVideos = [];
 var lastQuery;
 
+
 // HAS TO GO
+var JUKAPP_STORAGE_KEY = '@JukappStorage:key';
 var syncStorage = () => {
   var store = JSON.stringify({
     room: currentRoom,
     user
   });
 
-  AsyncStorage.setItem(JUKAPP_STORE_KEY, store);
+  AsyncStorage.setItem(JUKAPP_STORAGE_KEY, store);
 };
 
 var JukappStore = new Store((register: Function) => {
 
   register({
-    initialize() {
-      AsyncStorage.removeItem(JUKAPP_STORE_KEY);
-      AsyncStorage.getItem(JUKAPP_STORE_KEY).then((value) => {
-        var store = JSON.parse(value);
-        if (store) {
-          console.log(store);
-          if (store.room) {
-            currentRoom = store.room;
-          }
-
-          if (store.user) {
-            user = store.user;
-          }
-        }
-      });
-    },
-
     joinRoom(action) {
       currentRoom = action.room;
       syncStorage();

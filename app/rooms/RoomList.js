@@ -2,6 +2,7 @@ var React = require('react-native');
 var JukappStore = require('../stores/JukappStore');
 var JukappApi = require('../JukappApi');
 var RoomListItem = require('./RoomListItem');
+var Dispatcher = require('../../Dispatcher');
 
 var {
   StyleSheet,
@@ -11,7 +12,6 @@ var {
 } = React;
 
 class RoomList extends Component {
-
   constructor(props) {
     super(props);
 
@@ -39,13 +39,27 @@ class RoomList extends Component {
     });
   }
 
+  _onPress(room) {
+    JukappApi.joinRoom(room.id)
+      .then((room) => {
+        Dispatcher.dispatch({
+          type: 'joinRoom',
+          room
+        });
+      })
+      .catch((err) => {
+        Dispatcher.dispatch({
+          type: 'leaveRoom'
+        });
+        console.log('[RoomList] Join room error', err);
+      });
+  }
+
   _renderRow(room) {
     return (
       <RoomListItem
         room={room}
-        onPress={() => {
-          JukappApi.joinRoom(room.id);
-        }}
+        onPress={this._onPress.bind(this)}
       />
     );
   }
@@ -60,7 +74,7 @@ class RoomList extends Component {
     return (
       <ListView
         style={styles.listView}
-        renderRow={this._renderRow}
+        renderRow={this._renderRow.bind(this)}
         dataSource={this.state.dataSource}
         renderFooter={this._renderFooter.bind(this)}
       />

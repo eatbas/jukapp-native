@@ -29,6 +29,7 @@ class MenuList extends Component {
       return (
         <MenuListItem
           routeName={routeName}
+          key={routeName}
           onPress={this.props.onSceneChanged}
         />
         );

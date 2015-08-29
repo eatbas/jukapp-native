@@ -116,13 +116,14 @@ class Navigation extends Component {
       return (
         <Navigator
           ref={this._setCurrentNavigator.bind(this)}
+          key={routeName}
           initialRoute={{route, params}}
           renderScene={this._renderScene.bind(this)}
           navigationBar={<NavigationBar routeMapper={NavigatorRouteMapper} style={styles.navigatorBar} />}
         />
       );
     } else {
-      return <View />;
+      return <View key={routeName}/>;
     }
   }
 

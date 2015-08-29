@@ -10,12 +10,16 @@ var {
 } = React;
 
 class RoomsListItem extends Component {
+  _onPress() {
+    this.props.onPress(this.props.room);
+  }
+
   render() {
     return (
       <TouchableHighlight
         underlayColor="#CFD6D6"
         style={{ marginBottom:10 }}
-        onPress={this.props.onPress}>
+        onPress={this._onPress.bind(this)}>
 
         <View style={styles.cell}>
           <Text style={styles.title}>{this.props.room.name}</Text>
