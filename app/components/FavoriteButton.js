@@ -1,34 +1,34 @@
-'use strict';
-
 var React = require('react-native');
-var JukappApi = require('./JukappApi');
+var JukappApi = require('../JukappApi');
 
 var {
   Icon
 } = require('react-native-icons');
 
 var {
+  Component,
   StyleSheet,
   TouchableHighlight,
+  PropTypes
 } = React;
 
-var FavoriteButton = React.createClass ({
+class FavoriteButton extends Component {
 
-  handleButtonPress: function() {
-    var video = this.props.video
+  _handleButtonPress() {
+    var video = this.props.video;
     video.isFavorite ? JukappApi.unfavoriteVideo(video) : JukappApi.favoriteVideo(video);
 
     this.props.onFavoriteToggled();
-  },
+  }
 
-  render: function() {
+  render() {
     var icon = this.props.video.isFavorite ? 'fontawesome|star' : 'fontawesome|star-o';
 
     return (
       <TouchableHighlight
         underlayColor="#ebeeee"
         style={styles.secondaryButton}
-        onPress={this.handleButtonPress}>
+        onPress={this._handleButtonPress.bind(this)}>
         <Icon
           name={icon}
           size={20}
@@ -38,14 +38,19 @@ var FavoriteButton = React.createClass ({
       </TouchableHighlight>
     );
   }
-});
+}
+
+FavoriteButton.propTypes = {
+  onFavoriteToggled: PropTypes.func.isRequired,
+  video: PropTypes.object.isRequired
+};
 
 var styles = StyleSheet.create({
 
   secondaryButton: {
     justifyContent: 'center',
     marginTop: 16,
-    marginBottom: 16,
+    marginBottom: 16
   },
 
   star: {
@@ -62,4 +67,4 @@ var styles = StyleSheet.create({
 
 });
 
-module.exports = FavoriteButton
+module.exports = FavoriteButton;

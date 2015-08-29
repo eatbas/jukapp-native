@@ -1,60 +1,67 @@
-'use strict';
-
 var React = require('react-native');
-var JukappActions = require('./JukappActions');
-var JukappStore = require('./JukappStore');
-var JukappApi = require('./JukappApi');
-var LoginView = require('./LoginView');
+var JukappStore = require('../stores/JukappStore');
+var Dispatcher = require('../../Dispatcher');
+var Login = require('./Login');
+var Dispatcher = require('../../Dispatcher');
+var JukappStorage = require('../../JukappStorage');
 
 var {
+  Component,
   StyleSheet,
   View,
   Text,
   TouchableHighlight
 } = React;
 
-var AccountView = React.createClass ({
-  getInitialState: function() {
-    return {
-      isLoggedIn: JukappStore.isLoggedIn(),
+class AccountDetails extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loggedIn: JukappStore.loggedIn()
     };
-  },
+  }
 
-  componentDidMount: function() {
-    JukappStore.addChangeListener(this._onChange);
-  },
+  componentDidMount() {
+    JukappStore.addChangeListener(this._onChange.bind(this));
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     JukappStore.removeChangeListener(this._onChange);
-  },
+  }
 
-  _onChange: function() {
+  _onChange() {
     this.setState({
-      isLoggedIn: JukappStore.isLoggedIn(),
+      loggedIn: JukappStore.loggedIn()
     });
-  },
+  }
 
-  render: function() {
-    if(!this.state.isLoggedIn) {
-      return (<LoginView onLogin={this._onChange} />);
+  _onPress() {
+    JukappStorage.removeItem('user');
+    Dispatcher.dispatch({
+      type: 'logout'
+    });
+  }
+
+  render() {
+    if(!this.state.loggedIn) {
+      return (<Login onLogin={this._onChange.bind(this)} />);
     }
 
     return (
       <View style={styles.container} >
-        <Text>Logged in as {JukappStore.getUser().username}</Text>
+        <Text>Logged in as {JukappStore.currentUser().username}</Text>
         <TouchableHighlight
           underlayColor="#66BB6A"
           style={styles.button}
-          onPress={() => {
-           JukappActions.loggedOut();
-          }}
+          onPress={this._onPress.bind(this)}
         >
           <Text style={styles.buttonText}>Logout</Text>
         </TouchableHighlight>
       </View>
     );
   }
-});
+}
 
 var styles = StyleSheet.create({
   container: {
@@ -87,8 +94,8 @@ var styles = StyleSheet.create({
     color: 'rgba(0,0,0,0.87)',
     fontSize: 16,
     fontWeight: 'bold',
-    textAlign: 'left',
+    textAlign: 'left'
   }
 });
 
-module.exports = AccountView
+module.exports = AccountDetails;
