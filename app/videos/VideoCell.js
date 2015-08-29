@@ -6,47 +6,42 @@ var JukappApi = require('../JukappApi');
 var FavoriteButton = require('../components/FavoriteButton');
 
 var {
+  Component,
   StyleSheet,
   Text,
   View,
   Image,
   TouchableHighlight,
+  PropTypes
 } = React;
 
-var VideoCell = React.createClass ({
+class VideoCell extends Component {
 
-  renderFavoriteButton: function() {
+  renderFavoriteButton() {
     if (!JukappStore.isLoggedIn()) {
       return;
     }
 
-    var video = this.props.video
+    return(<FavoriteButton video={this.props.video} onFavoriteToggled={this.props.onFavoriteToggled} />);
+  }
 
-    return(<FavoriteButton video={video} onFavoriteToggled={this.props.onFavoriteToggled} />);
-  },
-
-  render: function() {
+  render() {
     var video = this.props.video;
-    var playCount;
+    var playCount = 0;
 
-    if (video["video_events"]) {
-      var videoEvent = video["video_events"].find((events) => events["room_id"] == JukappStore.getCurrentRoom().id);
-      if (videoEvent) playCount = videoEvent["play_count"];
+    if (video['video_events']) {
+      var videoEvent = video['video_events'].find((events) => events['room_id'] == JukappStore.getCurrentRoom().id);
+      if (videoEvent) playCount = videoEvent['play_count'];
     }
 
-    if (!playCount) {
-      playCount = 0;
-    }
-
-    var image = { uri: 'http://img.youtube.com/vi/' + video.youtube_id + '/default.jpg' }
-    var secondaryButton = this.renderFavoriteButton();
+    var image = { uri: 'http://img.youtube.com/vi/' + video.youtube_id + '/default.jpg' };
 
     return (
       <TouchableHighlight
-        underlayColor="#CFD6D6"
+        underlayColor='#CFD6D6'
         style={{ marginBottom:10 }}
         onPress={() => {
-          JukappApi.queueVideo(video)
+          JukappApi.queueVideo(video);
         }}>
 
         <View style={styles.cell}>
@@ -57,12 +52,17 @@ var VideoCell = React.createClass ({
             <Text style={styles.details}>{playCount} VIEWS</Text>
           </View>
 
-          {secondaryButton}
+          {this.renderFavoriteButton()}
         </View>
       </TouchableHighlight>
     );
   }
-});
+}
+
+VideoCell.propTypes = {
+  onFavoriteToggled: PropTypes.func.isRequired,
+  video: PropTypes.object.isRequired
+};
 
 var styles = StyleSheet.create({
 
@@ -85,7 +85,7 @@ var styles = StyleSheet.create({
   secondaryButton: {
     justifyContent: 'center',
     marginTop: 16,
-    marginBottom: 16,
+    marginBottom: 16
   },
 
   star: {
@@ -104,7 +104,7 @@ var styles = StyleSheet.create({
     flexDirection: 'column',
     paddingLeft: 16,
     justifyContent: 'space-around',
-    flex: 1,
+    flex: 1
   },
 
   title: {
@@ -112,7 +112,7 @@ var styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     textAlign: 'left',
-    paddingTop: 4,
+    paddingTop: 4
   },
 
   details: {
@@ -126,8 +126,7 @@ var styles = StyleSheet.create({
     alignSelf: 'flex-start',
     width: 64,
     height: 64
-  },
-
+  }
 });
 
-module.exports = VideoCell
+module.exports = VideoCell;
