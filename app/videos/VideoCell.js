@@ -82,24 +82,6 @@ var styles = StyleSheet.create({
     }
   },
 
-  secondaryButton: {
-    justifyContent: 'center',
-    marginTop: 16,
-    marginBottom: 16
-  },
-
-  star: {
-    height: 40,
-    width: 40,
-    shadowColor: '#000000',
-    shadowRadius: 1,
-    shadowOpacity: 0.3,
-    shadowOffset: {
-      height: 1,
-      width: 0
-    }
-  },
-
   rowData: {
     flexDirection: 'column',
     paddingLeft: 16,
