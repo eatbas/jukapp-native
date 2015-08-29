@@ -72,7 +72,7 @@ var RoomView = React.createClass({
         dataSource={this.state.dataSource}
         renderRow={this._renderRow}
         renderFooter={this._renderFooter}
-        automaticallyAdjustContentInsets={false}
+        contentInset={{ bottom: 0, top: 40 }}
       />
     );
   }
@@ -81,11 +81,11 @@ var RoomView = React.createClass({
 var styles = StyleSheet.create({
   container: {
     padding: 10,
-    backgroundColor: '#EEF2F2',
+    backgroundColor: '#EEF2F2'
   },
 
   listViewContent: {
-    justifyContent: 'center',
+    justifyContent: 'center'
   }
 });
 
