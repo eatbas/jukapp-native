@@ -111,19 +111,16 @@ var JukappApi = {
           return response.json();
         } else {
           console.log('Could not log in');
+          // test this case
           return Promise.reject(new Error);
         }
       })
-      .then((responseData => {
-        if (!responseData) return;
-
-        var user = {
-          username: responseData['username'],
-          authToken: responseData['authentication_token']
+      .then((userData) => {
+        return {
+          username: userData.username,
+          authToken: userData.authentication_token
         };
-
-        Dispatcher.dispatch({type: 'login', user});
-      }));
+      });
   },
 
   fetchQueuedVideos() {

@@ -2,6 +2,8 @@ var React = require('react-native');
 var JukappStore = require('../stores/JukappStore');
 var Dispatcher = require('../../Dispatcher');
 var Login = require('./Login');
+var Dispatcher = require('../../Dispatcher');
+var JukappStorage = require('../../JukappStorage');
 
 var {
   Component,
@@ -34,6 +36,13 @@ class AccountDetails extends Component {
     });
   }
 
+  _onPress() {
+    JukappStorage.removeItem('user');
+    Dispatcher.dispatch({
+      type: 'logout'
+    });
+  }
+
   render() {
     if(!this.state.loggedIn) {
       return (<Login onLogin={this._onChange.bind(this)} />);
@@ -45,11 +54,7 @@ class AccountDetails extends Component {
         <TouchableHighlight
           underlayColor="#66BB6A"
           style={styles.button}
-          onPress={() => {
-            Dispatcher.dispatch({
-              type: 'logout'
-            });
-          }}
+          onPress={this._onPress.bind(this)}
         >
           <Text style={styles.buttonText}>Logout</Text>
         </TouchableHighlight>

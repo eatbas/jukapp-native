@@ -1,6 +1,7 @@
 var React = require('react-native');
-var JukappStore = require('../stores/JukappStore');
 var JukappApi = require('../JukappApi');
+var JukappStorage = require('../../JukappStorage');
+var Dispatcher = require('../../Dispatcher');
 
 var {
   Component,
@@ -24,7 +25,16 @@ class Login extends Component {
   }
 
   _onLoginRequested() {
+    // directly reference to the components instead of this.state.password
     JukappApi.login(this.state.username, this.state.password)
+      .then((user) => {
+        JukappStorage.setItem('user', user);
+
+        // Parent should listen to this
+        this.props.onLogin();
+
+        Dispatcher.dispatch({type: 'login', user});
+      })
       .catch((response) => {
         // different error based on response
         console.log(response);
@@ -32,15 +42,12 @@ class Login extends Component {
       })
       .done(() => {
         this.setState({loading: false});
-
-        if (JukappStore.loggedIn()) {
-          this.props.onLogin();
-        }
       });
 
     this.setState({loading: true});
   }
 
+  // could be more components
   render() {
     var header;
 

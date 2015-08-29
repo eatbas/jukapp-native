@@ -2,6 +2,7 @@ var React = require('react-native');
 var MenuListItem = require('./MenuListItem');
 var JukappStore = require('../stores/JukappStore');
 var Dispatcher = require('../../Dispatcher');
+var JukappStorage = require('../../JukappStorage');
 
 var {
   Icon
@@ -19,6 +20,7 @@ var {
 class MenuList extends Component {
 
   _leaveRoom() {
+    JukappStorage.removeItem('room');
     Dispatcher.dispatch({
       type: 'leaveRoom'
     });

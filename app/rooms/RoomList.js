@@ -3,6 +3,7 @@ var JukappStore = require('../stores/JukappStore');
 var JukappApi = require('../JukappApi');
 var RoomListItem = require('./RoomListItem');
 var Dispatcher = require('../../Dispatcher');
+var JukappStorage = require('../../JukappStorage');
 
 var {
   StyleSheet,
@@ -46,6 +47,8 @@ class RoomList extends Component {
           type: 'joinRoom',
           room
         });
+
+        JukappStorage.setItem('room', room);
       })
       .catch((err) => {
         Dispatcher.dispatch({

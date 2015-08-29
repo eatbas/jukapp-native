@@ -1,9 +1,4 @@
-var React = require('react-native');
 var Store = require('./Store');
-
-var {
-  AsyncStorage
-} = React;
 
 var currentRoom;
 var user;
@@ -13,39 +8,22 @@ var searchResults = [];
 var queuedVideos = [];
 var lastQuery;
 
-
-// HAS TO GO
-var JUKAPP_STORAGE_KEY = '@JukappStorage:key';
-var syncStorage = () => {
-  var store = JSON.stringify({
-    room: currentRoom,
-    user
-  });
-
-  AsyncStorage.setItem(JUKAPP_STORAGE_KEY, store);
-};
-
 var JukappStore = new Store((register: Function) => {
-
   register({
     joinRoom(action) {
       currentRoom = action.room;
-      syncStorage();
     },
 
     leaveRoom() {
       currentRoom = null;
-      syncStorage();
     },
 
     login(action) {
       user = action.user;
-      syncStorage();
     },
 
     logout() {
       user = null;
-      syncStorage();
     },
 
     loadRooms(action) {
