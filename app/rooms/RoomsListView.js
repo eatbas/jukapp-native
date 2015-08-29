@@ -1,5 +1,3 @@
-'use strict';
-
 var React = require('react-native');
 var JukappStore = require('../stores/JukappStore');
 var JukappApi = require('../JukappApi');
@@ -11,74 +9,77 @@ var {
   ListView,
   TouchableHighlight,
   ActivityIndicatorIOS,
+  Component
 } = React;
 
-var RoomsListView = React.createClass ({
+class RoomsListView extends Component {
 
-  getInitialState: function () {
+  constructor(props) {
+    super(props);
+
     var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
-    return {
+    this.state = {
       dataSource: dataSource.cloneWithRows(JukappStore.getRooms()),
-      loading: true,
+      loading: true
     };
-  },
+  }
 
-  componentDidMount: function() {
-    JukappStore.addChangeListener(this._onChange);
+  componentDidMount() {
+    JukappStore.addChangeListener(this._onChange.bind(this));
     JukappApi.fetchRooms();
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     JukappStore.removeChangeListener(this._onChange);
-  },
+  }
 
-  _onChange: function() {
+  _onChange() {
     this.setState({
       dataSource: this.state.dataSource.cloneWithRows(JukappStore.getRooms()),
       loading: false
-    })
-  },
+    });
+  }
 
-  renderRow: function(rowData, sectionID, rowID) {
+  _renderRow(room) {
     return (
       <TouchableHighlight
         underlayColor="#CFD6D6"
         style={{ marginBottom:10 }}
         onPress={() => {
-          JukappApi.joinRoom(rowData.id)
+          JukappApi.joinRoom(room.id);
         }}>
 
         <View style={styles.cell}>
-          <Text style={styles.title}>{rowData.name}</Text>
+          <Text style={styles.title}>{room.name}</Text>
           <Text style={styles.details}>1234 USERS</Text>
         </View>
       </TouchableHighlight>
-    )
-  },
+    );
+  }
 
-  renderFooter: function() {
+  _renderFooter() {
     if (this.state.loading) {
       return <ActivityIndicatorIOS />;
     }
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <ListView
         style={styles.listView}
-        renderRow={this.renderRow}
+        renderRow={this._renderRow}
         dataSource={this.state.dataSource}
-        renderFooter={this.renderFooter}
+        renderFooter={this._renderFooter.bind(this)}
       />
     );
   }
-});
+}
 
 var styles = StyleSheet.create({
   listView: {
     backgroundColor: '#EEF2F2',
-    padding: 10,
+    padding: 10
   },
 
   cell: {
@@ -95,7 +96,7 @@ var styles = StyleSheet.create({
       height: 1,
       width: 0
     },
-    flex: 1,
+    flex: 1
   },
 
   title: {
@@ -104,7 +105,7 @@ var styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'left',
     paddingTop: 4,
-    paddingLeft: 10,
+    paddingLeft: 10
   },
 
   details: {
@@ -112,8 +113,8 @@ var styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'left',
     paddingBottom: 4,
-    paddingLeft: 10,
-  },
+    paddingLeft: 10
+  }
 });
 
-module.exports = RoomsListView
+module.exports = RoomsListView;
