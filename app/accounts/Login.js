@@ -1,45 +1,55 @@
-'use strict';
-
 var React = require('react-native');
-var JukappActions = require('./JukappActions');
-var JukappStore = require('./JukappStore');
-var JukappApi = require('./JukappApi');
+var JukappApi = require('../JukappApi');
+var JukappStorage = require('../../JukappStorage');
+var Dispatcher = require('../../Dispatcher');
 
 var {
+  Component,
   StyleSheet,
   Text,
   View,
   TouchableHighlight,
   TextInput,
-  ActivityIndicatorIOS
+  ActivityIndicatorIOS,
+  PropTypes
 } = React;
 
-var LoginView = React.createClass ({
-  getInitialState: function() {
-    return {
-      loading: false,
-      loginError: false,
-    };
-  },
+class Login extends Component {
+  constructor(props) {
+    super(props);
 
-  onLoginRequested: function() {
+    this.state = {
+      loading: false,
+      loginError: false
+    };
+  }
+
+  _onLoginRequested() {
+    // directly reference to the components instead of this.state.password
     JukappApi.login(this.state.username, this.state.password)
-     .catch((response) => {
+      .then((user) => {
+        JukappStorage.setItem('user', user);
+
+        // Parent should listen to this
+        this.props.onLogin();
+
+        Dispatcher.dispatch({type: 'login', user});
+      })
+      .catch((response) => {
+        // different error based on response
+        console.log(response);
         this.setState({loginError: true});
       })
       .done(() => {
         this.setState({loading: false});
-
-        if (JukappStore.isLoggedIn()) {
-          this.props.onLogin();
-        }
       });
 
     this.setState({loading: true});
-  },
+  }
 
-  render: function() {
-    var header = null
+  // could be more components
+  render() {
+    var header;
 
     if (this.state.loading) {
       header = (
@@ -49,7 +59,7 @@ var LoginView = React.createClass ({
           </Text>
           <ActivityIndicatorIOS />
         </View>
-      )
+      );
     } else if (this.state.loginError) {
       header = (
         <View style={styles.headerContainer}>
@@ -57,7 +67,7 @@ var LoginView = React.createClass ({
             Login failed
           </Text>
         </View>
-      )
+      );
     } else {
       header = (
         <View style={styles.headerContainer}>
@@ -65,7 +75,7 @@ var LoginView = React.createClass ({
             Please login to continue
           </Text>
         </View>
-      )
+      );
     }
 
     return (
@@ -97,7 +107,7 @@ var LoginView = React.createClass ({
             placeholder='Password'
             style={styles.textbox}
             secureTextEntry={true}
-            onSubmitEditing={this.onLoginRequested}
+            onSubmitEditing={this._onLoginRequested.bind(this)}
             onChange={(event) => {
               this.setState({
                 password: event.nativeEvent.text
@@ -108,19 +118,23 @@ var LoginView = React.createClass ({
           <TouchableHighlight
             underlayColor="#66BB6A"
             style={styles.button}
-            onPress={this.onLoginRequested}>
+            onPress={this._onLoginRequested.bind(this)}>
             <Text style={styles.buttonText}>Login</Text>
           </TouchableHighlight>
         </View>
       </View>
     );
   }
-});
+}
+
+Login.propTypes = {
+  onLogin: PropTypes.func.isRequired
+};
 
 var styles = StyleSheet.create({
   page: {
     flex: 1,
-    backgroundColor: '#EEF2F2',
+    backgroundColor: '#EEF2F2'
   },
 
   loginContainer: {
@@ -129,20 +143,20 @@ var styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
     marginBottom: 250,
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
 
   headerContainer: {
     alignSelf: 'center',
     flexDirection: 'row',
     marginBottom: 16,
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
 
   noticeText: {
     color: 'rgba(0,0,0,0.87)',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
 
   textbox: {
@@ -154,7 +168,7 @@ var styles = StyleSheet.create({
     borderRadius: 4,
     fontSize: 16,
     margin: 8,
-    padding: 8,
+    padding: 8
   },
 
   button: {
@@ -179,8 +193,8 @@ var styles = StyleSheet.create({
     color: 'rgba(0,0,0,0.87)',
     fontSize: 16,
     fontWeight: 'bold',
-    textAlign: 'left',
+    textAlign: 'left'
   }
 });
 
-module.exports = LoginView
+module.exports = Login;
