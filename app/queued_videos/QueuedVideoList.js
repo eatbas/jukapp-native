@@ -1,9 +1,8 @@
 var React = require('react-native');
 var Dispatcher = require('../../Dispatcher');
 var JukappStore = require('../stores/JukappStore');
-var VideoCell = require('../videos/VideoCell');
+var VideoListItem = require('../components/VideoListItem');
 var JukappApi = require('../JukappApi');
-var LoginView = require('../accounts/LoginView');
 
 var {
   Component,
@@ -12,31 +11,54 @@ var {
   ActivityIndicatorIOS
 } = React;
 
-class FavoritesListView extends Component {
+class QueuedVideoList extends Component {
+
   constructor(props) {
     super(props);
 
     var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
     this.state = {
-      dataSource: dataSource.cloneWithRows(JukappStore.getFavorites()),
-      loggedIn: JukappStore.loggedIn(),
+      dataSource: dataSource.cloneWithRows(JukappStore.getQueuedVideos()),
       loading: true
     };
   }
 
   componentDidMount() {
+    JukappApi.addEventListener((message) => {
+      console.log(message);
+      this._fetchData();
+    });
+
     JukappStore.addChangeListener(this._onChange.bind(this));
+
     this._fetchData();
   }
 
   componentWillUnmount() {
     JukappStore.removeChangeListener(this._onChange);
+    JukappApi.removeEventListener();
+  }
+
+  _fetchData() {
+    JukappApi.fetchQueuedVideos().done((queuedVideos) => {
+      Dispatcher.dispatch({
+        type: 'loadQueuedVideos',
+        queuedVideos
+      });
+    });
+  }
+
+  _onChange() {
+    this.setState({
+      dataSource: this.state.dataSource.cloneWithRows(JukappStore.getQueuedVideos()),
+      loading: false
+    });
   }
 
   _renderRow(video) {
     return (
-      <VideoCell video={video} onFavoriteToggled={this._fetchData.bind(this)} />
+      <VideoListItem video={video} onFavoriteToggled={this._fetchData.bind(this)} />
     );
   }
 
@@ -46,28 +68,7 @@ class FavoritesListView extends Component {
     }
   }
 
-  _fetchData() {
-    JukappApi.fetchFavorites().done((favorites) => {
-      Dispatcher.dispatch({
-        type: 'loadFavorites',
-        favorites
-      });
-    });
-  }
-
-  _onChange() {
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(JukappStore.getFavorites()),
-      loggedIn: JukappStore.loggedIn(),
-      loading: false
-    });
-  }
-
   render() {
-    if(!this.state.loggedIn) {
-      return (<LoginView onLogin={this._fetchData.bind(this)} />);
-    }
-
     return (
       <ListView
         style={styles.container}
@@ -92,4 +93,4 @@ var styles = StyleSheet.create({
   }
 });
 
-module.exports = FavoritesListView;
+module.exports = QueuedVideoList;

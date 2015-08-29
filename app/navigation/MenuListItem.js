@@ -1,5 +1,5 @@
 var React = require('react-native');
-var routes = require('../navigation/routes');
+var routes = require('./routes');
 
 var {
   Icon
@@ -14,7 +14,7 @@ var {
   TouchableHighlight
 } = React;
 
-class MenuItemView extends Component {
+class MenuListItem extends Component {
   _onPress() {
     this.props.onPress(this.props.routeName);
   }
@@ -42,7 +42,7 @@ class MenuItemView extends Component {
   }
 }
 
-MenuItemView.propTypes = {
+MenuListItem.propTypes = {
   onPress: PropTypes.func.isRequired,
   routeName: PropTypes.string.isRequired
 };
@@ -71,4 +71,4 @@ var styles = StyleSheet.create({
   }
 });
 
-module.exports = MenuItemView;
+module.exports = MenuListItem;

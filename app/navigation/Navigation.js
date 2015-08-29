@@ -1,5 +1,5 @@
 var React = require('react-native');
-var MenuView = require('../components/MenuView');
+var MenuList = require('./MenuList');
 var SideMenu = require('react-native-side-menu');
 var Router = require('./Router');
 var routes = require('./routes');
@@ -139,7 +139,7 @@ class Navigation extends Component {
       <SideMenu
         ref={this._setSideMenu.bind(this)}
         menu={
-          <MenuView
+          <MenuList
             navigator={this.refs.nav}
             onSceneChanged={this._sceneChanged.bind(this)}
             mainRoutes={mainRoutes}

@@ -1,5 +1,5 @@
 var React = require('react-native');
-var RoomsListView = require('./app/rooms/RoomsListView');
+var RoomList = require('./app/rooms/RoomList');
 var JukappStore = require('./app/stores/JukappStore');
 var Navigation = require('./app/navigation/Navigation');
 var Dispatcher = require('./Dispatcher');
@@ -32,7 +32,7 @@ var Jukapp = React.createClass({
 
   render() {
     if (!this.state.inRoom) {
-      return <RoomsListView />;
+      return <RoomList />;
     }
 
     return (

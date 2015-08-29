@@ -13,7 +13,7 @@ var {
   PropTypes
 } = React;
 
-class VideoCell extends Component {
+class VideoListItem extends Component {
 
   renderFavoriteButton() {
     if (!JukappStore.loggedIn()) {
@@ -57,7 +57,7 @@ class VideoCell extends Component {
   }
 }
 
-VideoCell.propTypes = {
+VideoListItem.propTypes = {
   onFavoriteToggled: PropTypes.func.isRequired,
   video: PropTypes.object.isRequired
 };
@@ -109,4 +109,4 @@ var styles = StyleSheet.create({
   }
 });
 
-module.exports = VideoCell;
+module.exports = VideoListItem;

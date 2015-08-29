@@ -13,7 +13,7 @@ var {
   PropTypes
 } = React;
 
-class LoginView extends Component {
+class Login extends Component {
   constructor(props) {
     super(props);
 
@@ -120,7 +120,7 @@ class LoginView extends Component {
   }
 }
 
-LoginView.propTypes = {
+Login.propTypes = {
   onLogin: PropTypes.func.isRequired
 };
 
@@ -190,4 +190,4 @@ var styles = StyleSheet.create({
   }
 });
 
-module.exports = LoginView;
+module.exports = Login;

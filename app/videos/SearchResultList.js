@@ -1,6 +1,6 @@
 var React = require('react-native');
 var SearchBar = require('react-native-search-bar');
-var VideoCell = require('./VideoCell.js');
+var VideoListItem = require('../components/VideoListItem.js');
 var JukappStore = require('../stores/JukappStore');
 var Dispatcher = require('../../Dispatcher');
 var JukappApi = require('../JukappApi');
@@ -13,7 +13,7 @@ var {
   ActivityIndicatorIOS
 } = React;
 
-class SearchResultsListView extends Component {
+class SearchResultsList extends Component {
 
   constructor(props) {
     super(props);
@@ -61,7 +61,7 @@ class SearchResultsListView extends Component {
 
   _renderRow(video) {
     return (
-      <VideoCell video={video} onFavoriteToggled={this._refreshList.bind(this)}/>
+      <VideoListItem video={video} onFavoriteToggled={this._refreshList.bind(this)}/>
     );
   }
 
@@ -121,4 +121,4 @@ var styles = StyleSheet.create({
   }
 });
 
-module.exports = SearchResultsListView;
+module.exports = SearchResultsList;

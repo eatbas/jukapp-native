@@ -1,7 +1,7 @@
 var React = require('react-native');
 var JukappStore = require('../stores/JukappStore');
 var Dispatcher = require('../../Dispatcher');
-var LoginView = require('./LoginView');
+var Login = require('./Login');
 
 var {
   Component,
@@ -11,7 +11,7 @@ var {
   TouchableHighlight
 } = React;
 
-class AccountView extends Component {
+class AccountDetails extends Component {
   constructor(props) {
     super(props);
 
@@ -36,7 +36,7 @@ class AccountView extends Component {
 
   render() {
     if(!this.state.loggedIn) {
-      return (<LoginView onLogin={this._onChange.bind(this)} />);
+      return (<Login onLogin={this._onChange.bind(this)} />);
     }
 
     return (
@@ -93,4 +93,4 @@ var styles = StyleSheet.create({
   }
 });
 
-module.exports = AccountView;
+module.exports = AccountDetails;

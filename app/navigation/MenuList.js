@@ -1,5 +1,5 @@
 var React = require('react-native');
-var MenuItemView = require('./MenuItemView');
+var MenuListItem = require('./MenuListItem');
 var JukappStore = require('../stores/JukappStore');
 var Dispatcher = require('../../Dispatcher');
 
@@ -16,7 +16,7 @@ var {
   TouchableHighlight
 } = React;
 
-class MenuView extends Component {
+class MenuList extends Component {
 
   _leaveRoom() {
     Dispatcher.dispatch({
@@ -27,7 +27,7 @@ class MenuView extends Component {
   _renderMenuItems() {
     return this.props.mainRoutes.map((routeName) => {
       return (
-        <MenuItemView
+        <MenuListItem
           routeName={routeName}
           onPress={this.props.onSceneChanged}
         />
@@ -65,7 +65,7 @@ class MenuView extends Component {
   }
 }
 
-MenuView.propTypes = {
+MenuList.propTypes = {
   mainRoutes: PropTypes.array.isRequired,
   onSceneChanged: PropTypes.func.isRequired
 };
@@ -119,4 +119,4 @@ var styles = StyleSheet.create({
   }
 });
 
-module.exports = MenuView;
+module.exports = MenuList;
