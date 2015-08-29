@@ -1,39 +1,38 @@
 'use strict';
 
 var React = require('react-native');
+var Router = require('../navigation/Router');
 
 var {
   Icon
 } = require('react-native-icons');
 
 var {
+  Component,
   StyleSheet,
   View,
   Text,
   TouchableHighlight
 } = React;
 
-var MenuItemView = React.createClass({
-  _onPress: function() {
+class MenuItemView extends Component {
+  _onPress() {
     this.props.menuActions.close();
 
     if (this.props.onPress) {
       this.props.onPress();
     } else {
-      if (this.props.navigator.getCurrentRoutes()[0].id != this.props.scene) {
-        this.props.navigator.replace({
-          id: this.props.scene,
-          title: this.props.title
-        });
+      if (Router.currentRoute != this.props.scene) {
+        Router.push(this.props.scene, {});
       }
     }
-  },
+  }
 
-  render: function() {
+  render() {
     return (
         <TouchableHighlight
           style={styles.item}
-          onPress={this._onPress}
+          onPress={this._onPress.bind(this)}
           underlayColor="#ebeeee"
         >
           <View style={styles.itemContent}>
@@ -48,7 +47,7 @@ var MenuItemView = React.createClass({
         </TouchableHighlight>
     );
   }
-});
+}
 
 var styles = StyleSheet.create({
   icon: {

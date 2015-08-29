@@ -22,6 +22,8 @@ var {
   NavigationBar
 } = Navigator;
 
+Router.routes = routes;
+
 var NavigatorRouteMapper = {
   Title({route}) {
     return (
@@ -101,7 +103,7 @@ class Navigation extends Component {
 
   _renderSelectedScene() {
     var route = routes[this.state.selectedScene];
-    var params = {}; // remove this
+    var params = {};
 
     return (
       <Navigator
