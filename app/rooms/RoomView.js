@@ -1,5 +1,3 @@
-'use strict';
-
 var React = require('react-native');
 var JukappActions = require('../../JukappActions');
 var JukappStore = require('../stores/JukappStore');
@@ -7,76 +5,77 @@ var VideoCell = require('../videos/VideoCell');
 var JukappApi = require('../JukappApi');
 
 var {
+  Component,
   StyleSheet,
-  View,
-  Image,
-  Text,
   ListView,
-  ActivityIndicatorIOS,
+  ActivityIndicatorIOS
 } = React;
 
-var RoomView = React.createClass({
+class RoomView extends Component {
 
-  getInitialState: function() {
+  constructor(props) {
+    super(props);
+
     var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
-    return {
+    this.state = {
       dataSource: dataSource.cloneWithRows(JukappStore.getQueuedVideos()),
       loading: true
     };
-  },
+  }
 
-  componentDidMount: function() {
+  componentDidMount() {
     JukappApi.addEventListener((message) => {
+      console.log(message);
       this._refreshList();
     });
 
-    JukappStore.addChangeListener(this._onChange);
+    JukappStore.addChangeListener(this._onChange.bind(this));
 
     this._refreshList();
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     JukappStore.removeChangeListener(this._onChange);
     JukappApi.removeEventListener();
-  },
+  }
 
-  _refreshList: function() {
+  _refreshList() {
     JukappApi.fetchQueuedVideos().done(JukappActions.loadedQueuedVideos);
-  },
+  }
 
-  _onChange: function() {
+  _onChange() {
     this.setState({
       dataSource: this.state.dataSource.cloneWithRows(JukappStore.getQueuedVideos()),
-      loading: false,
-    })
-  },
+      loading: false
+    });
+  }
 
-  _renderRow: function(rowData, sectionID, rowID) {
+  _renderRow(video) {
     return (
-      <VideoCell video={rowData} onFavoriteToggled={this._refreshList} />
+      <VideoCell video={video} onFavoriteToggled={this._refreshList.bind(this)} />
     );
-  },
+  }
 
-  _renderFooter: function() {
+  _renderFooter() {
     if (this.state.loading) {
       return <ActivityIndicatorIOS />;
     }
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <ListView
         style={styles.container}
         contentContainerStyle={styles.listViewContent}
         dataSource={this.state.dataSource}
-        renderRow={this._renderRow}
-        renderFooter={this._renderFooter}
+        renderRow={this._renderRow.bind(this)}
+        renderFooter={this._renderFooter.bind(this)}
         contentInset={{ bottom: 0, top: 40 }}
       />
     );
   }
-});
+}
 
 var styles = StyleSheet.create({
   container: {
@@ -89,4 +88,4 @@ var styles = StyleSheet.create({
   }
 });
 
-module.exports = RoomView
+module.exports = RoomView;

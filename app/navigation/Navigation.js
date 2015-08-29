@@ -85,7 +85,6 @@ class Navigation extends Component {
   }
 
   _renderScene({route, params}, nav) {
-    console.log(route);
     var ChildComponent = route.component;
 
     var setRef = (ref) => {
@@ -135,7 +134,6 @@ class Navigation extends Component {
     });
   }
 
-  // needs multiple navigators
   render() {
     return (
       <SideMenu
