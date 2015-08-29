@@ -6,22 +6,26 @@ var RoomView = require('../rooms/RoomView');
 var routes = {
   favorites: {
     component: FavoritesListView,
-    title: 'Favorites'
+    title: 'Favorites',
+    icon: 'fontawesome|star'
   },
 
   room: {
     component: RoomView,
-    title: 'Room' // TODO: Should be the room name probably?
+    title: 'Room', // TODO: Should be the room name probably?
+    icon: 'fontawesome|home'
   },
 
   search: {
     component: SearchResultsListView,
-    title: 'Search'
+    title: 'Search',
+    icon: 'fontawesome|search'
   },
 
   account: {
     component: AccountView,
-    title: 'My Account'
+    title: 'My Account',
+    icon: 'fontawesome|user'
   }
 };
 

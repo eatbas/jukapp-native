@@ -1,7 +1,5 @@
-'use strict';
-
 var React = require('react-native');
-var Router = require('../navigation/Router');
+var routes = require('../navigation/routes');
 
 var {
   Icon
@@ -9,6 +7,7 @@ var {
 
 var {
   Component,
+  PropTypes,
   StyleSheet,
   View,
   Text,
@@ -17,18 +16,12 @@ var {
 
 class MenuItemView extends Component {
   _onPress() {
-    this.props.menuActions.close();
-
-    if (this.props.onPress) {
-      this.props.onPress();
-    } else {
-      if (Router.currentRoute != this.props.scene) {
-        Router.push(this.props.scene, {});
-      }
-    }
+    this.props.onPress(this.props.routeName);
   }
 
   render() {
+    var route = routes[this.props.routeName];
+
     return (
         <TouchableHighlight
           style={styles.item}
@@ -37,29 +30,34 @@ class MenuItemView extends Component {
         >
           <View style={styles.itemContent}>
             <Icon
-              name={this.props.icon}
+              name={route.icon}
               size={20}
               color='black'
               style={styles.icon}
             />
-            <Text style={styles.itemTitle}>{this.props.title}</Text>
+            <Text style={styles.itemTitle}>{route.title}</Text>
           </View>
         </TouchableHighlight>
     );
   }
 }
 
+MenuItemView.propTypes = {
+  onPress: PropTypes.func.isRequired,
+  routeName: PropTypes.string.isRequired
+};
+
 var styles = StyleSheet.create({
   icon: {
     height: 20,
     width: 20,
-    marginRight: 16,
+    marginRight: 16
   },
 
   item: {
     padding: 16,
     height: 48,
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
 
   itemContent: {
@@ -69,8 +67,8 @@ var styles = StyleSheet.create({
   },
 
   itemTitle: {
-    fontSize: 14,
-  },
+    fontSize: 14
+  }
 });
 
-module.exports = MenuItemView
+module.exports = MenuItemView;

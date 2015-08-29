@@ -23,6 +23,7 @@ var {
 } = Navigator;
 
 Router.routes = routes;
+var mainRoutes = ['room', 'search', 'favorites', 'account'];
 
 var NavigatorRouteMapper = {
   Title({route}) {
@@ -84,6 +85,7 @@ class Navigation extends Component {
   }
 
   _renderScene({route, params}, nav) {
+    console.log(route);
     var ChildComponent = route.component;
 
     var setRef = (ref) => {
@@ -101,32 +103,54 @@ class Navigation extends Component {
     Router.sideMenu = menu;
   }
 
-  _renderSelectedScene() {
-    var route = routes[this.state.selectedScene];
+  _renderMainRoutes() {
+    return mainRoutes.map((routeName) => {
+      return this._renderMainRoute(routeName);
+    });
+  }
+
+  _renderMainRoute(routeName) {
+    var route = routes[routeName];
     var params = {};
 
-    return (
-      <Navigator
-        ref={this._setCurrentNavigator.bind(this)}
-        initialRoute={{route, params}}
-        renderScene={this._renderScene.bind(this)}
-        navigationBar={<NavigationBar routeMapper={NavigatorRouteMapper} style={styles.navigatorBar} />}
-      />
-    );
+    if (this.state.selectedScene === routeName) {
+      return (
+        <Navigator
+          ref={this._setCurrentNavigator.bind(this)}
+          initialRoute={{route, params}}
+          renderScene={this._renderScene.bind(this)}
+          navigationBar={<NavigationBar routeMapper={NavigatorRouteMapper} style={styles.navigatorBar} />}
+        />
+      );
+    } else {
+      return <View />;
+    }
+  }
+
+  _sceneChanged(routeName) {
+    Router.sideMenu.closeMenu();
+
+    this.setState({
+      selectedScene: routeName
+    });
   }
 
   // needs multiple navigators
   render() {
-    var scene = this._renderSelectedScene();
-
     return (
       <SideMenu
         ref={this._setSideMenu.bind(this)}
-        menu={<MenuView navigator={this.refs.nav} />}
+        menu={
+          <MenuView
+            navigator={this.refs.nav}
+            onSceneChanged={this._sceneChanged.bind(this)}
+            mainRoutes={mainRoutes}
+          />
+        }
         touchToClose={true}
       >
         <View style={styles.shadow} >
-          {scene}
+          {this._renderMainRoutes()}
         </View>
       </SideMenu>
     );

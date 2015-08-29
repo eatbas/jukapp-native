@@ -1,5 +1,3 @@
-'use strict';
-
 var React = require('react-native');
 var MenuItemView = require('./MenuItemView');
 var JukappStore = require('../stores/JukappStore');
@@ -10,17 +8,30 @@ var {
 } = require('react-native-icons');
 
 var {
+  Component,
   StyleSheet,
   View,
   Text,
+  PropTypes
 } = React;
 
-var MenuView = React.createClass({
-  _leaveRoom: function() {
+class MenuView extends Component {
+  _leaveRoom() {
     JukappActions.leftRoom();
-  },
+  }
 
-  render: function() {
+  _renderMenuItems() {
+    return this.props.mainRoutes.map((routeName) => {
+      return (
+        <MenuItemView
+          routeName={routeName}
+          onPress={this.props.onSceneChanged}
+        />
+        );
+    });
+  }
+
+  render() {
     return (
       <View style={styles.container}>
 
@@ -33,50 +44,16 @@ var MenuView = React.createClass({
           />
           <Text style={styles.headerMainText}>{JukappStore.getCurrentRoom().name}</Text>
         </View>
-
-        <MenuItemView
-          scene='room'
-          title='Room'
-          icon='fontawesome|home'
-          navigator={this.props.navigator}
-          menuActions={this.props.menuActions}
-        />
-
-        <MenuItemView
-          scene='search'
-          title='Search'
-          icon='fontawesome|search'
-          navigator={this.props.navigator}
-          menuActions={this.props.menuActions}
-        />
-
-        <MenuItemView
-          scene='favorites'
-          title='Favorites'
-          icon='fontawesome|star'
-          navigator={this.props.navigator}
-          menuActions={this.props.menuActions}
-        />
-
-        <MenuItemView
-          scene='account'
-          title='My Account'
-          icon='fontawesome|user'
-          navigator={this.props.navigator}
-          menuActions={this.props.menuActions}
-        />
-
-        <MenuItemView
-          title='Leave Room'
-          icon='fontawesome|sign-out'
-          navigator={this.props.navigator}
-          onPress={this._leaveRoom}
-          menuActions={this.props.menuActions}
-        />
+        {this._renderMenuItems()}
       </View>
     );
   }
-});
+}
+
+MenuView.propTypes = {
+  mainRoutes: PropTypes.array.isRequired,
+  onSceneChanged: PropTypes.func.isRequired
+};
 
 var styles = StyleSheet.create({
   container: {
@@ -87,7 +64,7 @@ var styles = StyleSheet.create({
   icon: {
     height: 20,
     width: 20,
-    marginRight: 16,
+    marginRight: 16
   },
 
   header: {
@@ -96,13 +73,13 @@ var styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    backgroundColor: '#F4F7F7',
+    backgroundColor: '#F4F7F7'
   },
 
   headerMainText: {
     fontWeight: 'bold',
-    fontSize: 18,
-  },
+    fontSize: 18
+  }
 });
 
-module.exports = MenuView
+module.exports = MenuView;
