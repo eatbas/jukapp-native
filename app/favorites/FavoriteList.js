@@ -27,7 +27,7 @@ class FavoriteList extends Component {
 
   componentDidMount() {
     JukappStore.addChangeListener(this._onChange.bind(this));
-    this._fetchData();
+    this.fetchData();
   }
 
   componentWillUnmount() {
@@ -36,7 +36,7 @@ class FavoriteList extends Component {
 
   _renderRow(video) {
     return (
-      <VideoListItem video={video} onFavoriteToggled={this._fetchData.bind(this)} />
+      <VideoListItem video={video} onFavoriteToggled={this.fetchData.bind(this)} />
     );
   }
 
@@ -46,7 +46,7 @@ class FavoriteList extends Component {
     }
   }
 
-  _fetchData() {
+  fetchData() {
     JukappApi.fetchFavorites().done((favorites) => {
       Dispatcher.dispatch({
         type: 'loadFavorites',
@@ -65,7 +65,7 @@ class FavoriteList extends Component {
 
   render() {
     if(!this.state.loggedIn) {
-      return (<Login onLogin={this._fetchData.bind(this)} />);
+      return (<Login onLogin={this.fetchData.bind(this)} />);
     }
 
     return (

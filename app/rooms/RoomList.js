@@ -26,11 +26,18 @@ class RoomList extends Component {
 
   componentDidMount() {
     JukappStore.addChangeListener(this._onChange.bind(this));
-    JukappApi.fetchRooms();
+    this.fetchData();
   }
 
   componentWillUnmount() {
     JukappStore.removeChangeListener(this._onChange);
+  }
+
+  fetchData() {
+    JukappApi.fetchRooms()
+      .then((rooms) => {
+        return Dispatcher.dispatch({type: 'loadRooms', rooms});
+      });
   }
 
   _onChange() {

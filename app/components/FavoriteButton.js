@@ -14,7 +14,7 @@ var {
 
 class FavoriteButton extends Component {
 
-  handleButtonPress() {
+  _handleButtonPress() {
     var video = this.props.video;
     video.isFavorite ? JukappApi.unfavoriteVideo(video) : JukappApi.favoriteVideo(video);
 
@@ -28,7 +28,7 @@ class FavoriteButton extends Component {
       <TouchableHighlight
         underlayColor="#ebeeee"
         style={styles.secondaryButton}
-        onPress={this.handleButtonPress}>
+        onPress={this._handleButtonPress.bind(this)}>
         <Icon
           name={icon}
           size={20}

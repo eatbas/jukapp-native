@@ -27,12 +27,12 @@ class QueuedVideoList extends Component {
   componentDidMount() {
     JukappApi.addEventListener((message) => {
       console.log(message);
-      this._fetchData();
+      this.fetchData();
     });
 
     JukappStore.addChangeListener(this._onChange.bind(this));
 
-    this._fetchData();
+    this.fetchData();
   }
 
   componentWillUnmount() {
@@ -40,7 +40,7 @@ class QueuedVideoList extends Component {
     JukappApi.removeEventListener();
   }
 
-  _fetchData() {
+  fetchData() {
     JukappApi.fetchQueuedVideos().done((queuedVideos) => {
       Dispatcher.dispatch({
         type: 'loadQueuedVideos',
@@ -58,7 +58,7 @@ class QueuedVideoList extends Component {
 
   _renderRow(video) {
     return (
-      <VideoListItem video={video} onFavoriteToggled={this._fetchData.bind(this)} />
+      <VideoListItem video={video} onFavoriteToggled={this.fetchData.bind(this)} />
     );
   }
 

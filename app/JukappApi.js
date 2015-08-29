@@ -1,7 +1,6 @@
 var React = require('react-native');
 var JukappStore = require('./stores/JukappStore');
 var EventSource = require('NativeModules').RNEventSource;
-var Dispatcher = require('../Dispatcher');
 
 var JUKAPP_URL = 'https://jukapp-api.herokuapp.com';
 
@@ -36,6 +35,24 @@ var JukappApi = {
     return options;
   },
 
+  postOptions(body) {
+    var options = this.defaultOptions();
+
+    options.method = 'POST';
+    options.body = body;
+
+    return options;
+  },
+
+  deleteOptions(body) {
+    var options = this.defaultOptions();
+
+    options.method = 'DELETE';
+    options.body = body;
+
+    return options;
+  },
+
   videoOptions(video) {
     return JSON.stringify({
       youtube_id: video.youtube_id,
@@ -43,19 +60,19 @@ var JukappApi = {
     });
   },
 
+  fetch(url, options) {
+    return fetch(JUKAPP_URL + url, options || this.defaultOptions());
+  },
+
   fetchRooms() {
-    console.log('fetch');
-    fetch(JUKAPP_URL + '/rooms', this.defaultOptions())
+    return this.fetch('/rooms')
       .then((response) => {
         return response.json();
-      })
-      .then((rooms) => {
-        return Dispatcher.dispatch({type: 'loadRooms', rooms});
       });
   },
 
   joinRoom(roomId) {
-    return fetch(JUKAPP_URL + '/rooms/' + roomId + '/join', this.defaultOptions())
+    return this.fetch('/rooms/' + roomId + '/join')
       .then((response) => {
         return response.json();
       });
@@ -64,7 +81,7 @@ var JukappApi = {
   searchVideo(query) {
     var videos = [];
 
-    return fetch(JUKAPP_URL + '/search?query=' + query, this.defaultOptions())
+    return this.fetch('/search?query=' + query)
       .then((response) => {
         return response.json();
       })
@@ -79,11 +96,9 @@ var JukappApi = {
   },
 
   queueVideo(video) {
-    var options = this.defaultOptions();
-    options['method'] = 'POST';
-    options['body'] = this.videoOptions(video);
+    var options = this.postOptions(this.videoOptions(video));
 
-    fetch(JUKAPP_URL + '/queue', options)
+    return this.fetch('/queue', options)
       .then((response) => {
         if (response.status == 201) {
           console.log('Successfully queued video');
@@ -98,13 +113,13 @@ var JukappApi = {
   },
 
   login(username, password) {
-    var options = this.defaultOptions();
-    options['method'] = 'POST';
-    options['body'] = JSON.stringify({
+    var user = JSON.stringify({
       user: {username, password}
     });
 
-    return fetch(JUKAPP_URL + '/users/sign_in', options)
+    var options = this.postOptions(user);
+
+    return this.fetch('/users/sign_in', options)
       .then((response) => {
         if (response.status == 201) {
           console.log('Successfully logged in');
@@ -126,7 +141,7 @@ var JukappApi = {
   fetchQueuedVideos() {
     var videos = [];
 
-    return fetch(JUKAPP_URL + '/queued_videos', this.defaultOptions())
+    return this.fetch('/queued_videos')
       .then((response) => {
         return response.json();
       })
@@ -135,6 +150,7 @@ var JukappApi = {
           videos.push(queuedVideo.video);
         }
 
+        // return favorite info from first request
         return this.fetchFavorites();
       })
       .then((responseData) => {
@@ -146,6 +162,7 @@ var JukappApi = {
       });
   },
 
+  // HAS TO GO
   checkFavorites(videos, favorites) {
     for (var video of videos) {
       for (var favoriteVideo of favorites) {
@@ -158,13 +175,7 @@ var JukappApi = {
   },
 
   fetchFavorites() {
-    if (!JukappStore.loggedIn()) {
-      return new Promise((fulfill) => {
-        fulfill([]);
-      });
-    }
-
-    return fetch(JUKAPP_URL + '/favorites', this.defaultOptions())
+    return this.fetch('/favorites')
       .then((response) => {
         return response.json();
       })
@@ -186,11 +197,9 @@ var JukappApi = {
   },
 
   favoriteVideo(video) {
-    var options = this.defaultOptions();
-    options['method'] = 'POST';
-    options['body'] = this.videoOptions(video);
+    var options = this.postOptions(this.videoOptions(video));
 
-    fetch(JUKAPP_URL + '/favorites', options)
+    this.fetch('/favorites', options)
       .then((response) => {
         if (response.status == 201) {
           console.log('Successfully favorited video');
@@ -205,11 +214,9 @@ var JukappApi = {
   },
 
   unfavoriteVideo(video) {
-    var options = this.defaultOptions();
-    options['method'] = 'DELETE';
-    options['body'] = this.videoOptions(video);
+    var options = this.deleteOptions(this.videoOptions(video));
 
-    fetch(JUKAPP_URL + '/favorites', options)
+    this.fetch('/favorites', options)
       .then((response) => {
         if (response.status == 200) {
           console.log('Successfully unfavorited video');
@@ -236,10 +243,7 @@ var JukappApi = {
 
   removeEventListener() {
     EventSource.close();
-
-    if (eventListener) {
-      eventListener.remove();
-    }
+    eventListener.remove();
   }
 };
 
