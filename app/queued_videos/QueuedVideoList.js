@@ -76,7 +76,6 @@ class QueuedVideoList extends Component {
         dataSource={this.state.dataSource}
         renderRow={this._renderRow.bind(this)}
         renderFooter={this._renderFooter.bind(this)}
-        contentInset={{ bottom: 0, top: 40 }}
       />
     );
   }

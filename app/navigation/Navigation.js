@@ -120,6 +120,7 @@ class Navigation extends Component {
           initialRoute={{route, params}}
           renderScene={this._renderScene.bind(this)}
           navigationBar={<NavigationBar routeMapper={NavigatorRouteMapper} style={styles.navigatorBar} />}
+          sceneStyle={styles.navigatorScene}
         />
       );
     } else {
@@ -234,7 +235,7 @@ var styles = StyleSheet.create({
   navigatorScene: {
     position: 'absolute',
     left: 0,
-    top: NavigationBar.Styles.General.TotalNavHeight,
+    top: NavigationBar.Styles.General.NavBarHeight,
     right: 0,
     bottom: 0
   }
