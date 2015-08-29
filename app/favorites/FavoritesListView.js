@@ -33,7 +33,7 @@ class FavoritesListView extends Component {
   }
 
   componentWillUnmount() {
-    JukappStore.removeChangeListener(this._onChange.bind(this));
+    JukappStore.removeChangeListener(this._onChange);
   }
 
   _renderRow(video) {

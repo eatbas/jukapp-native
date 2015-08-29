@@ -1,41 +1,42 @@
-'use strict';
-
 var React = require('react-native');
 var JukappActions = require('../../JukappActions');
 var JukappStore = require('../stores/JukappStore');
 var LoginView = require('./LoginView');
 
 var {
+  Component,
   StyleSheet,
   View,
   Text,
   TouchableHighlight
 } = React;
 
-var AccountView = React.createClass ({
-  getInitialState: function() {
-    return {
-      isLoggedIn: JukappStore.isLoggedIn(),
+class AccountView extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isLoggedIn: JukappStore.isLoggedIn()
     };
-  },
+  }
 
-  componentDidMount: function() {
-    JukappStore.addChangeListener(this._onChange);
-  },
+  componentDidMount() {
+    JukappStore.addChangeListener(this._onChange.bind(this));
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     JukappStore.removeChangeListener(this._onChange);
-  },
+  }
 
-  _onChange: function() {
+  _onChange() {
     this.setState({
-      isLoggedIn: JukappStore.isLoggedIn(),
+      isLoggedIn: JukappStore.isLoggedIn()
     });
-  },
+  }
 
-  render: function() {
+  render() {
     if(!this.state.isLoggedIn) {
-      return (<LoginView onLogin={this._onChange} />);
+      return (<LoginView onLogin={this._onChange.bind(this)} />);
     }
 
     return (
@@ -45,7 +46,7 @@ var AccountView = React.createClass ({
           underlayColor="#66BB6A"
           style={styles.button}
           onPress={() => {
-           JukappActions.loggedOut();
+            JukappActions.loggedOut();
           }}
         >
           <Text style={styles.buttonText}>Logout</Text>
@@ -53,7 +54,7 @@ var AccountView = React.createClass ({
       </View>
     );
   }
-});
+}
 
 var styles = StyleSheet.create({
   container: {
@@ -86,8 +87,8 @@ var styles = StyleSheet.create({
     color: 'rgba(0,0,0,0.87)',
     fontSize: 16,
     fontWeight: 'bold',
-    textAlign: 'left',
+    textAlign: 'left'
   }
 });
 
-module.exports = AccountView
+module.exports = AccountView;
