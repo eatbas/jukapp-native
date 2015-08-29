@@ -1395,199 +1395,47 @@ throw new TypeError(
 
 var index=findIndex.call(this,predicate,context);
 return index === -1?undefined:this[index];}});}})();
-__d('Jukapp/index.ios.js',["react-native/Libraries/react-native/react-native.js","Jukapp/RoomsListView.js","Jukapp/JukappStore.js","Jukapp/JukappActions.js","Jukapp/SearchResultsListView.js","Jukapp/FavoritesListView.js","Jukapp/AccountView.js","Jukapp/RoomView.js","Jukapp/MenuView.js","react-native-side-menu/index.js","react-native-icons/index.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
-
-
-
-
-
-var React=require('react-native/Libraries/react-native/react-native.js');
-var RoomsListView=require('Jukapp/RoomsListView.js');
-var JukappStore=require('Jukapp/JukappStore.js');
-var JukappActions=require('Jukapp/JukappActions.js');
-var SearchResultsListView=require('Jukapp/SearchResultsListView.js');
-var FavoritesListView=require('Jukapp/FavoritesListView.js');
-var AccountView=require('Jukapp/AccountView.js');
-var RoomView=require('Jukapp/RoomView.js');
-var MenuView=require('Jukapp/MenuView.js');
-var SideMenu=require('react-native-side-menu/index.js');var _require=
-
-
-
-require('react-native-icons/index.js');var Icon=_require.Icon;var 
+__d('Jukapp/index.ios.js',["react-native/Libraries/react-native/react-native.js","Jukapp/app/rooms/RoomList.js","Jukapp/app/stores/JukappStore.js","Jukapp/app/navigation/Navigation.js","Jukapp/JukappStorage.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var React=require('react-native/Libraries/react-native/react-native.js');
+var RoomList=require('Jukapp/app/rooms/RoomList.js');
+var JukappStore=require('Jukapp/app/stores/JukappStore.js');
+var Navigation=require('Jukapp/app/navigation/Navigation.js');
+var JukappStorage=require('Jukapp/JukappStorage.js');var 
 
 
 AppRegistry=
-
-
-
-
-
-React.AppRegistry;var StyleSheet=React.StyleSheet;var View=React.View;var Navigator=React.Navigator;var Text=React.Text;var TouchableHighlight=React.TouchableHighlight;
+React.AppRegistry;
 
 var Jukapp=React.createClass({displayName:'Jukapp',
+mixins:[JukappStore.Watch],
+
 getInitialState:function(){
 return {
-isInRoom:JukappStore.isInRoom(),
-isLoggedIn:JukappStore.isLoggedIn()};},
+inRoom:JukappStore.inRoom()};},
 
 
 
 componentDidMount:function(){
-JukappStore.initialize();
-JukappStore.addChangeListener(this._onChange);},
+setTimeout(function(){
 
 
-componentWillUnmount:function(){
-JukappStore.removeChangeListener(this._onChange);},
-
-
-_handleNextButtonPress:function(){
-this.refs.nav.push({
-component:SearchResultsListView,
-title:"Search"});},
-
-
-
-_menuButton:function(){var _this=this;
-return (
-React.createElement(TouchableHighlight,{
-onPress:function(){return _this.refs.sideMenu.toggleMenu();},
-activeOpacity:0.3,
-underlayColor:'#607D8B',
-style:styles.headerLeftView},
-
-React.createElement(Icon,{
-name:'fontawesome|bars',
-size:20,
-color:'black',
-style:styles.headerLeftButtonIcon})));},
-
-
-
-
-
-_renderScene:function(route,nav){
-var scene,title;
-
-switch(route.id){
-case 'favorites':
-scene = React.createElement(FavoritesListView,null);
-title = 'Favorites';
-break;
-case 'room':
-scene = React.createElement(RoomView,null);
-title = 'Room';
-break;
-case 'search':
-scene = React.createElement(SearchResultsListView,null);
-title = 'Search';
-break;
-case 'account':
-scene = React.createElement(AccountView,null);
-title = 'My Account';
-break;}
-
-
-return (
-React.createElement(View,{style:styles.container},
-React.createElement(View,{style:styles.header},
-this._menuButton(),
-React.createElement(Text,{style:styles.headerText},title),
-React.createElement(View,{style:styles.headerRightView})),
-
-
-
-scene));},
-
-
-
-
-render:function(){
-if(!this.state.isInRoom){
-return this.renderRoomsList();}
-
-
-return (
-React.createElement(SideMenu,{
-ref:'sideMenu',
-menu:React.createElement(MenuView,{navigator:this.refs.nav}),
-touchToClose:true},
-
-React.createElement(View,{style:styles.shadow},
-React.createElement(Navigator,{
-ref:'nav',
-initialRoute:{id:'room'},
-renderScene:this._renderScene}))));},
-
-
-
-
-
-
-renderRoomsList:function(){
-return React.createElement(RoomsListView,null);},
+JukappStorage.loadFromStorage();},
+100);},
 
 
 _onChange:function(){
 this.setState({
-isInRoom:JukappStore.isInRoom(),
-isLoggedIn:JukappStore.isLoggedIn()});}});
+inRoom:JukappStore.inRoom()});},
 
 
 
-
-var styles=StyleSheet.create({
-shadow:{
-flex:1,
-shadowColor:'#000000',
-shadowRadius:3,
-shadowOpacity:0.5,
-shadowOffset:{
-height:1,
-width:0}},
+render:function(){
+if(!this.state.inRoom){
+return React.createElement(RoomList,null);}
 
 
+return (
+React.createElement(Navigation,null));}});
 
-container:{
-flex:1},
-
-
-header:{
-height:64,
-backgroundColor:"#607D8B",
-flexDirection:'row',
-justifyContent:'center'},
-
-
-headerLeftView:{
-width:60},
-
-
-headerRightView:{
-width:60},
-
-
-headerLeftButtonIcon:{
-width:20,
-height:20,
-marginTop:30,
-marginLeft:20},
-
-
-headeRightButtonImage:{
-marginTop:30,
-marginRight:20,
-width:20,
-height:15},
-
-
-headerText:{
-flex:2,
-fontSize:18,
-fontWeight:'bold',
-textAlign:'center',
-marginTop:30}});
 
 
 
@@ -45234,80 +45082,95 @@ makeNativeSimulator(eventType);}
 
 module.exports = ReactTestUtils;
 });
-__d('Jukapp/RoomsListView.js',["react-native/Libraries/react-native/react-native.js","Jukapp/SearchResultsListView.js","Jukapp/FavoritesListView.js","Jukapp/JukappStore.js","Jukapp/JukappApi.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
-
-var React=require('react-native/Libraries/react-native/react-native.js');
-var SearchResultsListView=require('Jukapp/SearchResultsListView.js');
-var FavoritesListView=require('Jukapp/FavoritesListView.js');
-var JukappStore=require('Jukapp/JukappStore.js');
-var JukappApi=require('Jukapp/JukappApi.js');var 
+__d('Jukapp/app/rooms/RoomList.js',["react-native/Libraries/react-native/react-native.js","Jukapp/app/stores/JukappStore.js","Jukapp/app/JukappApi.js","Jukapp/app/rooms/RoomListItem.js","Jukapp/Dispatcher.js","Jukapp/JukappStorage.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
+var JukappStore=require('Jukapp/app/stores/JukappStore.js');
+var JukappApi=require('Jukapp/app/JukappApi.js');
+var RoomListItem=require('Jukapp/app/rooms/RoomListItem.js');
+var Dispatcher=require('Jukapp/Dispatcher.js');
+var JukappStorage=require('Jukapp/JukappStorage.js');var 
 
 
 StyleSheet=
 
 
 
+React.StyleSheet;var ListView=React.ListView;var ActivityIndicatorIOS=React.ActivityIndicatorIOS;var Component=React.Component;var 
 
+RoomList=(function(_Component){_inherits(RoomList,_Component);
+function RoomList(props){_classCallCheck(this,RoomList);
+_get(Object.getPrototypeOf(RoomList.prototype),'constructor',this).call(this,props);
 
-React.StyleSheet;var Text=React.Text;var View=React.View;var ListView=React.ListView;var TouchableHighlight=React.TouchableHighlight;var ActivityIndicatorIOS=React.ActivityIndicatorIOS;
-
-var RoomsListView=React.createClass({displayName:'RoomsListView',
-
-getInitialState:function(){
 var dataSource=new ListView.DataSource({rowHasChanged:function(r1,r2){return r1 !== r2;}});
 
-return {
+this.state = {
 dataSource:dataSource.cloneWithRows(JukappStore.getRooms()),
-loading:true};},
+loading:true};}_createClass(RoomList,[{key:'componentDidMount',value:
 
 
 
-componentDidMount:function(){
-JukappStore.addChangeListener(this._onChange);
-JukappApi.fetchRooms();},
+function componentDidMount(){
+JukappStore.addChangeListener(this._onChange.bind(this));
+this.fetchData();}},{key:'componentWillUnmount',value:
 
 
-componentWillUnmount:function(){
-JukappStore.removeChangeListener(this._onChange);},
+function componentWillUnmount(){
+JukappStore.removeChangeListener(this._onChange);}},{key:'fetchData',value:
 
 
-_onChange:function(){
+function fetchData(){
+JukappApi.fetchRooms().
+then(function(rooms){
+return Dispatcher.dispatch({type:'loadRooms',rooms:rooms});});}},{key:'_onChange',value:
+
+
+
+function _onChange(){
 this.setState({
 dataSource:this.state.dataSource.cloneWithRows(JukappStore.getRooms()),
-loading:false});},
+loading:false});}},{key:'_onPress',value:
 
 
 
-renderRow:function(rowData,sectionID,rowID){
+function _onPress(room){
+JukappApi.joinRoom(room.id).
+then(function(room){
+Dispatcher.dispatch({
+type:'joinRoom',
+room:room});
+
+
+JukappStorage.setItem('room',room);}).
+
+catch(function(err){
+Dispatcher.dispatch({
+type:'leaveRoom'});
+
+console.log('[RoomList] Join room error',err);});}},{key:'_renderRow',value:
+
+
+
+function _renderRow(room){
 return (
-React.createElement(TouchableHighlight,{
-underlayColor:'#CFD6D6',
-style:{marginBottom:10},
-onPress:function(){
-JukappApi.joinRoom(rowData.id);}},
-
-
-React.createElement(View,{style:styles.cell},
-React.createElement(Text,{style:styles.title},rowData.name),
-React.createElement(Text,{style:styles.details},'1234 USERS'))));},
+React.createElement(RoomListItem,{
+room:room,
+onPress:this._onPress.bind(this)}));}},{key:'_renderFooter',value:
 
 
 
 
-
-renderFooter:function(){
+function _renderFooter(){
 if(this.state.loading){
-return React.createElement(ActivityIndicatorIOS,null);}},
+return React.createElement(ActivityIndicatorIOS,null);}}},{key:'render',value:
 
 
 
-render:function(){
+function render(){
 return (
 React.createElement(ListView,{
 style:styles.listView,
-renderRow:this.renderRow,
+renderRow:this._renderRow.bind(this),
 dataSource:this.state.dataSource,
-renderFooter:this.renderFooter}));}});
+renderFooter:this._renderFooter.bind(this)}));}}]);return RoomList;})(Component);
 
 
 
@@ -45316,716 +45179,13 @@ renderFooter:this.renderFooter}));}});
 var styles=StyleSheet.create({
 listView:{
 backgroundColor:'#EEF2F2',
-padding:10},
-
-
-cell:{
-flexDirection:'column',
-backgroundColor:'white',
-padding:6,
-height:72,
-justifyContent:'space-around',
-borderRadius:4,
-shadowColor:'#000000',
-shadowRadius:1,
-shadowOpacity:0.3,
-shadowOffset:{
-height:1,
-width:0},
-
-flex:1},
-
-
-title:{
-color:'black',
-fontSize:16,
-fontWeight:'bold',
-textAlign:'left',
-paddingTop:4,
-paddingLeft:10},
-
-
-details:{
-color:'#9FA7A7',
-fontSize:14,
-textAlign:'left',
-paddingBottom:4,
-paddingLeft:10}});
+padding:10}});
 
 
 
-module.exports = RoomsListView;
+module.exports = RoomList;
 });
-__d('Jukapp/SearchResultsListView.js',["react-native/Libraries/react-native/react-native.js","react-native-search-bar/SearchBar.js","Jukapp/VideoCell.js","Jukapp/JukappStore.js","Jukapp/JukappActions.js","Jukapp/JukappApi.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
-
-var React=require('react-native/Libraries/react-native/react-native.js');
-var SearchBar=require('react-native-search-bar/SearchBar.js');
-var VideoCell=require('Jukapp/VideoCell.js');
-var JukappStore=require('Jukapp/JukappStore.js');
-var JukappActions=require('Jukapp/JukappActions.js');
-var JukappApi=require('Jukapp/JukappApi.js');var 
-
-
-StyleSheet=
-
-
-
-
-React.StyleSheet;var View=React.View;var ListView=React.ListView;var TouchableHighlight=React.TouchableHighlight;var ActivityIndicatorIOS=React.ActivityIndicatorIOS;
-
-var SearchResultsListView=React.createClass({displayName:'SearchResultsListView',
-
-getInitialState:function(){
-var dataSource=new ListView.DataSource({rowHasChanged:function(r1,r2){return true;}});
-
-console.log(JukappStore.getLastQuery());
-
-return {
-dataSource:dataSource.cloneWithRows(JukappStore.getSearchResults()),
-query:JukappStore.getLastQuery()};},
-
-
-
-componentDidMount:function(){
-JukappStore.addChangeListener(this._onChange);},
-
-
-componentWillUnmount:function(){
-JukappStore.removeChangeListener(this._onChange);},
-
-
-_renderFooter:function(){
-if(this.state.loading){
-return React.createElement(ActivityIndicatorIOS,null);}},
-
-
-
-_onChange:function(){
-this.setState({
-loading:false,
-dataSource:this.state.dataSource.cloneWithRows(JukappStore.getSearchResults())});},
-
-
-
-_refreshList:function(){var _this=this;
-JukappApi.searchVideo(this.state.query).
-done(function(searchResults){
-JukappActions.completedSearch(searchResults,_this.state.query);});},
-
-
-
-_renderRow:function(rowData,sectionID,rowID){
-return (
-React.createElement(VideoCell,{video:rowData,onFavoriteToggled:this._refreshList}));},
-
-
-
-render:function(){var _this2=this;
-return (
-React.createElement(View,{style:styles.container},
-React.createElement(SearchBar,{
-placeholder:'Search on YouTube',
-onSearchButtonPress:function(query){
-_this2.setState({
-loading:true,
-query:query});
-
-
-JukappApi.searchVideo(query).
-done(function(searchResults){
-JukappActions.completedSearch(searchResults,query);});},
-
-
-onCancelButtonPress:function(){
-console.log('onCancelButtonPress');}}),
-
-
-
-React.createElement(ListView,{
-style:styles.listView,
-contentContainerStyle:styles.listViewContent,
-dataSource:this.state.dataSource,
-renderRow:this._renderRow,
-renderFooter:this._renderFooter,
-automaticallyAdjustContentInsets:false})));}});
-
-
-
-
-
-
-
-var styles=StyleSheet.create({
-container:{
-flex:1,
-backgroundColor:'#EEF2F2'},
-
-listView:{
-backgroundColor:'#EEF2F2',
-padding:10},
-
-listViewContent:{
-justifyContent:'center'}});
-
-
-
-module.exports = SearchResultsListView;
-});
-__d('react-native-search-bar/SearchBar.js',["react-native/Libraries/react-native/react-native.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _extends=Object.assign || function(target){for(var i=1;i < arguments.length;i++) {var source=arguments[i];for(var key in source) {if(Object.prototype.hasOwnProperty.call(source,key)){target[key] = source[key];}}}return target;};var NativeModules,PropTypes,RNSearchBar,React,SearchBar;
-
-React = require('react-native/Libraries/react-native/react-native.js');
-
-RNSearchBar = React.requireNativeComponent('RNSearchBar',null);
-
-PropTypes = React.PropTypes;
-
-NativeModules = React.NativeModules;
-
-SearchBar = React.createClass({displayName:'SearchBar',
-propTypes:{
-placeholder:PropTypes.string,
-text:PropTypes.string,
-tintColor:PropTypes.string,
-showsCancelButton:PropTypes.bool,
-onChange:PropTypes.func,
-onChangeText:PropTypes.func,
-onFocus:PropTypes.func,
-onSearchButtonPress:PropTypes.func,
-onCancelButtonPress:PropTypes.func,
-hideBackground:PropTypes.bool},
-
-_onChange:function(e){
-var base,base1;
-if(typeof (base = this.props).onChange === "function"){
-base.onChange(e);}
-
-return typeof (base1 = this.props).onChangeText === "function"?base1.onChangeText(e.nativeEvent.text):void 0;},
-
-_onPress:function(e){
-var base,base1,button;
-button = e.nativeEvent.button;
-if(button === 'search'){
-return typeof (base = this.props).onSearchButtonPress === "function"?base.onSearchButtonPress(e.nativeEvent.searchText):void 0;}else 
-if(button === 'cancel'){
-return typeof (base1 = this.props).onCancelButtonPress === "function"?base1.onCancelButtonPress():void 0;}},
-
-
-render:function(){
-return React.createElement(RNSearchBar,_extends({
-style:{height:NativeModules.RNSearchBarManager.ComponentHeight},
-onChange:this._onChange,
-onPress:this._onPress},
-this.props));}});
-
-
-
-
-module.exports = SearchBar;
-});
-__d('Jukapp/VideoCell.js',["react-native/Libraries/react-native/react-native.js","Jukapp/JukappActions.js","Jukapp/JukappStore.js","Jukapp/JukappApi.js","Jukapp/FavoriteButton.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
-
-var React=require('react-native/Libraries/react-native/react-native.js');
-var JukappActions=require('Jukapp/JukappActions.js');
-var JukappStore=require('Jukapp/JukappStore.js');
-var JukappApi=require('Jukapp/JukappApi.js');
-var FavoriteButton=require('Jukapp/FavoriteButton.js');var 
-
-
-StyleSheet=
-
-
-
-
-React.StyleSheet;var Text=React.Text;var View=React.View;var Image=React.Image;var TouchableHighlight=React.TouchableHighlight;
-
-var VideoCell=React.createClass({displayName:'VideoCell',
-
-renderFavoriteButton:function(){
-if(!JukappStore.isLoggedIn()){
-return;}
-
-
-var video=this.props.video;
-
-return React.createElement(FavoriteButton,{video:video,onFavoriteToggled:this.props.onFavoriteToggled});},
-
-
-render:function(){
-var video=this.props.video;
-var playCount;
-
-if(video["video_events"]){
-var videoEvent=video["video_events"].find(function(events){return events["room_id"] == JukappStore.getCurrentRoom().id;});
-if(videoEvent)playCount = videoEvent["play_count"];}
-
-
-if(!playCount){
-playCount = 0;}
-
-
-var image={uri:'http://img.youtube.com/vi/' + video.youtube_id + '/default.jpg'};
-var secondaryButton=this.renderFavoriteButton();
-
-return (
-React.createElement(TouchableHighlight,{
-underlayColor:'#CFD6D6',
-style:{marginBottom:10},
-onPress:function(){
-JukappApi.queueVideo(video);}},
-
-
-React.createElement(View,{style:styles.cell},
-React.createElement(Image,{source:image,style:styles.videoImage}),
-
-React.createElement(View,{style:styles.rowData},
-React.createElement(Text,{style:styles.title},video.title),
-React.createElement(Text,{style:styles.details},playCount,' VIEWS')),
-
-
-secondaryButton)));}});
-
-
-
-
-
-
-var styles=StyleSheet.create({
-
-cell:{
-flexDirection:'row',
-backgroundColor:'white',
-padding:16,
-height:96,
-justifyContent:'flex-start',
-borderRadius:4,
-shadowColor:'#000000',
-shadowRadius:1,
-shadowOpacity:0.3,
-shadowOffset:{
-height:1,
-width:0}},
-
-
-
-secondaryButton:{
-justifyContent:'center',
-marginTop:16,
-marginBottom:16},
-
-
-star:{
-height:40,
-width:40,
-shadowColor:'#000000',
-shadowRadius:1,
-shadowOpacity:0.3,
-shadowOffset:{
-height:1,
-width:0}},
-
-
-
-rowData:{
-flexDirection:'column',
-paddingLeft:16,
-justifyContent:'space-around',
-flex:1},
-
-
-title:{
-color:'black',
-fontSize:14,
-fontWeight:'bold',
-textAlign:'left',
-paddingTop:4},
-
-
-details:{
-color:'#9FA7A7',
-fontSize:12,
-textAlign:'left',
-paddingBottom:4},
-
-
-videoImage:{
-alignSelf:'flex-start',
-width:64,
-height:64}});
-
-
-
-
-module.exports = VideoCell;
-});
-__d('Jukapp/JukappActions.js',["Jukapp/Dispatcher.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var Dispatcher=require('Jukapp/Dispatcher.js');
-
-var JukappActions={
-loadedRooms:function(rooms){
-Dispatcher.dispatch({
-actionType:'loaded-rooms',
-rooms:rooms});},
-
-
-
-joinedRoom:function(room){
-Dispatcher.dispatch({
-actionType:'joined-room',
-room:room});},
-
-
-
-leftRoom:function(){
-Dispatcher.dispatch({
-actionType:'left-room'});},
-
-
-
-loggedIn:function(user){
-Dispatcher.dispatch({
-actionType:'logged-in',
-user:user});},
-
-
-
-loggedOut:function(user){
-Dispatcher.dispatch({
-actionType:'logged-out'});},
-
-
-
-loadedQueuedVideos:function(queuedVideos){
-Dispatcher.dispatch({
-actionType:'loaded-queued-videos',
-queuedVideos:queuedVideos});},
-
-
-
-loadedFavorites:function(favorites){
-Dispatcher.dispatch({
-actionType:'loaded-favorites',
-favorites:favorites});},
-
-
-
-completedSearch:function(searchResults,query){
-Dispatcher.dispatch({
-actionType:'completed-search',
-searchResults:searchResults,
-query:query});}};
-
-
-
-
-module.exports = JukappActions;
-});
-__d('Jukapp/Dispatcher.js',["flux/index.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var Dispatcher=require('flux/index.js').Dispatcher;
-
-module.exports = new Dispatcher();
-});
-__d('flux/index.js',["Dispatcher"],function(global, require, requireDynamic, requireLazy, module, exports) {  module.
-
-
-
-
-
-
-
-
-exports.Dispatcher = require('Dispatcher');
-});
-__d('Dispatcher',["invariant"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-exports.__esModule = true;
-
-function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}
-
-var invariant=require('invariant');
-
-var _prefix='ID_';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var Dispatcher=(function(){
-function Dispatcher(){
-_classCallCheck(this,Dispatcher);
-
-this._callbacks = {};
-this._isDispatching = false;
-this._isHandled = {};
-this._isPending = {};
-this._lastID = 1;}
-
-
-
-
-
-
-
-Dispatcher.prototype.register = function register(callback){
-var id=_prefix + this._lastID++;
-this._callbacks[id] = callback;
-return id;};
-
-
-
-
-
-
-Dispatcher.prototype.unregister = function unregister(id){
-!this._callbacks[id]?process.env.NODE_ENV !== 'production'?invariant(false,'Dispatcher.unregister(...): `%s` does not map to a registered callback.',id):invariant(false):undefined;
-delete this._callbacks[id];};
-
-
-
-
-
-
-
-
-Dispatcher.prototype.waitFor = function waitFor(ids){
-!this._isDispatching?process.env.NODE_ENV !== 'production'?invariant(false,'Dispatcher.waitFor(...): Must be invoked while dispatching.'):invariant(false):undefined;
-for(var ii=0;ii < ids.length;ii++) {
-var id=ids[ii];
-if(this._isPending[id]){
-!this._isHandled[id]?process.env.NODE_ENV !== 'production'?invariant(false,'Dispatcher.waitFor(...): Circular dependency detected while ' + 'waiting for `%s`.',id):invariant(false):undefined;
-continue;}
-
-!this._callbacks[id]?process.env.NODE_ENV !== 'production'?invariant(false,'Dispatcher.waitFor(...): `%s` does not map to a registered callback.',id):invariant(false):undefined;
-this._invokeCallback(id);}};
-
-
-
-
-
-
-
-Dispatcher.prototype.dispatch = function dispatch(payload){
-!!this._isDispatching?process.env.NODE_ENV !== 'production'?invariant(false,'Dispatch.dispatch(...): Cannot dispatch in the middle of a dispatch.'):invariant(false):undefined;
-this._startDispatching(payload);
-try{
-for(var id in this._callbacks) {
-if(this._isPending[id]){
-continue;}
-
-this._invokeCallback(id);}}finally 
-
-{
-this._stopDispatching();}};
-
-
-
-
-
-
-
-Dispatcher.prototype.isDispatching = function isDispatching(){
-return this._isDispatching;};
-
-
-
-
-
-
-
-
-
-Dispatcher.prototype._invokeCallback = function _invokeCallback(id){
-this._isPending[id] = true;
-this._callbacks[id](this._pendingPayload);
-this._isHandled[id] = true;};
-
-
-
-
-
-
-
-
-Dispatcher.prototype._startDispatching = function _startDispatching(payload){
-for(var id in this._callbacks) {
-this._isPending[id] = false;
-this._isHandled[id] = false;}
-
-this._pendingPayload = payload;
-this._isDispatching = true;};
-
-
-
-
-
-
-
-
-Dispatcher.prototype._stopDispatching = function _stopDispatching(){
-delete this._pendingPayload;
-this._isDispatching = false;};
-
-
-return Dispatcher;})();
-
-
-module.exports = Dispatcher;
-});
-__d('invariant',[],function(global, require, requireDynamic, requireLazy, module, exports) {  "use strict";
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var invariant=function(condition,format,a,b,c,d,e,f){
-if(process.env.NODE_ENV !== 'production'){
-if(format === undefined){
-throw new Error('invariant requires an error message argument');}}
-
-
-
-if(!condition){
-var error;
-if(format === undefined){
-error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');}else 
-{
-var args=[a,b,c,d,e,f];
-var argIndex=0;
-error = new Error('Invariant Violation: ' + format.replace(/%s/g,function(){
-return args[argIndex++];}));}
-
-
-
-error.framesToPop = 1;
-throw error;}};
-
-
-
-module.exports = invariant;
-});
-__d('Jukapp/JukappStore.js',["react-native/Libraries/react-native/react-native.js","Jukapp/Dispatcher.js","events/events.js","object-assign/index.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var React=require('react-native/Libraries/react-native/react-native.js');
-var Dispatcher=require('Jukapp/Dispatcher.js');
-var EventEmitter=require('events/events.js').EventEmitter;var 
-
-AsyncStorage=
-React.AsyncStorage;
-
-var assign=require('object-assign/index.js');
-
-var CHANGE_EVENT='change';
-var JUKAPP_STORE_KEY='@JukappStore:key';
+__d('Jukapp/app/stores/JukappStore.js',["Jukapp/app/stores/Store.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var Store=require('Jukapp/app/stores/Store.js');
 
 var currentRoom;
 var user;
@@ -46035,65 +45195,66 @@ var searchResults=[];
 var queuedVideos=[];
 var lastQuery;
 
-function joinedRoom(room){
-currentRoom = room;
-syncStorage();}
+var JukappStore=new Store(function(register){
+register({
+joinRoom:function(action){
+currentRoom = action.room;},
 
 
-function loggedOut(){
-user = null;
-syncStorage();}
+leaveRoom:function(){
+currentRoom = null;},
 
 
-function leftRoom(){
-currentRoom = null;
-syncStorage();}
+login:function(action){
+user = action.user;},
 
 
-function loggedIn(loginUser){
-user = loginUser;
-syncStorage();}
+logout:function(){
+user = null;},
 
 
-function syncStorage(){
-var store=JSON.stringify({
-user:user,
-room:currentRoom});
+loadRooms:function(action){
+rooms = action.rooms;},
 
 
-AsyncStorage.setItem(JUKAPP_STORE_KEY,store);}
+loadQueuedVideos:function(action){
+queuedVideos = action.queuedVideos;},
 
 
-var JukappStore=assign({},EventEmitter.prototype,{
-
-initialize:function(){
-
-AsyncStorage.getItem(JUKAPP_STORE_KEY).then(function(value){
-var store=JSON.parse(value);
-if(store){
-console.log(store);
-if(store.room){
-currentRoom = store.room;}
+loadFavorites:function(action){
+favorites = action.favorites;},
 
 
-if(store.user){
-user = store.user;}}});},
+loadSearchResults:function(action){
+searchResults = action.searchResults;
+lastQuery = action.query;}});
 
 
 
-
-
-isInRoom:function(){
+return {
+inRoom:function(){
 return !!currentRoom;},
 
 
-isLoggedIn:function(){
+currentRoom:function(){
+return currentRoom;},
+
+
+loggedIn:function(){
 return !!user;},
+
+
+currentUser:function(){
+
+if(user){
+return user;}},
+
+
 
 
 isFavoriteVideo:function(video){
 for(var id in favorites) {
-if(favorites[id]["video"].youtube_id == video.youtube_id){
+if(favorites[id]['video'].youtube_id == video.youtube_id){
 return true;}}
 
 
@@ -46101,18 +45262,10 @@ return true;}}
 return false;},
 
 
-getUser:function(){
-if(this.isLoggedIn()){
-return user;}},
-
 
 
 getRooms:function(){
 return rooms;},
-
-
-getCurrentRoom:function(){
-return currentRoom;},
 
 
 getSearchResults:function(){
@@ -46128,74 +45281,78 @@ return queuedVideos;},
 
 
 getFavorites:function(){
-return favorites;},
-
-
-emitChange:function(){
-this.emit(CHANGE_EVENT);},
-
-
-addChangeListener:function(callback){
-this.on(CHANGE_EVENT,callback);},
-
-
-removeChangeListener:function(callback){
-this.removeListener(CHANGE_EVENT,callback);}});
-
-
-
-
-Dispatcher.register(function(action){
-switch(action.actionType){
-case 'loaded-rooms':
-rooms = action.rooms;
-JukappStore.emitChange();
-break;
-
-case 'joined-room':
-joinedRoom(action.room);
-JukappStore.emitChange();
-break;
-
-case 'left-room':
-leftRoom();
-JukappStore.emitChange();
-break;
-
-case 'logged-in':
-loggedIn(action.user);
-JukappStore.emitChange();
-break;
-
-case 'logged-out':
-loggedOut();
-JukappStore.emitChange();
-break;
-
-case 'loaded-queued-videos':
-queuedVideos = action.queuedVideos;
-JukappStore.emitChange();
-break;
-
-
-case 'loaded-favorites':
-favorites = action.favorites;
-JukappStore.emitChange();
-break;
-
-case 'completed-search':
-searchResults = action.searchResults;
-console.log('ac ' + action.query);
-lastQuery = action.query;
-JukappStore.emitChange();
-break;
-
-default:}});
+return favorites;}};});
 
 
 
 
 module.exports = JukappStore;
+});
+__d('Jukapp/app/stores/Store.js',["events/events.js","Jukapp/Dispatcher.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var EventEmitter=require('events/events.js').EventEmitter;
+var Dispatcher=require('Jukapp/Dispatcher.js');
+
+var CHANGE_EVENT='change';
+var ROOM_CHANGE_EVENT='room';var 
+
+Store=(function(_EventEmitter){_inherits(Store,_EventEmitter);
+function Store(definition){var _this=this;_classCallCheck(this,Store);
+_get(Object.getPrototypeOf(Store.prototype),'constructor',this).call(this);
+
+var publicMethods=definition.call(this,function(handlers){
+_this.dispatchToken = Dispatcher.register(function(action){
+var handler=handlers[action.type];
+if(handler){
+handler.call(_this,action);
+_this.changed();}});});
+
+
+
+
+for(var key in publicMethods) {
+Object.defineProperty(this,key,Object.getOwnPropertyDescriptor(publicMethods,key));}
+
+
+this.Watch = Store.watch(this);}_createClass(Store,[{key:'addChangeListener',value:
+
+
+function addChangeListener(callback){
+this.addListener(CHANGE_EVENT,callback);}},{key:'addRoomChangeListener',value:
+
+
+function addRoomChangeListener(callback){
+
+this.addListener(ROOM_CHANGE_EVENT,callback);}},{key:'removeRoomChangeListener',value:
+
+
+function removeRoomChangeListener(){
+
+this.removeAllListeners(ROOM_CHANGE_EVENT);}},{key:'removeChangeListener',value:
+
+
+function removeChangeListener(){
+
+this.removeAllListeners(CHANGE_EVENT);}},{key:'changed',value:
+
+
+function changed(){
+this.emit(CHANGE_EVENT);
+this.emit(ROOM_CHANGE_EVENT);}}],[{key:'watch',value:
+
+
+function watch(store){
+return {
+componentDidMount:function(){
+store.addRoomChangeListener(this._onChange);},
+
+
+componentWillUnmount:function(){
+store.removeRoomChangeListener(this._onChange);}};}}]);return Store;})(EventEmitter);
+
+
+
+
+
+module.exports = Store;
 });
 __d('events/events.js',[],function(global, require, requireDynamic, requireLazy, module, exports) {  function 
 
@@ -46498,50 +45655,304 @@ return typeof arg === 'object' && arg !== null;}
 function isUndefined(arg){
 return arg === void 0;}
 });
-__d('object-assign/index.js',[],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
-var propIsEnumerable=Object.prototype.propertyIsEnumerable;
-
-function ToObject(val){
-if(val == null){
-throw new TypeError('Object.assign cannot be called with null or undefined');}
-
-
-return Object(val);}
-
-
-function ownEnumerableKeys(obj){
-var keys=Object.getOwnPropertyNames(obj);
-
-if(Object.getOwnPropertySymbols){
-keys = keys.concat(Object.getOwnPropertySymbols(obj));}
-
-
-return keys.filter(function(key){
-return propIsEnumerable.call(obj,key);});}
-
-
-
-module.exports = Object.assign || function(target,source){
-var from;
-var keys;
-var to=ToObject(target);
-
-for(var s=1;s < arguments.length;s++) {
-from = arguments[s];
-keys = ownEnumerableKeys(Object(from));
-
-for(var i=0;i < keys.length;i++) {
-to[keys[i]] = from[keys[i]];}}
-
-
-
-return to;};
+__d('Jukapp/Dispatcher.js',["flux/index.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var Dispatcher=require('flux/index.js').Dispatcher;
+module.exports = new Dispatcher();
 });
-__d('Jukapp/JukappApi.js',["NativeModules","react-native/Libraries/react-native/react-native.js","Jukapp/JukappActions.js","Jukapp/JukappStore.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
+__d('flux/index.js',["Dispatcher"],function(global, require, requireDynamic, requireLazy, module, exports) {  module.
 
-var React=require('react-native/Libraries/react-native/react-native.js');
-var JukappActions=require('Jukapp/JukappActions.js');
-var JukappStore=require('Jukapp/JukappStore.js');
+
+
+
+
+
+
+
+exports.Dispatcher = require('Dispatcher');
+});
+__d('Dispatcher',["invariant"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exports.__esModule = true;
+
+function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}
+
+var invariant=require('invariant');
+
+var _prefix='ID_';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var Dispatcher=(function(){
+function Dispatcher(){
+_classCallCheck(this,Dispatcher);
+
+this._callbacks = {};
+this._isDispatching = false;
+this._isHandled = {};
+this._isPending = {};
+this._lastID = 1;}
+
+
+
+
+
+
+
+Dispatcher.prototype.register = function register(callback){
+var id=_prefix + this._lastID++;
+this._callbacks[id] = callback;
+return id;};
+
+
+
+
+
+
+Dispatcher.prototype.unregister = function unregister(id){
+!this._callbacks[id]?process.env.NODE_ENV !== 'production'?invariant(false,'Dispatcher.unregister(...): `%s` does not map to a registered callback.',id):invariant(false):undefined;
+delete this._callbacks[id];};
+
+
+
+
+
+
+
+
+Dispatcher.prototype.waitFor = function waitFor(ids){
+!this._isDispatching?process.env.NODE_ENV !== 'production'?invariant(false,'Dispatcher.waitFor(...): Must be invoked while dispatching.'):invariant(false):undefined;
+for(var ii=0;ii < ids.length;ii++) {
+var id=ids[ii];
+if(this._isPending[id]){
+!this._isHandled[id]?process.env.NODE_ENV !== 'production'?invariant(false,'Dispatcher.waitFor(...): Circular dependency detected while ' + 'waiting for `%s`.',id):invariant(false):undefined;
+continue;}
+
+!this._callbacks[id]?process.env.NODE_ENV !== 'production'?invariant(false,'Dispatcher.waitFor(...): `%s` does not map to a registered callback.',id):invariant(false):undefined;
+this._invokeCallback(id);}};
+
+
+
+
+
+
+
+Dispatcher.prototype.dispatch = function dispatch(payload){
+!!this._isDispatching?process.env.NODE_ENV !== 'production'?invariant(false,'Dispatch.dispatch(...): Cannot dispatch in the middle of a dispatch.'):invariant(false):undefined;
+this._startDispatching(payload);
+try{
+for(var id in this._callbacks) {
+if(this._isPending[id]){
+continue;}
+
+this._invokeCallback(id);}}finally 
+
+{
+this._stopDispatching();}};
+
+
+
+
+
+
+
+Dispatcher.prototype.isDispatching = function isDispatching(){
+return this._isDispatching;};
+
+
+
+
+
+
+
+
+
+Dispatcher.prototype._invokeCallback = function _invokeCallback(id){
+this._isPending[id] = true;
+this._callbacks[id](this._pendingPayload);
+this._isHandled[id] = true;};
+
+
+
+
+
+
+
+
+Dispatcher.prototype._startDispatching = function _startDispatching(payload){
+for(var id in this._callbacks) {
+this._isPending[id] = false;
+this._isHandled[id] = false;}
+
+this._pendingPayload = payload;
+this._isDispatching = true;};
+
+
+
+
+
+
+
+
+Dispatcher.prototype._stopDispatching = function _stopDispatching(){
+delete this._pendingPayload;
+this._isDispatching = false;};
+
+
+return Dispatcher;})();
+
+
+module.exports = Dispatcher;
+});
+__d('invariant',[],function(global, require, requireDynamic, requireLazy, module, exports) {  "use strict";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var invariant=function(condition,format,a,b,c,d,e,f){
+if(process.env.NODE_ENV !== 'production'){
+if(format === undefined){
+throw new Error('invariant requires an error message argument');}}
+
+
+
+if(!condition){
+var error;
+if(format === undefined){
+error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');}else 
+{
+var args=[a,b,c,d,e,f];
+var argIndex=0;
+error = new Error('Invariant Violation: ' + format.replace(/%s/g,function(){
+return args[argIndex++];}));}
+
+
+
+error.framesToPop = 1;
+throw error;}};
+
+
+
+module.exports = invariant;
+});
+__d('Jukapp/app/JukappApi.js',["NativeModules","react-native/Libraries/react-native/react-native.js","Jukapp/app/stores/JukappStore.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var React=require('react-native/Libraries/react-native/react-native.js');
+var JukappStore=require('Jukapp/app/stores/JukappStore.js');
 var EventSource=require('NativeModules').RNEventSource;
 
 var JUKAPP_URL='https://jukapp-api.herokuapp.com';var 
@@ -46555,8 +45966,8 @@ var eventListener;
 
 var JukappApi={
 defaultOptions:function(){
-var currentRoom=JukappStore.getCurrentRoom();
-var user=JukappStore.getUser();
+var currentRoom=JukappStore.currentRoom();
+var user=JukappStore.currentUser();
 
 var options={
 headers:{
@@ -46577,6 +45988,24 @@ options['headers']['X-AuthToken'] = user.authToken;}
 return options;},
 
 
+postOptions:function(body){
+var options=this.defaultOptions();
+
+options.method = 'POST';
+options.body = body;
+
+return options;},
+
+
+deleteOptions:function(body){
+var options=this.defaultOptions();
+
+options.method = 'DELETE';
+options.body = body;
+
+return options;},
+
+
 videoOptions:function(video){
 return JSON.stringify({
 youtube_id:video.youtube_id,
@@ -46584,31 +46013,28 @@ title:video.title});},
 
 
 
-fetchRooms:function(){
-fetch(JUKAPP_URL + '/rooms',this.defaultOptions()).
-then(function(response){
-return response.json();}).
+fetch:function(url,options){
+return fetch(JUKAPP_URL + url,options || this.defaultOptions());},
 
-then(JukappActions.loadedRooms);},
+
+fetchRooms:function(){
+return this.fetch('/rooms').
+then(function(response){
+return response.json();});},
+
 
 
 joinRoom:function(roomId){
-fetch(JUKAPP_URL + '/rooms/' + roomId + '/join',this.defaultOptions()).
+return this.fetch('/rooms/' + roomId + '/join').
 then(function(response){
-return response.json();}).
-
-then(JukappActions.joinedRoom).
-catch(function(response){
-JukappActions.leftRoom();
-console.log('Join error',response);
-AlertIOS.alert('Join error' + response);});},
+return response.json();});},
 
 
 
 searchVideo:function(query){var _this=this;
 var videos=[];
 
-return fetch(JUKAPP_URL + '/search?query=' + query,this.defaultOptions()).
+return this.fetch('/search?query=' + query).
 then(function(response){
 return response.json();}).
 
@@ -46623,11 +46049,9 @@ return _this.checkFavorites(videos,responseData);});},
 
 
 queueVideo:function(video){
-var options=this.defaultOptions();
-options['method'] = 'POST';
-options['body'] = this.videoOptions(video);
+var options=this.postOptions(this.videoOptions(video));
 
-fetch(JUKAPP_URL + "/queue",options).
+return this.fetch('/queue',options).
 then(function(response){
 if(response.status == 201){
 console.log('Successfully queued video');}else 
@@ -46636,47 +46060,41 @@ console.log('Could not queue video');}}).
 
 
 catch(function(response){
-console.log("Queue error",response);
-AlertIOS.alert("Queue error" + response);});},
+console.log('Queue error',response);
+AlertIOS.alert('Queue error' + response);});},
 
 
 
 login:function(username,password){
-var options=this.defaultOptions();
-options['method'] = 'POST';
-options['body'] = JSON.stringify({
-user:{
-username:username,
-password:password}});
+var user=JSON.stringify({
+user:{username:username,password:password}});
 
 
+var options=this.postOptions(user);
 
-return fetch(JUKAPP_URL + "/users/sign_in",options).
+return this.fetch('/users/sign_in',options).
 then(function(response){
 if(response.status == 201){
-return response.json();
-console.log('Successfully logged in');}else 
+console.log('Successfully logged in');
+return response.json();}else 
 {
 console.log('Could not log in');
+
 return Promise.reject(new Error());}}).
 
 
-then(function(responseData){
-if(!responseData)return;
+then(function(userData){
+return {
+username:userData.username,
+authToken:userData.authentication_token};});},
 
-var user={
-username:responseData["username"],
-authToken:responseData["authentication_token"]};
-
-
-JukappActions.loggedIn(user);});},
 
 
 
 fetchQueuedVideos:function(){var _this2=this;
 var videos=[];
 
-return fetch(JUKAPP_URL + "/queued_videos",this.defaultOptions()).
+return this.fetch('/queued_videos').
 then(function(response){
 return response.json();}).
 
@@ -46685,36 +46103,32 @@ for(var queuedVideo of responseData) {
 videos.push(queuedVideo.video);}
 
 
+
 return _this2.fetchFavorites();}).
 
 then(function(responseData){
 return _this2.checkFavorites(videos,responseData);}).
 
 catch(function(response){
-console.log("Queued videos error",response);
-AlertIOS.alert("Queued videos error" + response);});},
+console.log('Queued videos error',response);
+AlertIOS.alert('Queued videos error' + response);});},
+
 
 
 
 checkFavorites:function(videos,favorites){
 for(var video of videos) {
 for(var favoriteVideo of favorites) {
-if(video.id == favoriteVideo.id)video["isFavorite"] = true;}
+if(video.id == favoriteVideo.id)video['isFavorite'] = true;}
 
-if(!video.isFavorite)video["isFavorite"] = false;}
+if(!video.isFavorite)video['isFavorite'] = false;}
 
 
 return videos;},
 
 
 fetchFavorites:function(){
-if(!JukappStore.isLoggedIn()){
-return new Promise(function(fulfill,reject){
-fulfill([]);});}
-
-
-
-return fetch(JUKAPP_URL + "/favorites",this.defaultOptions()).
+return this.fetch('/favorites').
 then(function(response){
 return response.json();}).
 
@@ -46722,7 +46136,7 @@ then(function(responseData){
 var videos=[];
 for(var favoriteVideo of responseData) {
 var video=favoriteVideo.video;
-video["isFavorite"] = true;
+video['isFavorite'] = true;
 
 videos.push(video);}
 
@@ -46730,17 +46144,15 @@ videos.push(video);}
 return videos;}).
 
 catch(function(response){
-console.log("Favorites error",response);
-AlertIOS.alert("Favorites error" + response);});},
+console.log('Favorites error',response);
+AlertIOS.alert('Favorites error' + response);});},
 
 
 
 favoriteVideo:function(video){
-var options=this.defaultOptions();
-options['method'] = 'POST';
-options['body'] = this.videoOptions(video);
+var options=this.postOptions(this.videoOptions(video));
 
-fetch(JUKAPP_URL + "/favorites",options).
+this.fetch('/favorites',options).
 then(function(response){
 if(response.status == 201){
 console.log('Successfully favorited video');}else 
@@ -46749,17 +46161,15 @@ console.log('Could not favorite video');}}).
 
 
 catch(function(response){
-console.log("Favorites error",response);
-AlertIOS.alert("Favorites error" + response);});},
+console.log('Favorites error',response);
+AlertIOS.alert('Favorites error' + response);});},
 
 
 
 unfavoriteVideo:function(video){
-var options=this.defaultOptions();
-options['method'] = 'DELETE';
-options['body'] = this.videoOptions(video);
+var options=this.deleteOptions(this.videoOptions(video));
 
-fetch(JUKAPP_URL + "/favorites",options).
+this.fetch('/favorites',options).
 then(function(response){
 if(response.status == 200){
 console.log('Successfully unfavorited video');}else 
@@ -46768,8 +46178,8 @@ console.log('Could not unfavorite video');}}).
 
 
 catch(function(response){
-console.log("Favorites error",response);
-AlertIOS.alert("Favorites error" + response);});},
+console.log('Favorites error',response);
+AlertIOS.alert('Favorites error' + response);});},
 
 
 
@@ -46781,61 +46191,955 @@ onEvent(message);}});
 
 
 
-EventSource.connectWithURL(JUKAPP_URL + "/events?channels[]=queue-" + JukappStore.getCurrentRoom().id);},
+EventSource.connectWithURL(JUKAPP_URL + '/events?channels[]=queue-' + JukappStore.currentRoom().id);},
 
 
 removeEventListener:function(){
 EventSource.close();
-
-if(eventListener){
-eventListener.remove();}}};
-
-
+eventListener.remove();}};
 
 
 
 module.exports = JukappApi;
 });
-__d('Jukapp/FavoriteButton.js',["react-native/Libraries/react-native/react-native.js","Jukapp/JukappApi.js","react-native-icons/index.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
+__d('Jukapp/app/rooms/RoomListItem.js',["react-native/Libraries/react-native/react-native.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');var 
 
-var React=require('react-native/Libraries/react-native/react-native.js');
-var JukappApi=require('Jukapp/JukappApi.js');var _require=
+
+StyleSheet=
+
+
+
+
+
+React.StyleSheet;var Text=React.Text;var View=React.View;var TouchableHighlight=React.TouchableHighlight;var Component=React.Component;var PropTypes=React.PropTypes;var 
+
+RoomsListItem=(function(_Component){_inherits(RoomsListItem,_Component);function RoomsListItem(){_classCallCheck(this,RoomsListItem);_get(Object.getPrototypeOf(RoomsListItem.prototype),'constructor',this).apply(this,arguments);}_createClass(RoomsListItem,[{key:'_onPress',value:
+function _onPress(){
+this.props.onPress(this.props.room);}},{key:'render',value:
+
+
+function render(){
+return (
+React.createElement(TouchableHighlight,{
+underlayColor:'#CFD6D6',
+style:{marginBottom:10},
+onPress:this._onPress.bind(this)},
+
+React.createElement(View,{style:styles.cell},
+React.createElement(Text,{style:styles.title},this.props.room.name),
+React.createElement(Text,{style:styles.details},'1234 USERS'))));}}]);return RoomsListItem;})(Component);
+
+
+
+
+
+
+RoomsListItem.propTypes = {
+onPress:PropTypes.func.isRequired,
+room:PropTypes.object.isRequired};
+
+
+var styles=StyleSheet.create({
+cell:{
+flexDirection:'column',
+backgroundColor:'white',
+padding:6,
+height:72,
+justifyContent:'space-around',
+borderRadius:4,
+shadowColor:'#000000',
+shadowRadius:1,
+shadowOpacity:0.3,
+shadowOffset:{
+height:1,
+width:0},
+
+flex:1},
+
+
+title:{
+color:'black',
+fontSize:16,
+fontWeight:'bold',
+textAlign:'left',
+paddingTop:4,
+paddingLeft:10},
+
+
+details:{
+color:'#9FA7A7',
+fontSize:14,
+textAlign:'left',
+paddingBottom:4,
+paddingLeft:10}});
+
+
+
+module.exports = RoomsListItem;
+});
+__d('Jukapp/JukappStorage.js',["react-native/Libraries/react-native/react-native.js","Jukapp/Dispatcher.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var React=require('react-native/Libraries/react-native/react-native.js');
+var Dispatcher=require('Jukapp/Dispatcher.js');var 
+
+
+AsyncStorage=
+React.AsyncStorage;
+
+var JUKAPP_STORAGE_KEY='@JukappStorage:key';
+
+var JukappStorage={
+loadFromStorage:function(){
+
+this.getItem().
+then(function(store){
+if(store){
+if(store.room){
+Dispatcher.dispatch({
+type:'joinRoom',
+room:store.room});}
+
+
+
+if(store.user){
+Dispatcher.dispatch({
+type:'login',
+user:store.user});}}});},
+
+
+
+
+
+
+removeItem:function(key){
+this.setItem(key,null);},
+
+
+setItem:function(key,value){
+this.getItem().
+then(function(store){
+store[key] = value;
+AsyncStorage.setItem(JUKAPP_STORAGE_KEY,JSON.stringify(store));});},
+
+
+
+getItem:function(){
+return AsyncStorage.getItem(JUKAPP_STORAGE_KEY).then(function(value){return JSON.parse(value);});}};
+
+
+
+module.exports = JukappStorage;
+});
+__d('Jukapp/app/navigation/Navigation.js',["react-native/Libraries/react-native/react-native.js","Jukapp/app/navigation/MenuList.js","react-native-side-menu/index.js","Jukapp/app/navigation/Router.js","Jukapp/app/navigation/routes.js","react-native-icons/index.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _extends=Object.assign || function(target){for(var i=1;i < arguments.length;i++) {var source=arguments[i];for(var key in source) {if(Object.prototype.hasOwnProperty.call(source,key)){target[key] = source[key];}}}return target;};var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
+var MenuList=require('Jukapp/app/navigation/MenuList.js');
+var SideMenu=require('react-native-side-menu/index.js');
+var Router=require('Jukapp/app/navigation/Router.js');
+var routes=require('Jukapp/app/navigation/routes.js');var _require=
 
 
 
 require('react-native-icons/index.js');var Icon=_require.Icon;var 
 
 
-StyleSheet=
+Component=
 
-React.StyleSheet;var TouchableHighlight=React.TouchableHighlight;
 
-var FavoriteButton=React.createClass({displayName:'FavoriteButton',
 
-handleButtonPress:function(){
-var video=this.props.video;
-video.isFavorite?JukappApi.unfavoriteVideo(video):JukappApi.favoriteVideo(video);
 
-this.props.onFavoriteToggled();},
+
+
+React.Component;var StyleSheet=React.StyleSheet;var View=React.View;var Navigator=React.Navigator;var Text=React.Text;var TouchableHighlight=React.TouchableHighlight;var TouchableOpacity=React.TouchableOpacity;var 
+
+
+NavigationBar=
+Navigator.NavigationBar;
+
+Router.routes = routes;
+var mainRoutes=['room','search','favorites','account'];
+
+var NavigatorRouteMapper={
+Title:function(_ref){var route=_ref.route;
+return (
+React.createElement(View,{style:styles.navigatorTitleContainer},
+React.createElement(Text,{style:styles.navigatorTitle},route.title)));},
+
+
+
+
+LeftButton:function(_ref2,navigator,index){var route=_ref2.route;
+if(!index){
+return this._menuButton();}
+
+
+return (
+React.createElement(TouchableOpacity,{onPress:function(){
+
+
+if(navigator.state.presentedIndex == 0){
+return;}
+
+
+navigator.pop();}},
+
+React.createElement(Text,{style:styles.leftButtonText},'‹')));},
+
+
+
+
+_menuButton:function(){
+return (
+React.createElement(TouchableHighlight,{
+onPress:function(){return Router.sideMenu.toggleMenu();},
+activeOpacity:0.3,
+underlayColor:'#33ADFF',
+style:styles.headerLeftView},
+
+React.createElement(Icon,{
+name:'fontawesome|bars',
+size:20,
+color:'black',
+style:styles.headerLeftButtonIcon})));},
+
+
+
+
+
+RightButton:function(){
+return null;}};var 
+
+
+
+Navigation=(function(_Component){_inherits(Navigation,_Component);
+function Navigation(props){_classCallCheck(this,Navigation);
+_get(Object.getPrototypeOf(Navigation.prototype),'constructor',this).call(this,props);
+
+this.state = {selectedScene:'room'};}_createClass(Navigation,[{key:'_renderScene',value:
+
+
+function _renderScene(_ref3,nav){var route=_ref3.route;var params=_ref3.params;
+var ChildComponent=route.component;
+
+var setRef=function(ref){
+nav._currentComponent = ref;};
+
+
+return React.createElement(ChildComponent,_extends({ref:setRef},params));}},{key:'_setCurrentNavigator',value:
+
+
+function _setCurrentNavigator(nav){
+Router.navigator = nav;}},{key:'_setSideMenu',value:
+
+
+function _setSideMenu(menu){
+Router.sideMenu = menu;}},{key:'_renderMainRoutes',value:
+
+
+function _renderMainRoutes(){var _this=this;
+return mainRoutes.map(function(routeName){
+return _this._renderMainRoute(routeName);});}},{key:'_renderMainRoute',value:
+
+
+
+function _renderMainRoute(routeName){
+var route=routes[routeName];
+var params={};
+
+if(this.state.selectedScene === routeName){
+return (
+React.createElement(Navigator,{
+ref:this._setCurrentNavigator.bind(this),
+key:routeName,
+initialRoute:{route:route,params:params},
+renderScene:this._renderScene.bind(this),
+navigationBar:React.createElement(NavigationBar,{routeMapper:NavigatorRouteMapper,style:styles.navigatorBar})}));}else 
+
+
+{
+return React.createElement(View,{key:routeName});}}},{key:'_sceneChanged',value:
+
+
+
+function _sceneChanged(routeName){
+Router.sideMenu.closeMenu();
+
+this.setState({
+selectedScene:routeName});}},{key:'render',value:
+
+
+
+function render(){
+return (
+React.createElement(SideMenu,{
+ref:this._setSideMenu.bind(this),
+menu:
+React.createElement(MenuList,{
+navigator:this.refs.nav,
+onSceneChanged:this._sceneChanged.bind(this),
+mainRoutes:mainRoutes}),
+
+
+touchToClose:true},
+
+React.createElement(View,{style:styles.shadow},
+this._renderMainRoutes())));}}]);return Navigation;})(Component);
+
+
+
+
+
+
+var styles=StyleSheet.create({
+shadow:{
+flex:1,
+shadowColor:'#000000',
+shadowRadius:3,
+shadowOpacity:0.5,
+shadowOffset:{
+height:1,
+width:0}},
+
+
+
+container:{
+flex:1},
+
+
+header:{
+height:64,
+backgroundColor:'#607D8B',
+flexDirection:'row',
+justifyContent:'center'},
+
+
+headerLeftView:{
+width:60},
+
+
+headerRightView:{
+width:60},
+
+
+headerLeftButtonIcon:{
+width:20,
+height:20,
+marginTop:10,
+marginLeft:20},
+
+
+headeRightButtonImage:{
+marginTop:30,
+marginRight:20,
+width:20,
+height:15},
+
+
+headerText:{
+flex:2,
+fontSize:18,
+fontWeight:'bold',
+textAlign:'center',
+marginTop:30},
+
+
+navigatorBar:{
+backgroundColor:'#33ADFF'},
+
+
+navigatorTitleContainer:{
+height:NavigationBar.Styles.General.NavBarHeight,
+justifyContent:'center',
+alignItems:'center'},
+
+
+navigatorTitle:{
+color:'white',
+fontSize:24,
+fontWeight:'bold'},
+
+
+leftButtonText:{
+color:'white',
+fontSize:30,
+marginLeft:10},
+
+
+navigatorScene:{
+position:'absolute',
+left:0,
+top:NavigationBar.Styles.General.TotalNavHeight,
+right:0,
+bottom:0}});
+
+
+
+module.exports = Navigation;
+});
+__d('Jukapp/app/navigation/MenuList.js',["react-native/Libraries/react-native/react-native.js","Jukapp/app/navigation/MenuListItem.js","Jukapp/app/stores/JukappStore.js","Jukapp/Dispatcher.js","Jukapp/JukappStorage.js","react-native-icons/index.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
+var MenuListItem=require('Jukapp/app/navigation/MenuListItem.js');
+var JukappStore=require('Jukapp/app/stores/JukappStore.js');
+var Dispatcher=require('Jukapp/Dispatcher.js');
+var JukappStorage=require('Jukapp/JukappStorage.js');var _require=
+
+
+
+require('react-native-icons/index.js');var Icon=_require.Icon;var 
+
+
+Component=
+
+
+
+
+
+React.Component;var StyleSheet=React.StyleSheet;var View=React.View;var Text=React.Text;var PropTypes=React.PropTypes;var TouchableHighlight=React.TouchableHighlight;var 
+
+MenuList=(function(_Component){_inherits(MenuList,_Component);function MenuList(){_classCallCheck(this,MenuList);_get(Object.getPrototypeOf(MenuList.prototype),'constructor',this).apply(this,arguments);}_createClass(MenuList,[{key:'_leaveRoom',value:
+
+function _leaveRoom(){
+JukappStorage.removeItem('room');
+Dispatcher.dispatch({
+type:'leaveRoom'});}},{key:'_renderMenuItems',value:
+
+
+
+function _renderMenuItems(){var _this=this;
+return this.props.mainRoutes.map(function(routeName){
+return (
+React.createElement(MenuListItem,{
+routeName:routeName,
+key:routeName,
+onPress:_this.props.onSceneChanged}));});}},{key:'render',value:
+
+
+
+
+
+function render(){
+return (
+React.createElement(View,{style:styles.container},
+React.createElement(View,{style:styles.header},
+React.createElement(Icon,{
+name:'fontawesome|rss',
+size:20,
+color:'black',
+style:styles.icon}),
+
+React.createElement(Text,{style:styles.headerMainText},JukappStore.currentRoom().name)),
+
+React.createElement(View,{style:styles.content},
+this._renderMenuItems()),
+
+React.createElement(View,{style:styles.footer},
+React.createElement(TouchableHighlight,{
+style:styles.footerButton,
+underlayColor:'gray',
+activeOpacity:0.3,
+onPress:this._leaveRoom},
+
+React.createElement(Text,{style:styles.footerButtonText},'Leave Room')))));}}]);return MenuList;})(Component);
+
+
+
+
+
+
+
+MenuList.propTypes = {
+mainRoutes:PropTypes.array.isRequired,
+onSceneChanged:PropTypes.func.isRequired};
+
+
+var styles=StyleSheet.create({
+container:{
+flexDirection:'column',
+flex:1},
+
+
+content:{
+flex:1},
+
+
+footer:{
+height:48,
+width:250,
+justifyContent:'center',
+backgroundColor:'gray'},
+
+
+footerButton:{
+alignItems:'center',
+justifyContent:'center',
+flex:1},
+
+
+footerButtonText:{
+fontSize:18,
+fontWeight:'bold'},
+
+
+icon:{
+height:20,
+width:20,
+marginRight:16},
+
+
+header:{
+padding:16,
+height:120,
+flexDirection:'row',
+justifyContent:'flex-start',
+alignItems:'center',
+backgroundColor:'#F4F7F7'},
+
+
+headerMainText:{
+fontWeight:'bold',
+fontSize:18}});
+
+
+
+module.exports = MenuList;
+});
+__d('Jukapp/app/navigation/MenuListItem.js',["react-native/Libraries/react-native/react-native.js","Jukapp/app/navigation/routes.js","react-native-icons/index.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
+var routes=require('Jukapp/app/navigation/routes.js');var _require=
+
+
+
+require('react-native-icons/index.js');var Icon=_require.Icon;var 
+
+
+Component=
+
+
+
+
+
+React.Component;var PropTypes=React.PropTypes;var StyleSheet=React.StyleSheet;var View=React.View;var Text=React.Text;var TouchableHighlight=React.TouchableHighlight;var 
+
+MenuListItem=(function(_Component){_inherits(MenuListItem,_Component);function MenuListItem(){_classCallCheck(this,MenuListItem);_get(Object.getPrototypeOf(MenuListItem.prototype),'constructor',this).apply(this,arguments);}_createClass(MenuListItem,[{key:'_onPress',value:
+function _onPress(){
+this.props.onPress(this.props.routeName);}},{key:'render',value:
+
+
+function render(){
+var route=routes[this.props.routeName];
+
+return (
+React.createElement(TouchableHighlight,{
+style:styles.item,
+onPress:this._onPress.bind(this),
+underlayColor:'#ebeeee'},
+
+React.createElement(View,{style:styles.itemContent},
+React.createElement(Icon,{
+name:route.icon,
+size:20,
+color:'black',
+style:styles.icon}),
+
+React.createElement(Text,{style:styles.itemTitle},route.title))));}}]);return MenuListItem;})(Component);
+
+
+
+
+
+
+MenuListItem.propTypes = {
+onPress:PropTypes.func.isRequired,
+routeName:PropTypes.string.isRequired};
+
+
+var styles=StyleSheet.create({
+icon:{
+height:20,
+width:20,
+marginRight:16},
+
+
+item:{
+padding:16,
+height:48,
+justifyContent:'center'},
+
+
+itemContent:{
+flex:1,
+flexDirection:'row',
+alignItems:'center'},
+
+
+itemTitle:{
+fontSize:14}});
+
+
+
+module.exports = MenuListItem;
+});
+__d('Jukapp/app/navigation/routes.js',["Jukapp/app/videos/SearchResultList.js","Jukapp/app/favorites/FavoriteList.js","Jukapp/app/accounts/AccountDetails.js","Jukapp/app/queued_videos/QueuedVideoList.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var SearchResultList=require('Jukapp/app/videos/SearchResultList.js');
+var FavoriteList=require('Jukapp/app/favorites/FavoriteList.js');
+var AccountDetails=require('Jukapp/app/accounts/AccountDetails.js');
+var QueuedVideoList=require('Jukapp/app/queued_videos/QueuedVideoList.js');
+
+var routes={
+favorites:{
+component:FavoriteList,
+title:'Favorites',
+icon:'fontawesome|star'},
+
+
+room:{
+component:QueuedVideoList,
+title:'Room',
+icon:'fontawesome|home'},
+
+
+search:{
+component:SearchResultList,
+title:'Search',
+icon:'fontawesome|search'},
+
+
+account:{
+component:AccountDetails,
+title:'My Account',
+icon:'fontawesome|user'}};
+
+
+
+module.exports = routes;
+});
+__d('Jukapp/app/videos/SearchResultList.js',["react-native/Libraries/react-native/react-native.js","react-native-search-bar/SearchBar.js","Jukapp/app/components/VideoListItem.js","Jukapp/app/stores/JukappStore.js","Jukapp/Dispatcher.js","Jukapp/app/JukappApi.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
+var SearchBar=require('react-native-search-bar/SearchBar.js');
+var VideoListItem=require('Jukapp/app/components/VideoListItem.js');
+var JukappStore=require('Jukapp/app/stores/JukappStore.js');
+var Dispatcher=require('Jukapp/Dispatcher.js');
+var JukappApi=require('Jukapp/app/JukappApi.js');var 
+
+
+Component=
+
+
+
+
+React.Component;var StyleSheet=React.StyleSheet;var View=React.View;var ListView=React.ListView;var ActivityIndicatorIOS=React.ActivityIndicatorIOS;var 
+
+SearchResultsList=(function(_Component){_inherits(SearchResultsList,_Component);
+
+function SearchResultsList(props){_classCallCheck(this,SearchResultsList);
+_get(Object.getPrototypeOf(SearchResultsList.prototype),'constructor',this).call(this,props);
+
+
+var dataSource=new ListView.DataSource({rowHasChanged:function(r1,r2){return true;}});
+
+this.state = {
+dataSource:dataSource.cloneWithRows(JukappStore.getSearchResults()),
+query:JukappStore.getLastQuery()};}_createClass(SearchResultsList,[{key:'componentDidMount',value:
+
+
+
+function componentDidMount(){
+JukappStore.addChangeListener(this._onChange.bind(this));}},{key:'componentWillUnmount',value:
+
+
+function componentWillUnmount(){
+JukappStore.removeChangeListener(this._onChange);}},{key:'_renderFooter',value:
+
+
+function _renderFooter(){
+if(this.state.loading){
+return React.createElement(ActivityIndicatorIOS,null);}}},{key:'_onChange',value:
+
+
+
+function _onChange(){
+this.setState({
+loading:false,
+dataSource:this.state.dataSource.cloneWithRows(JukappStore.getSearchResults())});}},{key:'_refreshList',value:
+
+
+
+function _refreshList(){var _this=this;
+JukappApi.searchVideo(this.state.query).
+done(function(searchResults){
+Dispatcher.dispatch({
+type:'loadSearchResults',
+searchResults:searchResults,
+query:_this.state.query});});}},{key:'_renderRow',value:
+
+
+
+
+function _renderRow(video){
+return (
+React.createElement(VideoListItem,{video:video,onFavoriteToggled:this._refreshList.bind(this)}));}},{key:'render',value:
+
+
+
+function render(){var _this2=this;
+return (
+React.createElement(View,{style:styles.container},
+React.createElement(SearchBar,{
+placeholder:'Search on YouTube',
+onSearchButtonPress:function(query){
+_this2.setState({
+loading:true,
+query:query});
+
+
+JukappApi.searchVideo(query).
+done(function(searchResults){
+Dispatcher.dispatch({
+type:'loadSearchResults',
+searchResults:searchResults,
+query:query});});},
+
+
+
+onCancelButtonPress:function(){
+console.log('onCancelButtonPress');}}),
+
+
+
+React.createElement(ListView,{
+style:styles.listView,
+contentContainerStyle:styles.listViewContent,
+dataSource:this.state.dataSource,
+renderRow:this._renderRow.bind(this),
+renderFooter:this._renderFooter.bind(this),
+automaticallyAdjustContentInsets:false})));}}]);return SearchResultsList;})(Component);
+
+
+
+
+
+
+
+var styles=StyleSheet.create({
+container:{
+paddingTop:64,
+flex:1,
+backgroundColor:'#EEF2F2'},
+
+
+listView:{
+backgroundColor:'#EEF2F2',
+padding:10},
+
+
+listViewContent:{
+justifyContent:'center'}});
+
+
+
+module.exports = SearchResultsList;
+});
+__d('react-native-search-bar/SearchBar.js',["react-native/Libraries/react-native/react-native.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _extends=Object.assign || function(target){for(var i=1;i < arguments.length;i++) {var source=arguments[i];for(var key in source) {if(Object.prototype.hasOwnProperty.call(source,key)){target[key] = source[key];}}}return target;};var NativeModules,PropTypes,RNSearchBar,React,SearchBar;
+
+React = require('react-native/Libraries/react-native/react-native.js');
+
+RNSearchBar = React.requireNativeComponent('RNSearchBar',null);
+
+PropTypes = React.PropTypes;
+
+NativeModules = React.NativeModules;
+
+SearchBar = React.createClass({displayName:'SearchBar',
+propTypes:{
+placeholder:PropTypes.string,
+text:PropTypes.string,
+tintColor:PropTypes.string,
+showsCancelButton:PropTypes.bool,
+onChange:PropTypes.func,
+onChangeText:PropTypes.func,
+onFocus:PropTypes.func,
+onSearchButtonPress:PropTypes.func,
+onCancelButtonPress:PropTypes.func,
+hideBackground:PropTypes.bool},
+
+_onChange:function(e){
+var base,base1;
+if(typeof (base = this.props).onChange === "function"){
+base.onChange(e);}
+
+return typeof (base1 = this.props).onChangeText === "function"?base1.onChangeText(e.nativeEvent.text):void 0;},
+
+_onPress:function(e){
+var base,base1,button;
+button = e.nativeEvent.button;
+if(button === 'search'){
+return typeof (base = this.props).onSearchButtonPress === "function"?base.onSearchButtonPress(e.nativeEvent.searchText):void 0;}else 
+if(button === 'cancel'){
+return typeof (base1 = this.props).onCancelButtonPress === "function"?base1.onCancelButtonPress():void 0;}},
 
 
 render:function(){
+return React.createElement(RNSearchBar,_extends({
+style:{height:NativeModules.RNSearchBarManager.ComponentHeight},
+onChange:this._onChange,
+onPress:this._onPress},
+this.props));}});
+
+
+
+
+module.exports = SearchBar;
+});
+__d('Jukapp/app/components/VideoListItem.js',["react-native/Libraries/react-native/react-native.js","Jukapp/app/stores/JukappStore.js","Jukapp/app/JukappApi.js","Jukapp/app/components/FavoriteButton.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
+var JukappStore=require('Jukapp/app/stores/JukappStore.js');
+var JukappApi=require('Jukapp/app/JukappApi.js');
+var FavoriteButton=require('Jukapp/app/components/FavoriteButton.js');var 
+
+
+Component=
+
+
+
+
+
+
+React.Component;var StyleSheet=React.StyleSheet;var Text=React.Text;var View=React.View;var Image=React.Image;var TouchableHighlight=React.TouchableHighlight;var PropTypes=React.PropTypes;var 
+
+VideoListItem=(function(_Component){_inherits(VideoListItem,_Component);function VideoListItem(){_classCallCheck(this,VideoListItem);_get(Object.getPrototypeOf(VideoListItem.prototype),'constructor',this).apply(this,arguments);}_createClass(VideoListItem,[{key:'renderFavoriteButton',value:
+
+function renderFavoriteButton(){
+if(!JukappStore.loggedIn()){
+return;}
+
+
+return React.createElement(FavoriteButton,{video:this.props.video,onFavoriteToggled:this.props.onFavoriteToggled});}},{key:'render',value:
+
+
+function render(){
+var video=this.props.video;
+var playCount=0;
+
+if(video['video_events']){
+var videoEvent=video['video_events'].find(function(events){return events['room_id'] == JukappStore.currentRoom().id;});
+if(videoEvent)playCount = videoEvent['play_count'];}
+
+
+var image={uri:'http://img.youtube.com/vi/' + video.youtube_id + '/default.jpg'};
+
+return (
+React.createElement(TouchableHighlight,{
+underlayColor:'#CFD6D6',
+style:{marginBottom:10},
+onPress:function(){
+JukappApi.queueVideo(video);}},
+
+
+React.createElement(View,{style:styles.cell},
+React.createElement(Image,{source:image,style:styles.videoImage}),
+
+React.createElement(View,{style:styles.rowData},
+React.createElement(Text,{style:styles.title},video.title),
+React.createElement(Text,{style:styles.details},playCount,' VIEWS')),
+
+
+this.renderFavoriteButton())));}}]);return VideoListItem;})(Component);
+
+
+
+
+
+
+VideoListItem.propTypes = {
+onFavoriteToggled:PropTypes.func.isRequired,
+video:PropTypes.object.isRequired};
+
+
+var styles=StyleSheet.create({
+
+cell:{
+flexDirection:'row',
+backgroundColor:'white',
+padding:16,
+height:96,
+justifyContent:'flex-start',
+borderRadius:4,
+shadowColor:'#000000',
+shadowRadius:1,
+shadowOpacity:0.3,
+shadowOffset:{
+height:1,
+width:0}},
+
+
+
+rowData:{
+flexDirection:'column',
+paddingLeft:16,
+justifyContent:'space-around',
+flex:1},
+
+
+title:{
+color:'black',
+fontSize:14,
+fontWeight:'bold',
+textAlign:'left',
+paddingTop:4},
+
+
+details:{
+color:'#9FA7A7',
+fontSize:12,
+textAlign:'left',
+paddingBottom:4},
+
+
+videoImage:{
+alignSelf:'flex-start',
+width:64,
+height:64}});
+
+
+
+module.exports = VideoListItem;
+});
+__d('Jukapp/app/components/FavoriteButton.js',["react-native/Libraries/react-native/react-native.js","Jukapp/app/JukappApi.js","react-native-icons/index.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
+var JukappApi=require('Jukapp/app/JukappApi.js');var _require=
+
+
+
+require('react-native-icons/index.js');var Icon=_require.Icon;var 
+
+
+Component=
+
+
+
+React.Component;var StyleSheet=React.StyleSheet;var TouchableHighlight=React.TouchableHighlight;var PropTypes=React.PropTypes;var 
+
+FavoriteButton=(function(_Component){_inherits(FavoriteButton,_Component);function FavoriteButton(){_classCallCheck(this,FavoriteButton);_get(Object.getPrototypeOf(FavoriteButton.prototype),'constructor',this).apply(this,arguments);}_createClass(FavoriteButton,[{key:'_handleButtonPress',value:
+
+function _handleButtonPress(){
+var video=this.props.video;
+video.isFavorite?JukappApi.unfavoriteVideo(video):JukappApi.favoriteVideo(video);
+
+this.props.onFavoriteToggled();}},{key:'render',value:
+
+
+function render(){
 var icon=this.props.video.isFavorite?'fontawesome|star':'fontawesome|star-o';
 
 return (
 React.createElement(TouchableHighlight,{
 underlayColor:'#ebeeee',
 style:styles.secondaryButton,
-onPress:this.handleButtonPress},
+onPress:this._handleButtonPress.bind(this)},
 React.createElement(Icon,{
 name:icon,
 size:20,
 color:'black',
-style:styles.star})));}});
+style:styles.star})));}}]);return FavoriteButton;})(Component);
 
 
 
 
+
+
+FavoriteButton.propTypes = {
+onFavoriteToggled:PropTypes.func.isRequired,
+video:PropTypes.object.isRequired};
 
 
 var styles=StyleSheet.create({
@@ -47202,64 +47506,74 @@ var SMXLoadingImageView=requireNativeComponent('FAKIconImage',SMXLoadingImage);
 
 module.exports = SMXLoadingImage;
 });
-__d('Jukapp/FavoritesListView.js',["react-native/Libraries/react-native/react-native.js","Jukapp/JukappActions.js","Jukapp/JukappStore.js","Jukapp/VideoCell.js","Jukapp/JukappApi.js","Jukapp/LoginView.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
-
-var React=require('react-native/Libraries/react-native/react-native.js');
-var JukappActions=require('Jukapp/JukappActions.js');
-var JukappStore=require('Jukapp/JukappStore.js');
-var VideoCell=require('Jukapp/VideoCell.js');
-var JukappApi=require('Jukapp/JukappApi.js');
-var LoginView=require('Jukapp/LoginView.js');var 
+__d('Jukapp/app/favorites/FavoriteList.js',["react-native/Libraries/react-native/react-native.js","Jukapp/Dispatcher.js","Jukapp/app/stores/JukappStore.js","Jukapp/app/components/VideoListItem.js","Jukapp/app/JukappApi.js","Jukapp/app/accounts/Login.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
+var Dispatcher=require('Jukapp/Dispatcher.js');
+var JukappStore=require('Jukapp/app/stores/JukappStore.js');
+var VideoListItem=require('Jukapp/app/components/VideoListItem.js');
+var JukappApi=require('Jukapp/app/JukappApi.js');
+var Login=require('Jukapp/app/accounts/Login.js');var 
 
 
-StyleSheet=
+Component=
 
 
-React.StyleSheet;var ListView=React.ListView;var ActivityIndicatorIOS=React.ActivityIndicatorIOS;
 
-var FavoritesListView=React.createClass({displayName:'FavoritesListView',
-getInitialState:function(){
+React.Component;var StyleSheet=React.StyleSheet;var ListView=React.ListView;var ActivityIndicatorIOS=React.ActivityIndicatorIOS;var 
+
+FavoriteList=(function(_Component){_inherits(FavoriteList,_Component);
+function FavoriteList(props){_classCallCheck(this,FavoriteList);
+_get(Object.getPrototypeOf(FavoriteList.prototype),'constructor',this).call(this,props);
+
 var dataSource=new ListView.DataSource({rowHasChanged:function(r1,r2){return r1 !== r2;}});
 
-return {
+this.state = {
 dataSource:dataSource.cloneWithRows(JukappStore.getFavorites()),
-isLoggedIn:JukappStore.isLoggedIn(),
-loading:true};},
+loggedIn:JukappStore.loggedIn(),
+loading:true};}_createClass(FavoriteList,[{key:'componentDidMount',value:
 
 
 
-componentDidMount:function(){
-JukappStore.addChangeListener(this._onChange);
-this._refreshList();},
+function componentDidMount(){
+JukappStore.addChangeListener(this._onChange.bind(this));
+this.fetchData();}},{key:'componentWillUnmount',value:
 
 
-componentWillUnmount:function(){
-JukappStore.removeChangeListener(this._onChange);},
+function componentWillUnmount(){
+JukappStore.removeChangeListener(this._onChange);}},{key:'_renderRow',value:
 
 
-_handleBackButtonPress:function(){
-this.props.navigator.pop();},
-
-
-renderRow:function(rowData,sectionID,rowID){
+function _renderRow(video){
 return (
-React.createElement(VideoCell,{video:rowData,onFavoriteToggled:this._refreshList}));},
+React.createElement(VideoListItem,{video:video,onFavoriteToggled:this.fetchData.bind(this)}));}},{key:'_renderFooter',value:
 
 
 
-renderFooter:function(){
+function _renderFooter(){
 if(this.state.loading){
-return React.createElement(ActivityIndicatorIOS,null);}},
+return React.createElement(ActivityIndicatorIOS,null);}}},{key:'fetchData',value:
 
 
 
-_refreshList:function(){
-JukappApi.fetchFavorites().done(JukappActions.loadedFavorites);},
+function fetchData(){
+JukappApi.fetchFavorites().done(function(favorites){
+Dispatcher.dispatch({
+type:'loadFavorites',
+favorites:favorites});});}},{key:'_onChange',value:
 
 
-render:function(){
-if(!this.state.isLoggedIn){
-return React.createElement(LoginView,{onLogin:this._refreshList});}
+
+
+function _onChange(){
+this.setState({
+dataSource:this.state.dataSource.cloneWithRows(JukappStore.getFavorites()),
+loggedIn:JukappStore.loggedIn(),
+loading:false});}},{key:'render',value:
+
+
+
+function render(){
+if(!this.state.loggedIn){
+return React.createElement(Login,{onLogin:this.fetchData.bind(this)});}
 
 
 return (
@@ -47267,18 +47581,10 @@ React.createElement(ListView,{
 style:styles.container,
 contentContainerStyle:styles.listViewContent,
 dataSource:this.state.dataSource,
-renderRow:this.renderRow,
-renderFooter:this.renderFooter,
-automaticallyAdjustContentInsets:false}));},
+renderRow:this._renderRow.bind(this),
+renderFooter:this._renderFooter.bind(this),
+contentInset:{bottom:0,top:40}}));}}]);return FavoriteList;})(Component);
 
-
-
-
-_onChange:function(){
-this.setState({
-dataSource:this.state.dataSource.cloneWithRows(JukappStore.getFavorites()),
-isLoggedIn:JukappStore.isLoggedIn(),
-loading:false});}});
 
 
 
@@ -47294,50 +47600,60 @@ justifyContent:'center'}});
 
 
 
-module.exports = FavoritesListView;
+module.exports = FavoriteList;
 });
-__d('Jukapp/LoginView.js',["react-native/Libraries/react-native/react-native.js","Jukapp/JukappActions.js","Jukapp/JukappStore.js","Jukapp/JukappApi.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
-
-var React=require('react-native/Libraries/react-native/react-native.js');
-var JukappActions=require('Jukapp/JukappActions.js');
-var JukappStore=require('Jukapp/JukappStore.js');
-var JukappApi=require('Jukapp/JukappApi.js');var 
+__d('Jukapp/app/accounts/Login.js',["react-native/Libraries/react-native/react-native.js","Jukapp/app/JukappApi.js","Jukapp/JukappStorage.js","Jukapp/Dispatcher.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
+var JukappApi=require('Jukapp/app/JukappApi.js');
+var JukappStorage=require('Jukapp/JukappStorage.js');
+var Dispatcher=require('Jukapp/Dispatcher.js');var 
 
 
-StyleSheet=
+Component=
 
 
 
 
 
-React.StyleSheet;var Text=React.Text;var View=React.View;var TouchableHighlight=React.TouchableHighlight;var TextInput=React.TextInput;var ActivityIndicatorIOS=React.ActivityIndicatorIOS;
 
-var LoginView=React.createClass({displayName:'LoginView',
-getInitialState:function(){
-return {
+
+React.Component;var StyleSheet=React.StyleSheet;var Text=React.Text;var View=React.View;var TouchableHighlight=React.TouchableHighlight;var TextInput=React.TextInput;var ActivityIndicatorIOS=React.ActivityIndicatorIOS;var PropTypes=React.PropTypes;var 
+
+Login=(function(_Component){_inherits(Login,_Component);
+function Login(props){_classCallCheck(this,Login);
+_get(Object.getPrototypeOf(Login.prototype),'constructor',this).call(this,props);
+
+this.state = {
 loading:false,
-loginError:false};},
+loginError:false};}_createClass(Login,[{key:'_onLoginRequested',value:
 
 
 
-onLoginRequested:function(){var _this=this;
+function _onLoginRequested(){var _this=this;
+
 JukappApi.login(this.state.username,this.state.password).
+then(function(user){
+JukappStorage.setItem('user',user);
+
+
+_this.props.onLogin();
+
+Dispatcher.dispatch({type:'login',user:user});}).
+
 catch(function(response){
+
+console.log(response);
 _this.setState({loginError:true});}).
 
 done(function(){
-_this.setState({loading:false});
-
-if(JukappStore.isLoggedIn()){
-_this.props.onLogin();}});
+_this.setState({loading:false});});
 
 
+this.setState({loading:true});}},{key:'render',value:
 
-this.setState({loading:true});},
 
 
-render:function(){var _this2=this;
-var header=null;
+function render(){var _this2=this;
+var header;
 
 if(this.state.loading){
 header = 
@@ -47395,7 +47711,7 @@ ref:'passwordInput',
 placeholder:'Password',
 style:styles.textbox,
 secureTextEntry:true,
-onSubmitEditing:this.onLoginRequested,
+onSubmitEditing:this._onLoginRequested.bind(this),
 onChange:function(event){
 _this2.setState({
 password:event.nativeEvent.text});}}),
@@ -47406,13 +47722,17 @@ password:event.nativeEvent.text});}}),
 React.createElement(TouchableHighlight,{
 underlayColor:'#66BB6A',
 style:styles.button,
-onPress:this.onLoginRequested},
-React.createElement(Text,{style:styles.buttonText},'Login')))));}});
+onPress:this._onLoginRequested.bind(this)},
+React.createElement(Text,{style:styles.buttonText},'Login')))));}}]);return Login;})(Component);
 
 
 
 
 
+
+
+Login.propTypes = {
+onLogin:PropTypes.func.isRequired};
 
 
 var styles=StyleSheet.create({
@@ -47481,60 +47801,67 @@ textAlign:'left'}});
 
 
 
-module.exports = LoginView;
+module.exports = Login;
 });
-__d('Jukapp/AccountView.js',["react-native/Libraries/react-native/react-native.js","Jukapp/JukappActions.js","Jukapp/JukappStore.js","Jukapp/JukappApi.js","Jukapp/LoginView.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
-
-var React=require('react-native/Libraries/react-native/react-native.js');
-var JukappActions=require('Jukapp/JukappActions.js');
-var JukappStore=require('Jukapp/JukappStore.js');
-var JukappApi=require('Jukapp/JukappApi.js');
-var LoginView=require('Jukapp/LoginView.js');var 
-
-
-StyleSheet=
+__d('Jukapp/app/accounts/AccountDetails.js',["react-native/Libraries/react-native/react-native.js","Jukapp/app/stores/JukappStore.js","Jukapp/Dispatcher.js","Jukapp/app/accounts/Login.js","Jukapp/Dispatcher.js","Jukapp/JukappStorage.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
+var JukappStore=require('Jukapp/app/stores/JukappStore.js');
+var Dispatcher=require('Jukapp/Dispatcher.js');
+var Login=require('Jukapp/app/accounts/Login.js');
+var Dispatcher=require('Jukapp/Dispatcher.js');
+var JukappStorage=require('Jukapp/JukappStorage.js');var 
 
 
-
-React.StyleSheet;var View=React.View;var Text=React.Text;var TouchableHighlight=React.TouchableHighlight;
-
-var AccountView=React.createClass({displayName:'AccountView',
-getInitialState:function(){
-return {
-isLoggedIn:JukappStore.isLoggedIn()};},
+Component=
 
 
 
-componentDidMount:function(){
-JukappStore.addChangeListener(this._onChange);},
+
+React.Component;var StyleSheet=React.StyleSheet;var View=React.View;var Text=React.Text;var TouchableHighlight=React.TouchableHighlight;var 
+
+AccountDetails=(function(_Component){_inherits(AccountDetails,_Component);
+function AccountDetails(props){_classCallCheck(this,AccountDetails);
+_get(Object.getPrototypeOf(AccountDetails.prototype),'constructor',this).call(this,props);
+
+this.state = {
+loggedIn:JukappStore.loggedIn()};}_createClass(AccountDetails,[{key:'componentDidMount',value:
 
 
-componentWillUnmount:function(){
-JukappStore.removeChangeListener(this._onChange);},
+
+function componentDidMount(){
+JukappStore.addChangeListener(this._onChange.bind(this));}},{key:'componentWillUnmount',value:
 
 
-_onChange:function(){
+function componentWillUnmount(){
+JukappStore.removeChangeListener(this._onChange);}},{key:'_onChange',value:
+
+
+function _onChange(){
 this.setState({
-isLoggedIn:JukappStore.isLoggedIn()});},
+loggedIn:JukappStore.loggedIn()});}},{key:'_onPress',value:
 
 
 
-render:function(){
-if(!this.state.isLoggedIn){
-return React.createElement(LoginView,{onLogin:this._onChange});}
+function _onPress(){
+JukappStorage.removeItem('user');
+Dispatcher.dispatch({
+type:'logout'});}},{key:'render',value:
+
+
+
+function render(){
+if(!this.state.loggedIn){
+return React.createElement(Login,{onLogin:this._onChange.bind(this)});}
 
 
 return (
 React.createElement(View,{style:styles.container},
-React.createElement(Text,null,'Logged in as ',JukappStore.getUser().username),
+React.createElement(Text,null,'Logged in as ',JukappStore.currentUser().username),
 React.createElement(TouchableHighlight,{
 underlayColor:'#66BB6A',
 style:styles.button,
-onPress:function(){
-JukappActions.loggedOut();}},
+onPress:this._onPress.bind(this)},
 
-
-React.createElement(Text,{style:styles.buttonText},'Logout'))));}});
+React.createElement(Text,{style:styles.buttonText},'Logout'))));}}]);return AccountDetails;})(Component);
 
 
 
@@ -47576,85 +47903,87 @@ textAlign:'left'}});
 
 
 
-module.exports = AccountView;
+module.exports = AccountDetails;
 });
-__d('Jukapp/RoomView.js',["react-native/Libraries/react-native/react-native.js","Jukapp/SearchResultsListView.js","Jukapp/FavoritesListView.js","Jukapp/JukappActions.js","Jukapp/JukappStore.js","Jukapp/VideoCell.js","Jukapp/JukappApi.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
-
-var React=require('react-native/Libraries/react-native/react-native.js');
-var SearchResultsListView=require('Jukapp/SearchResultsListView.js');
-var FavoritesListView=require('Jukapp/FavoritesListView.js');
-var JukappActions=require('Jukapp/JukappActions.js');
-var JukappStore=require('Jukapp/JukappStore.js');
-var VideoCell=require('Jukapp/VideoCell.js');
-var JukappApi=require('Jukapp/JukappApi.js');var 
+__d('Jukapp/app/queued_videos/QueuedVideoList.js',["react-native/Libraries/react-native/react-native.js","Jukapp/Dispatcher.js","Jukapp/app/stores/JukappStore.js","Jukapp/app/components/VideoListItem.js","Jukapp/app/JukappApi.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
+var Dispatcher=require('Jukapp/Dispatcher.js');
+var JukappStore=require('Jukapp/app/stores/JukappStore.js');
+var VideoListItem=require('Jukapp/app/components/VideoListItem.js');
+var JukappApi=require('Jukapp/app/JukappApi.js');var 
 
 
-StyleSheet=
+Component=
 
 
 
+React.Component;var StyleSheet=React.StyleSheet;var ListView=React.ListView;var ActivityIndicatorIOS=React.ActivityIndicatorIOS;var 
 
+QueuedVideoList=(function(_Component){_inherits(QueuedVideoList,_Component);
 
-React.StyleSheet;var View=React.View;var Image=React.Image;var Text=React.Text;var ListView=React.ListView;var ActivityIndicatorIOS=React.ActivityIndicatorIOS;
+function QueuedVideoList(props){_classCallCheck(this,QueuedVideoList);
+_get(Object.getPrototypeOf(QueuedVideoList.prototype),'constructor',this).call(this,props);
 
-var RoomView=React.createClass({displayName:'RoomView',
-
-getInitialState:function(){
 var dataSource=new ListView.DataSource({rowHasChanged:function(r1,r2){return r1 !== r2;}});
 
-return {
+this.state = {
 dataSource:dataSource.cloneWithRows(JukappStore.getQueuedVideos()),
-loading:true};},
+loading:true};}_createClass(QueuedVideoList,[{key:'componentDidMount',value:
 
 
 
-componentDidMount:function(){var _this=this;
+function componentDidMount(){var _this=this;
 JukappApi.addEventListener(function(message){
-_this._refreshList();});
+console.log(message);
+_this.fetchData();});
 
 
-JukappStore.addChangeListener(this._onChange);
+JukappStore.addChangeListener(this._onChange.bind(this));
 
-this._refreshList();},
+this.fetchData();}},{key:'componentWillUnmount',value:
 
 
-componentWillUnmount:function(){
+function componentWillUnmount(){
 JukappStore.removeChangeListener(this._onChange);
-JukappApi.removeEventListener();},
+JukappApi.removeEventListener();}},{key:'fetchData',value:
 
 
-_refreshList:function(){
-JukappApi.fetchQueuedVideos().done(JukappActions.loadedQueuedVideos);},
+function fetchData(){
+JukappApi.fetchQueuedVideos().done(function(queuedVideos){
+Dispatcher.dispatch({
+type:'loadQueuedVideos',
+queuedVideos:queuedVideos});});}},{key:'_onChange',value:
 
 
-_onChange:function(){
+
+
+function _onChange(){
 this.setState({
 dataSource:this.state.dataSource.cloneWithRows(JukappStore.getQueuedVideos()),
-loading:false});},
+loading:false});}},{key:'_renderRow',value:
 
 
 
-_renderRow:function(rowData,sectionID,rowID){
+function _renderRow(video){
 return (
-React.createElement(VideoCell,{video:rowData,onFavoriteToggled:this._refreshList}));},
+React.createElement(VideoListItem,{video:video,onFavoriteToggled:this.fetchData.bind(this)}));}},{key:'_renderFooter',value:
 
 
 
-_renderFooter:function(){
+function _renderFooter(){
 if(this.state.loading){
-return React.createElement(ActivityIndicatorIOS,null);}},
+return React.createElement(ActivityIndicatorIOS,null);}}},{key:'render',value:
 
 
 
-render:function(){
+function render(){
 return (
 React.createElement(ListView,{
 style:styles.container,
 contentContainerStyle:styles.listViewContent,
 dataSource:this.state.dataSource,
-renderRow:this._renderRow,
-renderFooter:this._renderFooter,
-automaticallyAdjustContentInsets:false}));}});
+renderRow:this._renderRow.bind(this),
+renderFooter:this._renderFooter.bind(this),
+contentInset:{bottom:0,top:40}}));}}]);return QueuedVideoList;})(Component);
 
 
 
@@ -47671,194 +48000,7 @@ justifyContent:'center'}});
 
 
 
-module.exports = RoomView;
-});
-__d('Jukapp/MenuView.js',["react-native/Libraries/react-native/react-native.js","Jukapp/MenuItemView.js","Jukapp/JukappStore.js","Jukapp/JukappActions.js","react-native-icons/index.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
-
-var React=require('react-native/Libraries/react-native/react-native.js');
-var MenuItemView=require('Jukapp/MenuItemView.js');
-var JukappStore=require('Jukapp/JukappStore.js');
-var JukappActions=require('Jukapp/JukappActions.js');var _require=
-
-
-
-require('react-native-icons/index.js');var Icon=_require.Icon;var 
-
-
-StyleSheet=
-
-
-React.StyleSheet;var View=React.View;var Text=React.Text;
-
-var MenuView=React.createClass({displayName:'MenuView',
-_leaveRoom:function(){
-JukappActions.leftRoom();},
-
-
-render:function(){
-return (
-React.createElement(View,{style:styles.container},
-
-React.createElement(View,{style:styles.header},
-React.createElement(Icon,{
-name:'fontawesome|rss',
-size:20,
-color:'black',
-style:styles.icon}),
-
-React.createElement(Text,{style:styles.headerMainText},JukappStore.getCurrentRoom().name)),
-
-
-React.createElement(MenuItemView,{
-scene:'room',
-title:'Room',
-icon:'fontawesome|home',
-navigator:this.props.navigator,
-menuActions:this.props.menuActions}),
-
-
-React.createElement(MenuItemView,{
-scene:'search',
-title:'Search',
-icon:'fontawesome|search',
-navigator:this.props.navigator,
-menuActions:this.props.menuActions}),
-
-
-React.createElement(MenuItemView,{
-scene:'favorites',
-title:'Favorites',
-icon:'fontawesome|star',
-navigator:this.props.navigator,
-menuActions:this.props.menuActions}),
-
-
-React.createElement(MenuItemView,{
-scene:'account',
-title:'My Account',
-icon:'fontawesome|user',
-navigator:this.props.navigator,
-menuActions:this.props.menuActions}),
-
-
-React.createElement(MenuItemView,{
-title:'Leave Room',
-icon:'fontawesome|sign-out',
-navigator:this.props.navigator,
-onPress:this._leaveRoom,
-menuActions:this.props.menuActions})));}});
-
-
-
-
-
-
-var styles=StyleSheet.create({
-container:{
-flexDirection:'column',
-flex:1},
-
-
-icon:{
-height:20,
-width:20,
-marginRight:16},
-
-
-header:{
-padding:16,
-height:120,
-flexDirection:'row',
-justifyContent:'flex-start',
-alignItems:'center',
-backgroundColor:'#F4F7F7'},
-
-
-headerMainText:{
-fontWeight:'bold',
-fontSize:18}});
-
-
-
-module.exports = MenuView;
-});
-__d('Jukapp/MenuItemView.js',["react-native/Libraries/react-native/react-native.js","react-native-icons/index.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  'use strict';
-
-var React=require('react-native/Libraries/react-native/react-native.js');var _require=
-
-
-
-require('react-native-icons/index.js');var Icon=_require.Icon;var 
-
-
-StyleSheet=
-
-
-
-React.StyleSheet;var View=React.View;var Text=React.Text;var TouchableHighlight=React.TouchableHighlight;
-
-var MenuItemView=React.createClass({displayName:'MenuItemView',
-_onPress:function(){
-this.props.menuActions.close();
-
-if(this.props.onPress){
-this.props.onPress();}else 
-{
-if(this.props.navigator.getCurrentRoutes()[0].id != this.props.scene){
-this.props.navigator.replace({
-id:this.props.scene,
-title:this.props.title});}}},
-
-
-
-
-
-render:function(){
-return (
-React.createElement(TouchableHighlight,{
-style:styles.item,
-onPress:this._onPress,
-underlayColor:'#ebeeee'},
-
-React.createElement(View,{style:styles.itemContent},
-React.createElement(Icon,{
-name:this.props.icon,
-size:20,
-color:'black',
-style:styles.icon}),
-
-React.createElement(Text,{style:styles.itemTitle},this.props.title))));}});
-
-
-
-
-
-
-var styles=StyleSheet.create({
-icon:{
-height:20,
-width:20,
-marginRight:16},
-
-
-item:{
-padding:16,
-height:48,
-justifyContent:'center'},
-
-
-itemContent:{
-flex:1,
-flexDirection:'row',
-alignItems:'center'},
-
-
-itemTitle:{
-fontSize:14}});
-
-
-
-module.exports = MenuItemView;
+module.exports = QueuedVideoList;
 });
 __d('react-native-side-menu/index.js',["react-native-side-menu/styles.js","react-native-side-menu/animations.js","react-native/Libraries/react-native/react-native.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _extends=Object.assign || function(target){for(var i=1;i < arguments.length;i++) {var source=arguments[i];for(var key in source) {if(Object.prototype.hasOwnProperty.call(source,key)){target[key] = source[key];}}}return target;};var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}const styles=require('react-native-side-menu/styles.js');
 const queueAnimation=require('react-native-side-menu/animations.js');
@@ -48272,6 +48414,33 @@ _animation = layoutAnimationConfigs[DEFAULT_ANIMATION];}
 
 
 LayoutAnimation.configureNext(_animation);};
+});
+__d('Jukapp/app/navigation/Router.js',[],function(global, require, requireDynamic, requireLazy, module, exports) {  var Router={
+push:function(path){var params=arguments.length <= 1 || arguments[1] === undefined?{}:arguments[1];
+var route=this.routes[path];
+
+if(!route){
+throw new Error("Missing route for path: " + path);}
+
+
+this.navigator.push({route:route,params:params});},
+
+
+pop:function(){
+this.navigator.pop();},
+
+
+popToTop:function(){
+this.navigator.popToTop();},
+
+
+get currentRoute(){
+var currentStack=this.navigator.getCurrentRoutes();
+return currentStack[currentStack.length - 1].route;}};
+
+
+
+module.exports = Router;
 });
 ;require("Jukapp/index.ios.js");
 //@ sourceMappingURL=/index.ios.map
