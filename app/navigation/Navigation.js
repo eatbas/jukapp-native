@@ -2,6 +2,7 @@ var React = require('react-native');
 var MenuList = require('./MenuList');
 var SideMenu = require('react-native-side-menu');
 var MenuButton = require('./MenuButton');
+var NavigatorTitle = require('./NavigatorTitle');
 var Router = require('./Router');
 var routes = require('./routes');
 
@@ -24,13 +25,11 @@ var mainRoutes = ['room', 'search', 'favorites', 'account'];
 var NavigatorRouteMapper = {
   Title({route}) {
     return (
-      <View style={styles.navigatorTitleContainer}>
-        <Text style={styles.navigatorTitle}>{route.title}</Text>
-      </View>
+      <NavigatorTitle route={route} />
     );
   },
 
-  LeftButton({route}, navigator, index) {
+  LeftButton({route}, navigator, index, navState) {
     if (!index){
       return <MenuButton />;
     }
@@ -39,6 +38,8 @@ var NavigatorRouteMapper = {
       <TouchableOpacity onPress={() => {
 
         // technical debt to prevent double tap
+        // try navState.presentedIndex
+        console.log(navState);
         if (navigator.state.presentedIndex == 0) {
           return;
         }
@@ -50,7 +51,10 @@ var NavigatorRouteMapper = {
     );
   },
 
-  RightButton() {
+  RightButton({route}, navigator, index, navState) {
+    // have a button, when you click title becomes input box
+    // enter query, submit query
+    // onPress: creates a new component from route.searchResultsComponent sends the query as a prop
     return null;
   }
 };
@@ -179,18 +183,6 @@ var styles = StyleSheet.create({
 
   navigatorBar: {
     backgroundColor: '#33ADFF'
-  },
-
-  navigatorTitleContainer: {
-    height: NavigationBar.Styles.General.NavBarHeight,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-
-  navigatorTitle: {
-    color: 'white',
-    fontSize: 24,
-    fontWeight: 'bold'
   },
 
   leftButtonText: {

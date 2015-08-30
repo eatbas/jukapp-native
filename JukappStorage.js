@@ -37,8 +37,13 @@ var JukappStorage = {
   setItem(key, value) {
     this.getItem()
       .then((store) => {
+        if (store == undefined) store = {};
+
         store[key] = value;
         AsyncStorage.setItem(JUKAPP_STORAGE_KEY, JSON.stringify(store));
+      })
+      .catch((err) => {
+        console.log('[JukappStorage] Error when setting item', err);
       });
   },
 

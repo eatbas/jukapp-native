@@ -50,6 +50,7 @@ class RoomList extends Component {
   _onPress(room) {
     JukappApi.joinRoom(room.id)
       .then((room) => {
+        console.log('joinRoom')
         Dispatcher.dispatch({
           type: 'joinRoom',
           room
