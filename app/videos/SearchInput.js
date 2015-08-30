@@ -51,8 +51,9 @@ class SearchInput extends Component {
 var styles = StyleSheet.create({
   navigatorTitleInput: {
     backgroundColor: '#2D9BE5',
-    width: 220,
+    width: 300,
     height: 32,
+    marginLeft: 40,
     paddingLeft: 10,
     color: 'white',
     borderRadius: 4

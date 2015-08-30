@@ -6,6 +6,10 @@ var Router = require('./Router');
 var routes = require('./routes');
 
 var {
+  Icon
+} = require('react-native-icons');
+
+var {
   Component,
   StyleSheet,
   View,
@@ -36,10 +40,18 @@ var NavigatorRouteMapper = {
     }
 
     return (
-      <TouchableOpacity onPress={() => {
-        navigator.pop();
-      }}>
-        <Text style={styles.leftButtonText}>‹</Text>
+      <TouchableOpacity
+        onPress={() => {
+          navigator.pop();
+        }}
+        style={styles.leftButton}
+      >
+        <Icon
+          style={styles.leftButtonIcon}
+          name='fontawesome|arrow-left'
+          size={20}
+          color='black'
+        />
       </TouchableOpacity>
     );
   },
@@ -181,10 +193,17 @@ var styles = StyleSheet.create({
     backgroundColor: '#33ADFF'
   },
 
-  leftButtonText: {
-    color: 'white',
-    fontSize: 30,
-    marginLeft: 10
+  leftButton: {
+    width: 60,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
+  leftButtonIcon: {
+    width: 20,
+    height: 20,
+    color: 'black'
   },
 
   navigatorScene: {

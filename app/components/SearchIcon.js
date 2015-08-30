@@ -24,10 +24,8 @@ class SearchIcon extends Component {
 
 var styles = StyleSheet.create({
   headerRightButtonIcon: {
-    width: 100,
     height: 20,
-    marginTop: 10,
-    marginLeft: 20
+    width: 20
   }
 });
 

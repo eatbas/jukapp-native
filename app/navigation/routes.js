@@ -1,10 +1,10 @@
 var React = require('react-native');
+var Router = require('./Router');
 var SearchResultList = require('../videos/SearchResultList');
 var FavoriteList = require('../favorites/FavoriteList');
 var AccountDetails = require('../accounts/AccountDetails');
 var QueuedVideoList = require('../queued_videos/QueuedVideoList');
-var YoutubeSearchButton = require('../videos/YoutubeSearchButton');
-var SearchIcon = require('../components/SearchIcon');
+var SearchButton = require('../components/SearchButton');
 var NavigatorTitle = require('./NavigatorTitle');
 var SearchInput = require('../videos/SearchInput');
 
@@ -21,14 +21,13 @@ var routes = {
     title: 'Room', // TODO: Should be the room name probably?
     titleComponent: <NavigatorTitle title={'Room'} />,
     icon: 'fontawesome|home',
-    rightButton: <YoutubeSearchButton />
+    rightButton: <SearchButton onPress={() => Router.push('search', {})} />
   },
 
   search: {
     component: SearchResultList,
     titleComponent: <SearchInput />,
-    icon: 'fontawesome|search',
-    rightButton: <SearchIcon />
+    icon: 'fontawesome|search'
   },
 
   account: {
