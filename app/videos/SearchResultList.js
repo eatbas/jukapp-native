@@ -16,11 +16,11 @@ class SearchResultsList extends Component {
     super(props);
 
     // fix this
-    var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => true});
+    var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    // var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => true});
 
     this.state = {
-      dataSource: dataSource.cloneWithRows(JukappStore.getSearchResults()),
-      query: JukappStore.getLastQuery()
+      dataSource
     };
   }
 
@@ -46,12 +46,12 @@ class SearchResultsList extends Component {
   }
 
   _refreshList() {
-    JukappApi.searchVideo(this.state.query)
+    JukappApi.searchVideo(JukappStore.getLastQuery())
       .done((searchResults) => {
         Dispatcher.dispatch({
           type: 'loadSearchResults',
           searchResults,
-          query: this.state.query
+          query: JukappStore.getLastQuery()
         });
       });
   }
@@ -62,28 +62,6 @@ class SearchResultsList extends Component {
     );
   }
 
-  // <SearchBar
-  //   placeholder='Search on YouTube'
-  //   onSearchButtonPress={(query) => {
-  //     this.setState({
-  //       loading: true,
-  //       query
-  //     });
-
-  //     JukappApi.searchVideo(query)
-  //       .done((searchResults) => {
-  //         Dispatcher.dispatch({
-  //           type: 'loadSearchResults',
-  //           searchResults,
-  //           query
-  //         });
-  //       });
-  //   }}
-  //   onCancelButtonPress={() => {
-  //     console.log('onCancelButtonPress');
-  //   }}
-  // />
-
   render() {
     return (
         <ListView
@@ -92,7 +70,6 @@ class SearchResultsList extends Component {
           dataSource={this.state.dataSource}
           renderRow={this._renderRow.bind(this)}
           renderFooter={this._renderFooter.bind(this)}
-          automaticallyAdjustContentInsets={false}
         />
     );
   }

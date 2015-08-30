@@ -4,7 +4,6 @@ var SideMenu = require('react-native-side-menu');
 var MenuButton = require('./MenuButton');
 var Router = require('./Router');
 var routes = require('./routes');
-var YoutubeSearchButton = require('../components/YoutubeSearchButton');
 
 var {
   Component,
@@ -12,8 +11,7 @@ var {
   View,
   Navigator,
   Text,
-  TouchableOpacity,
-  TextInput
+  TouchableOpacity
 } = React;
 
 var {
@@ -21,43 +19,24 @@ var {
 } = Navigator;
 
 Router.routes = routes;
-var mainRoutes = ['room', 'search', 'favorites', 'account'];
+var mainRoutes = ['room', 'favorites', 'account'];
 
 var NavigatorRouteMapper = {
   Title({route}) {
-    if (route.search) {
-      return (
-        <View style={styles.navigatorTitleContainer}>
-          <TextInput
-            style={styles.navigatorTitleInput}
-            placeholder='Search YouTube...'
-          />
-        </View>
-      );
-    } else {
-      return (
-        <View style={styles.navigatorTitleContainer}>
-          <Text style={styles.navigatorTitle}>{route.title}</Text>
-        </View>
-      );
-    }
+    return (
+      <View style={styles.navigatorTitleContainer}>
+        {route.titleComponent}
+      </View>
+    );
   },
 
-  LeftButton({route}, navigator, index, navState) {
+  LeftButton({route}, navigator, index) {
     if (!index){
       return <MenuButton />;
     }
 
     return (
       <TouchableOpacity onPress={() => {
-
-        // technical debt to prevent double tap
-        // try navState.presentedIndex
-        console.log(navState);
-        if (navigator.state.presentedIndex == 0) {
-          return;
-        }
-
         navigator.pop();
       }}>
         <Text style={styles.leftButtonText}>‹</Text>
@@ -65,18 +44,8 @@ var NavigatorRouteMapper = {
     );
   },
 
-  RightButton({route}, navigator, index, navState) {
-    // have a button, when you click title becomes input box
-    // enter query, submit query
-    // onPress: creates a new component from route.searchResultsComponent sends the query as a prop
-    if (route.rightButton) {
-      var RightButtonComponent = route.rightButton;
-      return <RightButtonComponent />;
-    }
-
-    if (route.search) {
-      return <YoutubeSearchButton />;
-    }
+  RightButton({route}) {
+    return route.rightButton;
   }
 };
 
@@ -84,7 +53,7 @@ class Navigation extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {selectedScene: 'search'};
+    this.state = {selectedScene: 'room'};
   }
 
   _renderScene({route, params}, nav) {
@@ -206,21 +175,6 @@ var styles = StyleSheet.create({
     height: NavigationBar.Styles.General.NavBarHeight,
     justifyContent: 'center',
     alignItems: 'center'
-  },
-
-  navigatorTitle: {
-    color: 'white',
-    fontSize: 24,
-    fontWeight: 'bold'
-  },
-
-  navigatorTitleInput: {
-    backgroundColor: '#2D9BE5',
-    width: 220,
-    height: 32,
-    paddingLeft: 10,
-    color: 'white',
-    borderRadius: 4
   },
 
   navigatorBar: {

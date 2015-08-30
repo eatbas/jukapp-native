@@ -9,21 +9,21 @@ var {
   StyleSheet
 } = React;
 
-class YoutubeSearchButton extends Component {
+class SearchIcon extends Component {
   render() {
     return (
       <Icon
         name='fontawesome|search'
         size={20}
         color='black'
-        style={styles.headerLeftButtonIcon}
+        style={styles.headerRightButtonIcon}
       />
     );
   }
 }
 
 var styles = StyleSheet.create({
-  headerLeftButtonIcon: {
+  headerRightButtonIcon: {
     width: 100,
     height: 20,
     marginTop: 10,
@@ -31,4 +31,4 @@ var styles = StyleSheet.create({
   }
 });
 
-module.exports = YoutubeSearchButton;
+module.exports = SearchIcon;
