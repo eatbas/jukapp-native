@@ -1,5 +1,4 @@
 var React = require('react-native');
-var SearchBar = require('react-native-search-bar');
 var VideoListItem = require('../components/VideoListItem.js');
 var JukappStore = require('../stores/JukappStore');
 var Dispatcher = require('../../Dispatcher');
@@ -8,7 +7,6 @@ var JukappApi = require('../JukappApi');
 var {
   Component,
   StyleSheet,
-  View,
   ListView,
   ActivityIndicatorIOS
 } = React;
@@ -17,12 +15,10 @@ class SearchResultsList extends Component {
   constructor(props) {
     super(props);
 
-    // fix this
-    var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => true});
+    var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
     this.state = {
-      dataSource: dataSource.cloneWithRows(JukappStore.getSearchResults()),
-      query: JukappStore.getLastQuery()
+      dataSource
     };
   }
 
@@ -48,12 +44,12 @@ class SearchResultsList extends Component {
   }
 
   _refreshList() {
-    JukappApi.searchVideo(this.state.query)
+    JukappApi.searchVideo(JukappStore.getLastQuery())
       .done((searchResults) => {
         Dispatcher.dispatch({
           type: 'loadSearchResults',
           searchResults,
-          query: this.state.query
+          query: JukappStore.getLastQuery()
         });
       });
   }
@@ -66,39 +62,13 @@ class SearchResultsList extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <SearchBar
-          placeholder='Search on YouTube'
-          onSearchButtonPress={(query) => {
-            this.setState({
-              loading: true,
-              query
-            });
-
-            JukappApi.searchVideo(query)
-              .done((searchResults) => {
-                Dispatcher.dispatch({
-                  type: 'loadSearchResults',
-                  searchResults,
-                  query
-                });
-              });
-          }}
-          onCancelButtonPress={() => {
-            console.log('onCancelButtonPress');
-          }}
-        />
-
         <ListView
           style={styles.listView}
           contentContainerStyle={styles.listViewContent}
           dataSource={this.state.dataSource}
           renderRow={this._renderRow.bind(this)}
           renderFooter={this._renderFooter.bind(this)}
-          automaticallyAdjustContentInsets={false}
         />
-
-      </View>
     );
   }
 }

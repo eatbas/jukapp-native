@@ -3,22 +3,14 @@ var React = require('react-native');
 var {
   Component,
   StyleSheet,
-  View,
-  Navigator,
   Text,
   PropTypes
 } = React;
 
-var {
-  NavigationBar
-} = Navigator;
-
 class NavigatorTitle extends Component {
   render() {
     return (
-      <View style={styles.navigatorTitleContainer}>
-        <Text style={styles.navigatorTitle}>{this.props.title}</Text>
-      </View>
+      <Text style={styles.navigatorTitle}>{this.props.title}</Text>
     );
   }
 }
@@ -28,12 +20,6 @@ NavigatorTitle.propTypes = {
 };
 
 var styles = StyleSheet.create({
-  navigatorTitleContainer: {
-    height: NavigationBar.Styles.General.NavBarHeight,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-
   navigatorTitle: {
     color: 'white',
     fontSize: 24,
