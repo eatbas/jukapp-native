@@ -15,9 +15,7 @@ class SearchResultsList extends Component {
   constructor(props) {
     super(props);
 
-    // fix this
     var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-    // var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => true});
 
     this.state = {
       dataSource
