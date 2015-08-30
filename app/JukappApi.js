@@ -175,6 +175,12 @@ var JukappApi = {
   },
 
   fetchFavorites() {
+    if (!JukappStore.loggedIn()) {
+      return new Promise((fulfill) => {
+        fulfill([]);
+      });
+    }
+
     return this.fetch('/favorites')
       .then((response) => {
         return response.json();

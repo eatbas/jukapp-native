@@ -1,12 +1,9 @@
 var React = require('react-native');
 var MenuList = require('./MenuList');
 var SideMenu = require('react-native-side-menu');
+var MenuButton = require('./MenuButton');
 var Router = require('./Router');
 var routes = require('./routes');
-
-var {
-  Icon
-} = require('react-native-icons');
 
 var {
   Component,
@@ -14,7 +11,6 @@ var {
   View,
   Navigator,
   Text,
-  TouchableHighlight,
   TouchableOpacity
 } = React;
 
@@ -36,7 +32,7 @@ var NavigatorRouteMapper = {
 
   LeftButton({route}, navigator, index) {
     if (!index){
-      return this._menuButton();
+      return <MenuButton />;
     }
 
     return (
@@ -51,24 +47,6 @@ var NavigatorRouteMapper = {
       }}>
         <Text style={styles.leftButtonText}>‹</Text>
       </TouchableOpacity>
-    );
-  },
-
-  _menuButton() {
-    return (
-      <TouchableHighlight
-        onPress={() => Router.sideMenu.toggleMenu()}
-        activeOpacity={0.3}
-        underlayColor='#33ADFF'
-        style={styles.headerLeftView}
-      >
-        <Icon
-          name='fontawesome|bars'
-          size={20}
-          color='black'
-          style={styles.headerLeftButtonIcon}
-        />
-      </TouchableHighlight>
     );
   },
 
@@ -120,6 +98,7 @@ class Navigation extends Component {
           initialRoute={{route, params}}
           renderScene={this._renderScene.bind(this)}
           navigationBar={<NavigationBar routeMapper={NavigatorRouteMapper} style={styles.navigatorBar} />}
+          sceneStyle={styles.navigatorScene}
         />
       );
     } else {
@@ -179,19 +158,8 @@ var styles = StyleSheet.create({
     justifyContent: 'center'
   },
 
-  headerLeftView: {
-    width: 60
-  },
-
   headerRightView: {
     width: 60
-  },
-
-  headerLeftButtonIcon: {
-    width: 20,
-    height: 20,
-    marginTop: 10,
-    marginLeft: 20
   },
 
   headeRightButtonImage: {
@@ -234,7 +202,7 @@ var styles = StyleSheet.create({
   navigatorScene: {
     position: 'absolute',
     left: 0,
-    top: NavigationBar.Styles.General.TotalNavHeight,
+    top: NavigationBar.Styles.General.NavBarHeight,
     right: 0,
     bottom: 0
   }
