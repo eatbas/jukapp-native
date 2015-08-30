@@ -176,6 +176,7 @@ var JukappApi = {
 
   fetchFavorites() {
     if (!JukappStore.loggedIn()) {
+      console.log('notloggedin')
       return new Promise((fulfill) => {
         fulfill([]);
       });

@@ -2,9 +2,9 @@ var React = require('react-native');
 var MenuList = require('./MenuList');
 var SideMenu = require('react-native-side-menu');
 var MenuButton = require('./MenuButton');
-var NavigatorTitle = require('./NavigatorTitle');
 var Router = require('./Router');
 var routes = require('./routes');
+var YoutubeSearchButton = require('../components/YoutubeSearchButton');
 
 var {
   Component,
@@ -12,7 +12,8 @@ var {
   View,
   Navigator,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  TextInput
 } = React;
 
 var {
@@ -24,9 +25,22 @@ var mainRoutes = ['room', 'search', 'favorites', 'account'];
 
 var NavigatorRouteMapper = {
   Title({route}) {
-    return (
-      <NavigatorTitle title={route.title} />
-    );
+    if (route.search) {
+      return (
+        <View style={styles.navigatorTitleContainer}>
+          <TextInput
+            style={styles.navigatorTitleInput}
+            placeholder='Search YouTube...'
+          />
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.navigatorTitleContainer}>
+          <Text style={styles.navigatorTitle}>{route.title}</Text>
+        </View>
+      );
+    }
   },
 
   LeftButton({route}, navigator, index, navState) {
@@ -55,7 +69,14 @@ var NavigatorRouteMapper = {
     // have a button, when you click title becomes input box
     // enter query, submit query
     // onPress: creates a new component from route.searchResultsComponent sends the query as a prop
-    return null;
+    if (route.rightButton) {
+      var RightButtonComponent = route.rightButton;
+      return <RightButtonComponent />;
+    }
+
+    if (route.search) {
+      return <YoutubeSearchButton />;
+    }
   }
 };
 
@@ -63,7 +84,7 @@ class Navigation extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {selectedScene: 'room'};
+    this.state = {selectedScene: 'search'};
   }
 
   _renderScene({route, params}, nav) {
@@ -179,6 +200,27 @@ var styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginTop: 30
+  },
+
+  navigatorTitleContainer: {
+    height: NavigationBar.Styles.General.NavBarHeight,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
+  navigatorTitle: {
+    color: 'white',
+    fontSize: 24,
+    fontWeight: 'bold'
+  },
+
+  navigatorTitleInput: {
+    backgroundColor: '#2D9BE5',
+    width: 220,
+    height: 32,
+    paddingLeft: 10,
+    color: 'white',
+    borderRadius: 4
   },
 
   navigatorBar: {

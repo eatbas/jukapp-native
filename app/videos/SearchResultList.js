@@ -1,5 +1,4 @@
 var React = require('react-native');
-var SearchBar = require('react-native-search-bar');
 var VideoListItem = require('../components/VideoListItem.js');
 var JukappStore = require('../stores/JukappStore');
 var Dispatcher = require('../../Dispatcher');
@@ -8,7 +7,6 @@ var JukappApi = require('../JukappApi');
 var {
   Component,
   StyleSheet,
-  View,
   ListView,
   ActivityIndicatorIOS
 } = React;
@@ -64,31 +62,30 @@ class SearchResultsList extends Component {
     );
   }
 
+  // <SearchBar
+  //   placeholder='Search on YouTube'
+  //   onSearchButtonPress={(query) => {
+  //     this.setState({
+  //       loading: true,
+  //       query
+  //     });
+
+  //     JukappApi.searchVideo(query)
+  //       .done((searchResults) => {
+  //         Dispatcher.dispatch({
+  //           type: 'loadSearchResults',
+  //           searchResults,
+  //           query
+  //         });
+  //       });
+  //   }}
+  //   onCancelButtonPress={() => {
+  //     console.log('onCancelButtonPress');
+  //   }}
+  // />
+
   render() {
     return (
-      <View style={styles.container}>
-        <SearchBar
-          placeholder='Search on YouTube'
-          onSearchButtonPress={(query) => {
-            this.setState({
-              loading: true,
-              query
-            });
-
-            JukappApi.searchVideo(query)
-              .done((searchResults) => {
-                Dispatcher.dispatch({
-                  type: 'loadSearchResults',
-                  searchResults,
-                  query
-                });
-              });
-          }}
-          onCancelButtonPress={() => {
-            console.log('onCancelButtonPress');
-          }}
-        />
-
         <ListView
           style={styles.listView}
           contentContainerStyle={styles.listViewContent}
@@ -97,8 +94,6 @@ class SearchResultsList extends Component {
           renderFooter={this._renderFooter.bind(this)}
           automaticallyAdjustContentInsets={false}
         />
-
-      </View>
     );
   }
 }

@@ -2,6 +2,7 @@ var SearchResultList = require('../videos/SearchResultList');
 var FavoriteList = require('../favorites/FavoriteList');
 var AccountDetails = require('../accounts/AccountDetails');
 var QueuedVideoList = require('../queued_videos/QueuedVideoList');
+var YoutubeSearchButton = require('../components/YoutubeSearchButton');
 
 var routes = {
   favorites: {
@@ -13,13 +14,15 @@ var routes = {
   room: {
     component: QueuedVideoList,
     title: 'Room', // TODO: Should be the room name probably?
-    icon: 'fontawesome|home'
+    icon: 'fontawesome|home',
+    rightButton: YoutubeSearchButton
   },
 
   search: {
     component: SearchResultList,
     title: 'Search',
-    icon: 'fontawesome|search'
+    icon: 'fontawesome|search',
+    search: true
   },
 
   account: {
