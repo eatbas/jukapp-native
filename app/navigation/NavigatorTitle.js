@@ -17,14 +17,14 @@ class NavigatorTitle extends Component {
   render() {
     return (
       <View style={styles.navigatorTitleContainer}>
-        <Text style={styles.navigatorTitle}>{this.props.route.title}</Text>
+        <Text style={styles.navigatorTitle}>{this.props.title}</Text>
       </View>
     );
   }
 }
 
 NavigatorTitle.propTypes = {
-  route: PropTypes.object.isRequired
+  title: PropTypes.string.isRequired
 };
 
 var styles = StyleSheet.create({

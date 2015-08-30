@@ -25,7 +25,7 @@ var mainRoutes = ['room', 'search', 'favorites', 'account'];
 var NavigatorRouteMapper = {
   Title({route}) {
     return (
-      <NavigatorTitle route={route} />
+      <NavigatorTitle title={route.title} />
     );
   },
 
