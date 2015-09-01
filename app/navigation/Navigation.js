@@ -14,7 +14,7 @@ var {
   StyleSheet,
   View,
   Navigator,
-  Text,
+  StatusBarIOS,
   TouchableOpacity
 } = React;
 
@@ -23,6 +23,7 @@ var {
 } = Navigator;
 
 Router.routes = routes;
+StatusBarIOS.setStyle('light-content');
 var mainRoutes = ['room', 'favorites', 'account'];
 
 var NavigatorRouteMapper = {
