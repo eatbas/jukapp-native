@@ -52604,7 +52604,7 @@ AlertIOS.alert('Favorites error' + response);});},
 favoriteVideo:function(video){
 var options=this.postOptions(this.videoOptions(video));
 
-this.fetch('/favorites',options).
+return this.fetch('/favorites',options).
 then(function(response){
 if(response.status == 201){
 console.log('Successfully favorited video');}else 
@@ -52621,7 +52621,7 @@ AlertIOS.alert('Favorites error' + response);});},
 unfavoriteVideo:function(video){
 var options=this.deleteOptions(this.videoOptions(video));
 
-this.fetch('/favorites',options).
+return this.fetch('/favorites',options).
 then(function(response){
 if(response.status == 200){
 console.log('Successfully unfavorited video');}else 
@@ -52768,8 +52768,13 @@ this.setItem(key,null);},
 setItem:function(key,value){
 this.getItem().
 then(function(store){
+if(store == undefined)store = {};
+
 store[key] = value;
-AsyncStorage.setItem(JUKAPP_STORAGE_KEY,JSON.stringify(store));});},
+AsyncStorage.setItem(JUKAPP_STORAGE_KEY,JSON.stringify(store));}).
+
+catch(function(err){
+console.log('[JukappStorage] Error when setting item',err);});},
 
 
 
@@ -52780,12 +52785,16 @@ return AsyncStorage.getItem(JUKAPP_STORAGE_KEY).then(function(value){return JSON
 
 module.exports = JukappStorage;
 });
-__d('Jukapp/app/navigation/Navigation.js',["react-native/Libraries/react-native/react-native.js","Jukapp/app/navigation/MenuList.js","react-native-side-menu/index.js","Jukapp/app/navigation/MenuButton.js","Jukapp/app/navigation/Router.js","Jukapp/app/navigation/routes.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _extends=Object.assign || function(target){for(var i=1;i < arguments.length;i++) {var source=arguments[i];for(var key in source) {if(Object.prototype.hasOwnProperty.call(source,key)){target[key] = source[key];}}}return target;};var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
+__d('Jukapp/app/navigation/Navigation.js',["react-native/Libraries/react-native/react-native.js","Jukapp/app/navigation/MenuList.js","react-native-side-menu/index.js","Jukapp/app/navigation/MenuButton.js","Jukapp/app/navigation/Router.js","Jukapp/app/navigation/routes.js","react-native-icons/index.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _extends=Object.assign || function(target){for(var i=1;i < arguments.length;i++) {var source=arguments[i];for(var key in source) {if(Object.prototype.hasOwnProperty.call(source,key)){target[key] = source[key];}}}return target;};var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
 var MenuList=require('Jukapp/app/navigation/MenuList.js');
 var SideMenu=require('react-native-side-menu/index.js');
 var MenuButton=require('Jukapp/app/navigation/MenuButton.js');
 var Router=require('Jukapp/app/navigation/Router.js');
-var routes=require('Jukapp/app/navigation/routes.js');var 
+var routes=require('Jukapp/app/navigation/routes.js');var _require=
+
+
+
+require('react-native-icons/index.js');var Icon=_require.Icon;var 
 
 
 Component=
@@ -52801,13 +52810,13 @@ NavigationBar=
 Navigator.NavigationBar;
 
 Router.routes = routes;
-var mainRoutes=['room','search','favorites','account'];
+var mainRoutes=['room','favorites','account'];
 
 var NavigatorRouteMapper={
 Title:function(_ref){var route=_ref.route;
 return (
 React.createElement(View,{style:styles.navigatorTitleContainer},
-React.createElement(Text,{style:styles.navigatorTitle},route.title)));},
+route.titleComponent));},
 
 
 
@@ -52818,22 +52827,24 @@ return React.createElement(MenuButton,null);}
 
 
 return (
-React.createElement(TouchableOpacity,{onPress:function(){
+React.createElement(TouchableOpacity,{
+onPress:function(){
+navigator.pop();},
+
+style:styles.leftButton},
+
+React.createElement(Icon,{
+style:styles.leftButtonIcon,
+name:'fontawesome|arrow-left',
+size:20,
+color:'black'})));},
 
 
-if(navigator.state.presentedIndex == 0){
-return;}
-
-
-navigator.pop();}},
-
-React.createElement(Text,{style:styles.leftButtonText},'‹')));},
 
 
 
-
-RightButton:function(){
-return null;}};var 
+RightButton:function(_ref3){var route=_ref3.route;
+return route.rightButton;}};var 
 
 
 
@@ -52844,7 +52855,7 @@ _get(Object.getPrototypeOf(Navigation.prototype),'constructor',this).call(this,p
 this.state = {selectedScene:'room'};}_createClass(Navigation,[{key:'_renderScene',value:
 
 
-function _renderScene(_ref3,nav){var route=_ref3.route;var params=_ref3.params;
+function _renderScene(_ref4,nav){var route=_ref4.route;var params=_ref4.params;
 var ChildComponent=route.component;
 
 var setRef=function(ref){
@@ -52959,26 +52970,27 @@ textAlign:'center',
 marginTop:30},
 
 
-navigatorBar:{
-backgroundColor:'#33ADFF'},
-
-
 navigatorTitleContainer:{
 height:NavigationBar.Styles.General.NavBarHeight,
 justifyContent:'center',
 alignItems:'center'},
 
 
-navigatorTitle:{
-color:'white',
-fontSize:24,
-fontWeight:'bold'},
+navigatorBar:{
+backgroundColor:'#33ADFF'},
 
 
-leftButtonText:{
-color:'white',
-fontSize:30,
-marginLeft:10},
+leftButton:{
+width:60,
+height:40,
+justifyContent:'center',
+alignItems:'center'},
+
+
+leftButtonIcon:{
+width:20,
+height:20,
+color:'black'},
 
 
 navigatorScene:{
@@ -53193,64 +53205,93 @@ fontSize:14}});
 
 module.exports = MenuListItem;
 });
-__d('Jukapp/app/navigation/routes.js',["Jukapp/app/videos/SearchResultList.js","Jukapp/app/favorites/FavoriteList.js","Jukapp/app/accounts/AccountDetails.js","Jukapp/app/queued_videos/QueuedVideoList.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var SearchResultList=require('Jukapp/app/videos/SearchResultList.js');
+__d('Jukapp/app/navigation/routes.js',["react-native/Libraries/react-native/react-native.js","Jukapp/app/navigation/Router.js","Jukapp/app/videos/SearchResultList.js","Jukapp/app/favorites/FavoriteList.js","Jukapp/app/accounts/AccountDetails.js","Jukapp/app/queued_videos/QueuedVideoList.js","Jukapp/app/components/SearchButton.js","Jukapp/app/navigation/NavigatorTitle.js","Jukapp/app/videos/SearchInput.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var React=require('react-native/Libraries/react-native/react-native.js');
+var Router=require('Jukapp/app/navigation/Router.js');
+var SearchResultList=require('Jukapp/app/videos/SearchResultList.js');
 var FavoriteList=require('Jukapp/app/favorites/FavoriteList.js');
 var AccountDetails=require('Jukapp/app/accounts/AccountDetails.js');
 var QueuedVideoList=require('Jukapp/app/queued_videos/QueuedVideoList.js');
+var SearchButton=require('Jukapp/app/components/SearchButton.js');
+var NavigatorTitle=require('Jukapp/app/navigation/NavigatorTitle.js');
+var SearchInput=require('Jukapp/app/videos/SearchInput.js');
 
 var routes={
 favorites:{
 component:FavoriteList,
 title:'Favorites',
+titleComponent:React.createElement(NavigatorTitle,{title:'Favorites'}),
 icon:'fontawesome|star'},
 
 
 room:{
 component:QueuedVideoList,
 title:'Room',
-icon:'fontawesome|home'},
+titleComponent:React.createElement(NavigatorTitle,{title:'Room'}),
+icon:'fontawesome|home',
+rightButton:React.createElement(SearchButton,{onPress:function(){return Router.push('search',{});}})},
 
 
 search:{
 component:SearchResultList,
-title:'Search',
+titleComponent:React.createElement(SearchInput,null),
 icon:'fontawesome|search'},
 
 
 account:{
 component:AccountDetails,
 title:'My Account',
+titleComponent:React.createElement(NavigatorTitle,{title:'My Account'}),
 icon:'fontawesome|user'}};
 
 
 
 module.exports = routes;
 });
-__d('Jukapp/app/videos/SearchResultList.js',["react-native/Libraries/react-native/react-native.js","react-native-search-bar/SearchBar.js","Jukapp/app/components/VideoListItem.js","Jukapp/app/stores/JukappStore.js","Jukapp/Dispatcher.js","Jukapp/app/JukappApi.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
-var SearchBar=require('react-native-search-bar/SearchBar.js');
-var VideoListItem=require('Jukapp/app/components/VideoListItem.js');
+__d('Jukapp/app/navigation/Router.js',[],function(global, require, requireDynamic, requireLazy, module, exports) {  var Router={
+push:function(path){var params=arguments.length <= 1 || arguments[1] === undefined?{}:arguments[1];
+var route=this.routes[path];
+
+if(!route){
+throw new Error("Missing route for path: " + path);}
+
+
+this.navigator.push({route:route,params:params});},
+
+
+pop:function(){
+this.navigator.pop();},
+
+
+popToTop:function(){
+this.navigator.popToTop();},
+
+
+get currentRoute(){
+var currentStack=this.navigator.getCurrentRoutes();
+return currentStack[currentStack.length - 1].route;}};
+
+
+
+module.exports = Router;
+});
+__d('Jukapp/app/videos/SearchResultList.js',["react-native/Libraries/react-native/react-native.js","Jukapp/app/stores/JukappStore.js","Jukapp/Dispatcher.js","Jukapp/app/JukappApi.js","Jukapp/app/videos/VideoList.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
 var JukappStore=require('Jukapp/app/stores/JukappStore.js');
 var Dispatcher=require('Jukapp/Dispatcher.js');
-var JukappApi=require('Jukapp/app/JukappApi.js');var 
+var JukappApi=require('Jukapp/app/JukappApi.js');
+var VideoList=require('Jukapp/app/videos/VideoList.js');var 
 
 
 Component=
+React.Component;var 
 
-
-
-
-React.Component;var StyleSheet=React.StyleSheet;var View=React.View;var ListView=React.ListView;var ActivityIndicatorIOS=React.ActivityIndicatorIOS;var 
 
 SearchResultsList=(function(_Component){_inherits(SearchResultsList,_Component);
 function SearchResultsList(props){_classCallCheck(this,SearchResultsList);
 _get(Object.getPrototypeOf(SearchResultsList.prototype),'constructor',this).call(this,props);
 
-
-var dataSource=new ListView.DataSource({rowHasChanged:function(r1,r2){return true;}});
-
 this.state = {
-dataSource:dataSource.cloneWithRows(JukappStore.getSearchResults()),
-query:JukappStore.getLastQuery()};}_createClass(SearchResultsList,[{key:'componentDidMount',value:
+videos:[],
+loading:false};}_createClass(SearchResultsList,[{key:'componentDidMount',value:
 
 
 
@@ -53259,152 +53300,45 @@ JukappStore.addChangeListener(this._onChange.bind(this));}},{key:'componentWillU
 
 
 function componentWillUnmount(){
-JukappStore.removeChangeListener(this._onChange);}},{key:'_renderFooter',value:
-
-
-function _renderFooter(){
-if(this.state.loading){
-return React.createElement(ActivityIndicatorIOS,null);}}},{key:'_onChange',value:
-
+JukappStore.removeChangeListener(this._onChange);}},{key:'_onChange',value:
 
 
 function _onChange(){
 this.setState({
-loading:false,
-dataSource:this.state.dataSource.cloneWithRows(JukappStore.getSearchResults())});}},{key:'_refreshList',value:
+videos:JukappStore.getSearchResults(),
+loading:false});}},{key:'fetchData',value:
 
 
 
-function _refreshList(){var _this=this;
-JukappApi.searchVideo(this.state.query).
+function fetchData(){
+JukappApi.searchVideo(JukappStore.getLastQuery()).
 done(function(searchResults){
 Dispatcher.dispatch({
 type:'loadSearchResults',
 searchResults:searchResults,
-query:_this.state.query});});}},{key:'_renderRow',value:
+query:JukappStore.getLastQuery()});});}},{key:'render',value:
 
 
 
 
-function _renderRow(video){
+function render(){
 return (
-React.createElement(VideoListItem,{video:video,onFavoriteToggled:this._refreshList.bind(this)}));}},{key:'render',value:
+React.createElement(VideoList,{
+videos:this.state.videos,
+loading:this.state.loading,
+onFavoriteToggled:this.fetchData.bind(this),
+action:true}));}}]);return SearchResultsList;})(Component);
 
 
-
-function render(){var _this2=this;
-return (
-React.createElement(View,{style:styles.container},
-React.createElement(SearchBar,{
-placeholder:'Search on YouTube',
-onSearchButtonPress:function(query){
-_this2.setState({
-loading:true,
-query:query});
-
-
-JukappApi.searchVideo(query).
-done(function(searchResults){
-Dispatcher.dispatch({
-type:'loadSearchResults',
-searchResults:searchResults,
-query:query});});},
-
-
-
-onCancelButtonPress:function(){
-console.log('onCancelButtonPress');}}),
-
-
-
-React.createElement(ListView,{
-style:styles.listView,
-contentContainerStyle:styles.listViewContent,
-dataSource:this.state.dataSource,
-renderRow:this._renderRow.bind(this),
-renderFooter:this._renderFooter.bind(this),
-automaticallyAdjustContentInsets:false})));}}]);return SearchResultsList;})(Component);
-
-
-
-
-
-
-
-var styles=StyleSheet.create({
-container:{
-paddingTop:20,
-flex:1,
-backgroundColor:'#EEF2F2'},
-
-
-listView:{
-backgroundColor:'#EEF2F2',
-padding:10},
-
-
-listViewContent:{
-justifyContent:'center'}});
 
 
 
 module.exports = SearchResultsList;
 });
-__d('react-native-search-bar/SearchBar.js',["react-native/Libraries/react-native/react-native.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _extends=Object.assign || function(target){for(var i=1;i < arguments.length;i++) {var source=arguments[i];for(var key in source) {if(Object.prototype.hasOwnProperty.call(source,key)){target[key] = source[key];}}}return target;};var NativeModules,PropTypes,RNSearchBar,React,SearchBar;
-
-React = require('react-native/Libraries/react-native/react-native.js');
-
-RNSearchBar = React.requireNativeComponent('RNSearchBar',null);
-
-PropTypes = React.PropTypes;
-
-NativeModules = React.NativeModules;
-
-SearchBar = React.createClass({
-propTypes:{
-placeholder:PropTypes.string,
-text:PropTypes.string,
-tintColor:PropTypes.string,
-showsCancelButton:PropTypes.bool,
-onChange:PropTypes.func,
-onChangeText:PropTypes.func,
-onFocus:PropTypes.func,
-onSearchButtonPress:PropTypes.func,
-onCancelButtonPress:PropTypes.func,
-hideBackground:PropTypes.bool},
-
-_onChange:function(e){
-var base,base1;
-if(typeof (base = this.props).onChange === "function"){
-base.onChange(e);}
-
-return typeof (base1 = this.props).onChangeText === "function"?base1.onChangeText(e.nativeEvent.text):void 0;},
-
-_onPress:function(e){
-var base,base1,button;
-button = e.nativeEvent.button;
-if(button === 'search'){
-return typeof (base = this.props).onSearchButtonPress === "function"?base.onSearchButtonPress(e.nativeEvent.searchText):void 0;}else 
-if(button === 'cancel'){
-return typeof (base1 = this.props).onCancelButtonPress === "function"?base1.onCancelButtonPress():void 0;}},
-
-
-render:function(){
-return React.createElement(RNSearchBar,_extends({
-style:{height:NativeModules.RNSearchBarManager.ComponentHeight},
-onChange:this._onChange,
-onPress:this._onPress},
-this.props));}});
-
-
-
-
-module.exports = SearchBar;
-});
-__d('Jukapp/app/components/VideoListItem.js',["react-native/Libraries/react-native/react-native.js","Jukapp/app/stores/JukappStore.js","Jukapp/app/JukappApi.js","Jukapp/app/components/FavoriteButton.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
-var JukappStore=require('Jukapp/app/stores/JukappStore.js');
-var JukappApi=require('Jukapp/app/JukappApi.js');
-var FavoriteButton=require('Jukapp/app/components/FavoriteButton.js');var 
+__d('Jukapp/app/videos/VideoList.js',["react-native/Libraries/react-native/react-native.js","Jukapp/app/components/Toast.js","Jukapp/app/components/VideoListItem.js","Jukapp/app/JukappApi.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
+var Toast=require('Jukapp/app/components/Toast.js');
+var VideoListItem=require('Jukapp/app/components/VideoListItem.js');
+var JukappApi=require('Jukapp/app/JukappApi.js');var 
 
 
 Component=
@@ -53413,109 +53347,105 @@ Component=
 
 
 
+React.Component;var StyleSheet=React.StyleSheet;var PropTypes=React.PropTypes;var ListView=React.ListView;var ActivityIndicatorIOS=React.ActivityIndicatorIOS;var View=React.View;var 
 
-React.Component;var StyleSheet=React.StyleSheet;var Text=React.Text;var View=React.View;var Image=React.Image;var TouchableHighlight=React.TouchableHighlight;var PropTypes=React.PropTypes;var 
+VideoList=(function(_Component){_inherits(VideoList,_Component);
+function VideoList(props){_classCallCheck(this,VideoList);
+_get(Object.getPrototypeOf(VideoList.prototype),'constructor',this).call(this,props);
 
-VideoListItem=(function(_Component){_inherits(VideoListItem,_Component);function VideoListItem(){_classCallCheck(this,VideoListItem);_get(Object.getPrototypeOf(VideoListItem.prototype),'constructor',this).apply(this,arguments);}_createClass(VideoListItem,[{key:'renderFavoriteButton',value:
+var dataSource=new ListView.DataSource({rowHasChanged:function(r1,r2){return r1 !== r2;}});
 
-function renderFavoriteButton(){
-if(!JukappStore.loggedIn()){
-return;}
-
-
-return React.createElement(FavoriteButton,{video:this.props.video,onFavoriteToggled:this.props.onFavoriteToggled});}},{key:'render',value:
-
-
-function render(){
-var video=this.props.video;
-var playCount=0;
-
-if(video['video_events']){
-var videoEvent=video['video_events'].find(function(events){return events['room_id'] == JukappStore.currentRoom().id;});
-if(videoEvent)playCount = videoEvent['play_count'];}
+this.state = {
+dataSource:dataSource.cloneWithRows(this.props.videos),
+loading:this.props.loading};}_createClass(VideoList,[{key:'componentWillReceiveProps',value:
 
 
-var image={uri:'http://img.youtube.com/vi/' + video.youtube_id + '/default.jpg'};
 
+function componentWillReceiveProps(nextProps){
+this.setState({
+dataSource:this.state.dataSource.cloneWithRows(nextProps.videos),
+loading:nextProps.loading});}},{key:'_onPress',value:
+
+
+
+function _onPress(video){var _this=this;
+JukappApi.queueVideo(video).
+done(function(){
+_this._toast.flash('Added','fontawesome|check');});}},{key:'_onFavoriteToggled',value:
+
+
+
+function _onFavoriteToggled(video){var _this2=this;
+if(video.isFavorite){
+JukappApi.unfavoriteVideo(video).
+done(function(){
+_this2._toast.flash('Removed','fontawesome|star-o');});}else 
+
+{
+JukappApi.favoriteVideo(video).
+done(function(){
+_this2._toast.flash('Favorited','fontawesome|star');});}
+
+
+
+this.props.onFavoriteToggled();}},{key:'_renderRow',value:
+
+
+function _renderRow(video){var _this3=this;
+if(this.props.action){
 return (
-React.createElement(TouchableHighlight,{
-underlayColor:'#CFD6D6',
-style:{marginBottom:10},
-onPress:function(){
-JukappApi.queueVideo(video);}},
+React.createElement(VideoListItem,{video:video,onFavoriteToggled:function(){return _this3._onFavoriteToggled(video);},onPress:function(){return _this3._onPress(video);}}));}else 
 
-
-React.createElement(View,{style:styles.cell},
-React.createElement(Image,{source:image,style:styles.videoImage}),
-
-React.createElement(View,{style:styles.rowData},
-React.createElement(Text,{style:styles.title},video.title),
-React.createElement(Text,{style:styles.details},playCount,' VIEWS')),
-
-
-this.renderFavoriteButton())));}}]);return VideoListItem;})(Component);
+{
+return (
+React.createElement(VideoListItem,{video:video,onFavoriteToggled:function(){return _this3._onFavoriteToggled(video);}}));}}},{key:'_renderFooter',value:
 
 
 
 
+function _renderFooter(){
+if(this.state.loading){
+return React.createElement(ActivityIndicatorIOS,null);}}},{key:'render',value:
 
 
-VideoListItem.propTypes = {
+
+function render(){var _this4=this;
+return (
+React.createElement(View,{style:styles.container},
+React.createElement(ListView,{
+contentContainerStyle:styles.listViewContent,
+dataSource:this.state.dataSource,
+renderRow:this._renderRow.bind(this),
+renderFooter:this._renderFooter.bind(this)}),
+
+React.createElement(Toast,{ref:function(component){return _this4._toast = component;}})));}}]);return VideoList;})(Component);
+
+
+
+
+
+VideoList.propTypes = {
+action:PropTypes.bool,
+loading:PropTypes.bool,
 onFavoriteToggled:PropTypes.func.isRequired,
-video:PropTypes.object.isRequired};
+videos:PropTypes.array.isRequired};
 
 
 var styles=StyleSheet.create({
+container:{
+flex:1,
+backgroundColor:'#EEF2F2'},
 
-cell:{
-flexDirection:'row',
-backgroundColor:'white',
-padding:16,
-height:96,
-justifyContent:'flex-start',
-borderRadius:4,
-shadowColor:'#000000',
-shadowRadius:1,
-shadowOpacity:0.3,
-shadowOffset:{
-height:1,
-width:0}},
+
+listViewContent:{
+justifyContent:'center',
+padding:10}});
 
 
 
-rowData:{
-flexDirection:'column',
-paddingLeft:16,
-justifyContent:'space-around',
-flex:1},
-
-
-title:{
-color:'black',
-fontSize:14,
-fontWeight:'bold',
-textAlign:'left',
-paddingTop:4},
-
-
-details:{
-color:'#9FA7A7',
-fontSize:12,
-textAlign:'left',
-paddingBottom:4},
-
-
-videoImage:{
-alignSelf:'flex-start',
-width:64,
-height:64}});
-
-
-
-module.exports = VideoListItem;
+module.exports = VideoList;
 });
-__d('Jukapp/app/components/FavoriteButton.js',["react-native/Libraries/react-native/react-native.js","Jukapp/app/JukappApi.js","react-native-icons/index.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
-var JukappApi=require('Jukapp/app/JukappApi.js');var _require=
+__d('Jukapp/app/components/Toast.js',["react-native/Libraries/react-native/react-native.js","react-native-icons/index.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');var _require=
 
 
 
@@ -53526,64 +53456,119 @@ Component=
 
 
 
-React.Component;var StyleSheet=React.StyleSheet;var TouchableHighlight=React.TouchableHighlight;var PropTypes=React.PropTypes;var 
 
-FavoriteButton=(function(_Component){_inherits(FavoriteButton,_Component);function FavoriteButton(){_classCallCheck(this,FavoriteButton);_get(Object.getPrototypeOf(FavoriteButton.prototype),'constructor',this).apply(this,arguments);}_createClass(FavoriteButton,[{key:'_handleButtonPress',value:
 
-function _handleButtonPress(){
-var video=this.props.video;
-video.isFavorite?JukappApi.unfavoriteVideo(video):JukappApi.favoriteVideo(video);
+React.Component;var StyleSheet=React.StyleSheet;var View=React.View;var Text=React.Text;var Animated=React.Animated;var Dimensions=React.Dimensions;var 
 
-this.props.onFavoriteToggled();}},{key:'render',value:
+Toast=(function(_Component){_inherits(Toast,_Component);
+
+function Toast(props){_classCallCheck(this,Toast);
+_get(Object.getPrototypeOf(Toast.prototype),'constructor',this).call(this,props);
+
+this.state = this._defaultState();}_createClass(Toast,[{key:'flash',value:
+
+
+function flash(text,icon){var _this=this;
+var appearAnimation=Animated.timing(
+this.state.opacity,
+{
+toValue:0.85,
+duration:200});
+
+
+
+var disappearAnimation=Animated.timing(
+this.state.opacity,
+{
+toValue:0,
+duration:800,
+delay:300});
+
+
+
+Animated.sequence([appearAnimation,disappearAnimation]).
+start(function(){
+_this.setState(_this._defaultState());});
+
+
+this.setState({
+isVisible:true,
+text:text,
+icon:icon});}},{key:'_defaultState',value:
+
+
+
+function _defaultState(){
+return {
+opacity:new Animated.Value(0),
+isVisible:false};}},{key:'render',value:
+
 
 
 function render(){
-var icon=this.props.video.isFavorite?'fontawesome|star':'fontawesome|star-o';
-
+if(this.state.isVisible){
 return (
-React.createElement(TouchableHighlight,{
-underlayColor:'#ebeeee',
-style:styles.secondaryButton,
-onPress:this._handleButtonPress.bind(this)},
+React.createElement(View,{
+style:styles.container},
+React.createElement(Animated.View,{style:[
+styles.round,
+{opacity:this.state.opacity}]},
+
 React.createElement(Icon,{
-name:icon,
-size:20,
-color:'black',
-style:styles.star})));}}]);return FavoriteButton;})(Component);
+name:this.state.icon,
+size:50,
+color:'white',
+style:styles.icon}),
+
+React.createElement(Text,{style:styles.text},this.state.text))));}else 
 
 
 
+{
+return React.createElement(View,null);}}}]);return Toast;})(Component);
 
 
-
-FavoriteButton.propTypes = {
-onFavoriteToggled:PropTypes.func.isRequired,
-video:PropTypes.object.isRequired};
 
 
 var styles=StyleSheet.create({
-
-secondaryButton:{
+container:{
+position:'absolute',
+top:(Dimensions.get('window').height - 200) / 2,
+bottom:(Dimensions.get('window').height - 200) / 2,
+right:(Dimensions.get('window').width - 150) / 2,
+left:(Dimensions.get('window').width - 150) / 2,
 justifyContent:'center',
-marginTop:16,
-marginBottom:16},
+alignSelf:'center',
+backgroundColor:'transparent',
+alignItems:'center',
+flex:1},
 
 
-star:{
-height:40,
-width:40,
-shadowColor:'#000000',
-shadowRadius:1,
-shadowOpacity:0.3,
-shadowOffset:{
-height:1,
-width:0}}});
+round:{
+height:150,
+width:150,
+borderRadius:20,
+alignSelf:'center',
+backgroundColor:'black',
+alignItems:'center',
+justifyContent:'space-around',
+flexDirection:'column',
+padding:20},
+
+
+icon:{
+height:50,
+width:50},
+
+
+text:{
+color:'white',
+fontWeight:'bold',
+fontSize:24}});
 
 
 
-
-
-module.exports = FavoriteButton;
+module.exports = Toast;
 });
 __d('react-native-icons/index.js',["SMXIconImage","SMXTabBarIOS","SMXLoadingImage"],function(global, require, requireDynamic, requireLazy, module, exports) {  module.exports = {
 Icon:require('SMXIconImage'),
@@ -53925,28 +53910,204 @@ var SMXLoadingImageView=requireNativeComponent('FAKIconImage',SMXLoadingImage);
 
 module.exports = SMXLoadingImage;
 });
-__d('Jukapp/app/favorites/FavoriteList.js',["react-native/Libraries/react-native/react-native.js","Jukapp/Dispatcher.js","Jukapp/app/stores/JukappStore.js","Jukapp/app/components/VideoListItem.js","Jukapp/app/JukappApi.js","Jukapp/app/accounts/Login.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
-var Dispatcher=require('Jukapp/Dispatcher.js');
+__d('Jukapp/app/components/VideoListItem.js',["react-native/Libraries/react-native/react-native.js","Jukapp/app/stores/JukappStore.js","Jukapp/app/components/FavoriteButton.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
 var JukappStore=require('Jukapp/app/stores/JukappStore.js');
-var VideoListItem=require('Jukapp/app/components/VideoListItem.js');
-var JukappApi=require('Jukapp/app/JukappApi.js');
-var Login=require('Jukapp/app/accounts/Login.js');var 
+var FavoriteButton=require('Jukapp/app/components/FavoriteButton.js');var 
 
 
 Component=
 
 
 
-React.Component;var StyleSheet=React.StyleSheet;var ListView=React.ListView;var ActivityIndicatorIOS=React.ActivityIndicatorIOS;var 
+
+
+
+React.Component;var StyleSheet=React.StyleSheet;var Text=React.Text;var View=React.View;var Image=React.Image;var TouchableHighlight=React.TouchableHighlight;var PropTypes=React.PropTypes;var 
+
+VideoListItem=(function(_Component){_inherits(VideoListItem,_Component);function VideoListItem(){_classCallCheck(this,VideoListItem);_get(Object.getPrototypeOf(VideoListItem.prototype),'constructor',this).apply(this,arguments);}_createClass(VideoListItem,[{key:'renderFavoriteButton',value:
+function renderFavoriteButton(){
+if(!JukappStore.loggedIn()){
+return;}
+
+
+return React.createElement(FavoriteButton,{video:this.props.video,onFavoriteToggled:this.props.onFavoriteToggled});}},{key:'render',value:
+
+
+function render(){
+var video=this.props.video;
+var playCount=0;
+
+if(video['video_events']){
+var videoEvent=video['video_events'].find(function(events){return events['room_id'] == JukappStore.currentRoom().id;});
+if(videoEvent)playCount = videoEvent['play_count'];}
+
+
+var image={uri:'http://img.youtube.com/vi/' + video.youtube_id + '/default.jpg'};
+
+var listItemContent=
+React.createElement(View,{style:styles.innerCell},
+React.createElement(Image,{source:image,style:styles.videoImage}),
+
+React.createElement(View,{style:styles.rowData},
+React.createElement(Text,{style:styles.title},video.title),
+React.createElement(Text,{style:styles.details},playCount,' VIEWS')),
+
+this.renderFavoriteButton());
+
+
+
+if(this.props.onPress){
+return (
+React.createElement(TouchableHighlight,{underlayColor:'#CFD6D6',onPress:this.props.onPress,style:styles.outerCell},
+listItemContent));}else 
+
+
+{
+return (
+React.createElement(View,{style:styles.outerCell},
+listItemContent));}}}]);return VideoListItem;})(Component);
+
+
+
+
+
+
+VideoListItem.propTypes = {
+onFavoriteToggled:PropTypes.func.isRequired,
+onPress:PropTypes.func,
+video:PropTypes.object.isRequired};
+
+
+var styles=StyleSheet.create({
+outerCell:{
+backgroundColor:'white',
+padding:16,
+justifyContent:'flex-start',
+borderRadius:4,
+shadowColor:'#000000',
+shadowRadius:1,
+shadowOpacity:0.3,
+shadowOffset:{
+height:1,
+width:0},
+
+marginBottom:10},
+
+
+innerCell:{
+flexDirection:'row',
+height:64},
+
+
+rowData:{
+flexDirection:'column',
+paddingLeft:16,
+justifyContent:'space-between',
+flex:1},
+
+
+title:{
+color:'black',
+fontSize:14,
+fontWeight:'bold',
+textAlign:'left',
+paddingTop:4},
+
+
+details:{
+color:'#9FA7A7',
+fontSize:12,
+textAlign:'left',
+paddingBottom:4},
+
+
+videoImage:{
+alignSelf:'flex-start',
+width:64,
+height:64}});
+
+
+
+module.exports = VideoListItem;
+});
+__d('Jukapp/app/components/FavoriteButton.js',["react-native/Libraries/react-native/react-native.js","react-native-icons/index.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');var _require=
+
+
+
+require('react-native-icons/index.js');var Icon=_require.Icon;var 
+
+
+Component=
+
+
+
+React.Component;var StyleSheet=React.StyleSheet;var TouchableHighlight=React.TouchableHighlight;var PropTypes=React.PropTypes;var 
+
+FavoriteButton=(function(_Component){_inherits(FavoriteButton,_Component);function FavoriteButton(){_classCallCheck(this,FavoriteButton);_get(Object.getPrototypeOf(FavoriteButton.prototype),'constructor',this).apply(this,arguments);}_createClass(FavoriteButton,[{key:'render',value:
+function render(){
+var icon=this.props.video.isFavorite?'fontawesome|star':'fontawesome|star-o';
+
+return (
+React.createElement(TouchableHighlight,{
+underlayColor:'#ebeeee',
+style:styles.secondaryButton,
+onPress:this.props.onFavoriteToggled},
+React.createElement(Icon,{
+name:icon,
+size:20,
+color:'black',
+style:styles.star})));}}]);return FavoriteButton;})(Component);
+
+
+
+
+
+
+FavoriteButton.propTypes = {
+onFavoriteToggled:PropTypes.func.isRequired,
+video:PropTypes.object.isRequired};
+
+
+var styles=StyleSheet.create({
+
+secondaryButton:{
+justifyContent:'center',
+marginTop:16,
+marginBottom:16},
+
+
+star:{
+height:40,
+width:40,
+shadowColor:'#000000',
+shadowRadius:1,
+shadowOpacity:0.3,
+shadowOffset:{
+height:1,
+width:0}}});
+
+
+
+
+
+module.exports = FavoriteButton;
+});
+__d('Jukapp/app/favorites/FavoriteList.js',["react-native/Libraries/react-native/react-native.js","Jukapp/Dispatcher.js","Jukapp/app/stores/JukappStore.js","Jukapp/app/JukappApi.js","Jukapp/app/accounts/Login.js","Jukapp/app/videos/VideoList.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
+var Dispatcher=require('Jukapp/Dispatcher.js');
+var JukappStore=require('Jukapp/app/stores/JukappStore.js');
+var JukappApi=require('Jukapp/app/JukappApi.js');
+var Login=require('Jukapp/app/accounts/Login.js');
+var VideoList=require('Jukapp/app/videos/VideoList.js');var 
+
+
+Component=
+React.Component;var 
 
 FavoriteList=(function(_Component){_inherits(FavoriteList,_Component);
 function FavoriteList(props){_classCallCheck(this,FavoriteList);
 _get(Object.getPrototypeOf(FavoriteList.prototype),'constructor',this).call(this,props);
 
-var dataSource=new ListView.DataSource({rowHasChanged:function(r1,r2){return r1 !== r2;}});
-
 this.state = {
-dataSource:dataSource.cloneWithRows(JukappStore.getFavorites()),
 loggedIn:JukappStore.loggedIn(),
 loading:true};}_createClass(FavoriteList,[{key:'componentDidMount',value:
 
@@ -53958,19 +54119,7 @@ this.fetchData();}},{key:'componentWillUnmount',value:
 
 
 function componentWillUnmount(){
-JukappStore.removeChangeListener(this._onChange);}},{key:'_renderRow',value:
-
-
-function _renderRow(video){
-return (
-React.createElement(VideoListItem,{video:video,onFavoriteToggled:this.fetchData.bind(this)}));}},{key:'_renderFooter',value:
-
-
-
-function _renderFooter(){
-if(this.state.loading){
-return React.createElement(ActivityIndicatorIOS,null);}}},{key:'fetchData',value:
-
+JukappStore.removeChangeListener(this._onChange);}},{key:'fetchData',value:
 
 
 function fetchData(){
@@ -53984,7 +54133,6 @@ favorites:favorites});});}},{key:'_onChange',value:
 
 function _onChange(){
 this.setState({
-dataSource:this.state.dataSource.cloneWithRows(JukappStore.getFavorites()),
 loggedIn:JukappStore.loggedIn(),
 loading:false});}},{key:'render',value:
 
@@ -53996,25 +54144,13 @@ return React.createElement(Login,{onLogin:this.fetchData.bind(this)});}
 
 
 return (
-React.createElement(ListView,{
-style:styles.container,
-contentContainerStyle:styles.listViewContent,
-dataSource:this.state.dataSource,
-renderRow:this._renderRow.bind(this),
-renderFooter:this._renderFooter.bind(this)}));}}]);return FavoriteList;})(Component);
+React.createElement(VideoList,{
+videos:JukappStore.getFavorites(),
+loading:this.state.loading,
+onFavoriteToggled:this.fetchData.bind(this),
+action:true}));}}]);return FavoriteList;})(Component);
 
 
-
-
-
-var styles=StyleSheet.create({
-container:{
-padding:10,
-backgroundColor:'#EEF2F2'},
-
-
-listViewContent:{
-justifyContent:'center'}});
 
 
 
@@ -54323,28 +54459,23 @@ textAlign:'left'}});
 
 module.exports = AccountDetails;
 });
-__d('Jukapp/app/queued_videos/QueuedVideoList.js',["react-native/Libraries/react-native/react-native.js","Jukapp/Dispatcher.js","Jukapp/app/stores/JukappStore.js","Jukapp/app/components/VideoListItem.js","Jukapp/app/JukappApi.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
+__d('Jukapp/app/queued_videos/QueuedVideoList.js',["react-native/Libraries/react-native/react-native.js","Jukapp/Dispatcher.js","Jukapp/app/stores/JukappStore.js","Jukapp/app/JukappApi.js","Jukapp/app/videos/VideoList.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
 var Dispatcher=require('Jukapp/Dispatcher.js');
 var JukappStore=require('Jukapp/app/stores/JukappStore.js');
-var VideoListItem=require('Jukapp/app/components/VideoListItem.js');
-var JukappApi=require('Jukapp/app/JukappApi.js');var 
+var JukappApi=require('Jukapp/app/JukappApi.js');
+var VideoList=require('Jukapp/app/videos/VideoList.js');var 
 
 
 Component=
+React.Component;var 
 
-
-
-React.Component;var StyleSheet=React.StyleSheet;var ListView=React.ListView;var ActivityIndicatorIOS=React.ActivityIndicatorIOS;var 
 
 QueuedVideoList=(function(_Component){_inherits(QueuedVideoList,_Component);
 
 function QueuedVideoList(props){_classCallCheck(this,QueuedVideoList);
 _get(Object.getPrototypeOf(QueuedVideoList.prototype),'constructor',this).call(this,props);
 
-var dataSource=new ListView.DataSource({rowHasChanged:function(r1,r2){return r1 !== r2;}});
-
 this.state = {
-dataSource:dataSource.cloneWithRows(JukappStore.getQueuedVideos()),
 loading:true};}_createClass(QueuedVideoList,[{key:'componentDidMount',value:
 
 
@@ -54376,48 +54507,203 @@ queuedVideos:queuedVideos});});}},{key:'_onChange',value:
 
 function _onChange(){
 this.setState({
-dataSource:this.state.dataSource.cloneWithRows(JukappStore.getQueuedVideos()),
-loading:false});}},{key:'_renderRow',value:
-
-
-
-function _renderRow(video){
-return (
-React.createElement(VideoListItem,{video:video,onFavoriteToggled:this.fetchData.bind(this)}));}},{key:'_renderFooter',value:
-
-
-
-function _renderFooter(){
-if(this.state.loading){
-return React.createElement(ActivityIndicatorIOS,null);}}},{key:'render',value:
+loading:false});}},{key:'render',value:
 
 
 
 function render(){
 return (
-React.createElement(ListView,{
-style:styles.container,
-contentContainerStyle:styles.listViewContent,
-dataSource:this.state.dataSource,
-renderRow:this._renderRow.bind(this),
-renderFooter:this._renderFooter.bind(this)}));}}]);return QueuedVideoList;})(Component);
+React.createElement(VideoList,{
+videos:JukappStore.getQueuedVideos(),
+loading:this.state.loading,
+onFavoriteToggled:this.fetchData.bind(this)}));}}]);return QueuedVideoList;})(Component);
+
+
+
+
+
+module.exports = QueuedVideoList;
+});
+__d('Jukapp/app/components/SearchButton.js',["react-native/Libraries/react-native/react-native.js","Jukapp/app/components/SearchIcon.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
+var SearchIcon=require('Jukapp/app/components/SearchIcon.js');var 
+
+
+Component=
+
+
+
+
+React.Component;var StyleSheet=React.StyleSheet;var TouchableHighlight=React.TouchableHighlight;var View=React.View;var PropTypes=React.PropTypes;var 
+
+SearchButton=(function(_Component){_inherits(SearchButton,_Component);function SearchButton(){_classCallCheck(this,SearchButton);_get(Object.getPrototypeOf(SearchButton.prototype),'constructor',this).apply(this,arguments);}_createClass(SearchButton,[{key:'render',value:
+function render(){
+
+if(this.props.onPress){
+return (
+React.createElement(TouchableHighlight,{
+underlayColor:'#33ADFF',
+activeOpacity:0.3,
+onPress:this.props.onPress,
+style:styles.rightButton},
+
+React.createElement(View,null,
+React.createElement(SearchIcon,null))));}else 
+
+
+
+{
+return (
+React.createElement(View,{style:styles.rightButton},
+React.createElement(SearchIcon,null)));}}}]);return SearchButton;})(Component);
+
+
+
+
+
+
+
+SearchButton.propTypes = {
+onPress:PropTypes.func};
+
+
+var styles=StyleSheet.create({
+rightButton:{
+width:60,
+height:40,
+justifyContent:'center',
+alignItems:'center'}});
+
+
+
+module.exports = SearchButton;
+});
+__d('Jukapp/app/components/SearchIcon.js',["react-native/Libraries/react-native/react-native.js","react-native-icons/index.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');var _require=
+
+
+
+require('react-native-icons/index.js');var Icon=_require.Icon;var 
+
+
+Component=
+
+React.Component;var StyleSheet=React.StyleSheet;var 
+
+SearchIcon=(function(_Component){_inherits(SearchIcon,_Component);function SearchIcon(){_classCallCheck(this,SearchIcon);_get(Object.getPrototypeOf(SearchIcon.prototype),'constructor',this).apply(this,arguments);}_createClass(SearchIcon,[{key:'render',value:
+function render(){
+return (
+React.createElement(Icon,{
+name:'fontawesome|search',
+size:20,
+color:'black',
+style:styles.headerRightButtonIcon}));}}]);return SearchIcon;})(Component);
 
 
 
 
 
 var styles=StyleSheet.create({
-container:{
-padding:10,
-backgroundColor:'#EEF2F2'},
-
-
-listViewContent:{
-justifyContent:'center'}});
+headerRightButtonIcon:{
+height:20,
+width:20}});
 
 
 
-module.exports = QueuedVideoList;
+module.exports = SearchIcon;
+});
+__d('Jukapp/app/navigation/NavigatorTitle.js',["react-native/Libraries/react-native/react-native.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');var 
+
+
+Component=
+
+
+
+React.Component;var StyleSheet=React.StyleSheet;var Text=React.Text;var PropTypes=React.PropTypes;var 
+
+NavigatorTitle=(function(_Component){_inherits(NavigatorTitle,_Component);function NavigatorTitle(){_classCallCheck(this,NavigatorTitle);_get(Object.getPrototypeOf(NavigatorTitle.prototype),'constructor',this).apply(this,arguments);}_createClass(NavigatorTitle,[{key:'render',value:
+function render(){
+return (
+React.createElement(Text,{style:styles.navigatorTitle},this.props.title));}}]);return NavigatorTitle;})(Component);
+
+
+
+
+NavigatorTitle.propTypes = {
+title:PropTypes.string.isRequired};
+
+
+var styles=StyleSheet.create({
+navigatorTitle:{
+color:'white',
+fontSize:24,
+fontWeight:'bold'}});
+
+
+
+module.exports = NavigatorTitle;
+});
+__d('Jukapp/app/videos/SearchInput.js',["react-native/Libraries/react-native/react-native.js","Jukapp/app/JukappApi.js","Jukapp/Dispatcher.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}var React=require('react-native/Libraries/react-native/react-native.js');
+var JukappApi=require('Jukapp/app/JukappApi.js');
+var Dispatcher=require('Jukapp/Dispatcher.js');var 
+
+
+Component=
+
+
+React.Component;var StyleSheet=React.StyleSheet;var TextInput=React.TextInput;var 
+
+SearchInput=(function(_Component){_inherits(SearchInput,_Component);
+function SearchInput(props){_classCallCheck(this,SearchInput);
+_get(Object.getPrototypeOf(SearchInput.prototype),'constructor',this).call(this,props);
+
+this.state = {
+query:''};}_createClass(SearchInput,[{key:'_onSubmit',value:
+
+
+
+function _onSubmit(){var _this=this;
+JukappApi.searchVideo(this.state.query).
+done(function(searchResults){
+Dispatcher.dispatch({
+type:'loadSearchResults',
+query:_this.state.query,
+searchResults:searchResults});});}},{key:'_onChange',value:
+
+
+
+
+function _onChange(event){
+this.setState({
+query:event.nativeEvent.text});}},{key:'render',value:
+
+
+
+function render(){var _this2=this;
+return (
+React.createElement(TextInput,{
+ref:function(component){return _this2._textInput = component;},
+style:styles.navigatorTitleInput,
+placeholder:'Search YouTube...',
+onSubmitEditing:this._onSubmit.bind(this),
+autoFocus:true,
+onChange:this._onChange.bind(this)}));}}]);return SearchInput;})(Component);
+
+
+
+
+
+var styles=StyleSheet.create({
+navigatorTitleInput:{
+backgroundColor:'#2D9BE5',
+width:300,
+height:32,
+marginLeft:40,
+paddingLeft:10,
+color:'white',
+borderRadius:4}});
+
+
+
+module.exports = SearchInput;
 });
 __d('react-native-side-menu/index.js',["react-native-side-menu/styles.js","react-native-side-menu/animations.js","react-native/Libraries/react-native/react-native.js"],function(global, require, requireDynamic, requireLazy, module, exports) {  var _extends=Object.assign || function(target){for(var i=1;i < arguments.length;i++) {var source=arguments[i];for(var key in source) {if(Object.prototype.hasOwnProperty.call(source,key)){target[key] = source[key];}}}return target;};var _createClass=(function(){function defineProperties(target,props){for(var i=0;i < props.length;i++) {var descriptor=props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if('value' in descriptor)descriptor.writable = true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};})();var _get=function get(object,property,receiver){if(object === null)object = Function.prototype;var desc=Object.getOwnPropertyDescriptor(object,property);if(desc === undefined){var parent=Object.getPrototypeOf(object);if(parent === null){return undefined;}else {return get(parent,property,receiver);}}else if('value' in desc){return desc.value;}else {var getter=desc.get;if(getter === undefined){return undefined;}return getter.call(receiver);}};function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError('Cannot call a class as a function');}}function _inherits(subClass,superClass){if(typeof superClass !== 'function' && superClass !== null){throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);}subClass.prototype = Object.create(superClass && superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__ = superClass;}const styles=require('react-native-side-menu/styles.js');
 const queueAnimation=require('react-native-side-menu/animations.js');
@@ -54879,33 +55165,6 @@ marginLeft:20}});
 
 
 module.exports = MenuButton;
-});
-__d('Jukapp/app/navigation/Router.js',[],function(global, require, requireDynamic, requireLazy, module, exports) {  var Router={
-push:function(path){var params=arguments.length <= 1 || arguments[1] === undefined?{}:arguments[1];
-var route=this.routes[path];
-
-if(!route){
-throw new Error("Missing route for path: " + path);}
-
-
-this.navigator.push({route:route,params:params});},
-
-
-pop:function(){
-this.navigator.pop();},
-
-
-popToTop:function(){
-this.navigator.popToTop();},
-
-
-get currentRoute(){
-var currentStack=this.navigator.getCurrentRoutes();
-return currentStack[currentStack.length - 1].route;}};
-
-
-
-module.exports = Router;
 });
 ;require("Jukapp/index.ios.js");
 //@ sourceMappingURL=/index.ios.map
