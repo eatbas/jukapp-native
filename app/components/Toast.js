@@ -1,5 +1,4 @@
 var React = require('react-native');
-var Overlay = require('react-native-overlay');
 
 var {
   Icon
@@ -10,7 +9,8 @@ var {
   StyleSheet,
   View,
   Text,
-  Animated
+  Animated,
+  Dimensions
 } = React;
 
 class Toast extends Component {
@@ -59,9 +59,9 @@ class Toast extends Component {
   }
 
   render() {
-    return (
-      <Overlay isVisible={this.state.isVisible}>
-        <Animated.View
+    if (this.state.isVisible) {
+      return (
+        <View
           style={styles.container}>
           <Animated.View style={[
             styles.round,
@@ -75,16 +75,26 @@ class Toast extends Component {
             />
             <Text style={styles.text}>{this.state.text}</Text>
           </Animated.View>
-        </Animated.View>
-      </Overlay>
-    );
+        </View>
+      );
+    } else {
+      return (<View />);
+    }
   }
 }
 
 var styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center'
+    position: 'absolute',
+    top: (Dimensions.get('window').height - 200) / 2,
+    bottom: (Dimensions.get('window').height - 200) / 2,
+    right: (Dimensions.get('window').width - 150) / 2,
+    left: (Dimensions.get('window').width - 150) / 2,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    backgroundColor: 'transparent',
+    alignItems: 'center',
+    flex: 1
   },
 
   round: {
@@ -93,8 +103,8 @@ var styles = StyleSheet.create({
     borderRadius: 20,
     alignSelf: 'center',
     backgroundColor: 'black',
-    justifyContent: 'space-around',
     alignItems: 'center',
+    justifyContent: 'space-around',
     flexDirection: 'column',
     padding: 20
   },

@@ -75,13 +75,13 @@ class VideoList extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Toast ref={(component) => this._toast = component} />
         <ListView
           contentContainerStyle={styles.listViewContent}
           dataSource={this.state.dataSource}
           renderRow={this._renderRow.bind(this)}
           renderFooter={this._renderFooter.bind(this)}
         />
+        <Toast ref={(component) => this._toast = component} />
       </View>
     );
   }
