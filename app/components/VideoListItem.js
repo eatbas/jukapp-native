@@ -1,6 +1,5 @@
 var React = require('react-native');
 var JukappStore = require('../stores/JukappStore');
-var JukappApi = require('../JukappApi');
 var FavoriteButton = require('../components/FavoriteButton');
 
 var {
@@ -14,7 +13,6 @@ var {
 } = React;
 
 class VideoListItem extends Component {
-
   renderFavoriteButton() {
     if (!JukappStore.loggedIn()) {
       return;
@@ -34,41 +32,44 @@ class VideoListItem extends Component {
 
     var image = { uri: 'http://img.youtube.com/vi/' + video.youtube_id + '/default.jpg' };
 
-    return (
-      <TouchableHighlight
-        underlayColor='#CFD6D6'
-        style={{ marginBottom:10 }}
-        onPress={() => {
-          JukappApi.queueVideo(video);
-        }}>
+    var listItemContent = (
+      <View style={styles.innerCell}>
+        <Image source={image} style={styles.videoImage}/>
 
-        <View style={styles.cell}>
-          <Image source={image} style={styles.videoImage}/>
-
-          <View style={styles.rowData}>
-            <Text style={styles.title}>{video.title}</Text>
-            <Text style={styles.details}>{playCount} VIEWS</Text>
-          </View>
-
-          {this.renderFavoriteButton()}
+        <View style={styles.rowData}>
+          <Text style={styles.title}>{video.title}</Text>
+          <Text style={styles.details}>{playCount} VIEWS</Text>
         </View>
-      </TouchableHighlight>
+        {this.renderFavoriteButton()}
+      </View>
     );
+
+    if (this.props.onPress) {
+      return (
+          <TouchableHighlight underlayColor='#CFD6D6' onPress={this.props.onPress} style={styles.outerCell}>
+            {listItemContent}
+          </TouchableHighlight>
+      );
+    } else {
+      return (
+        <View style={styles.outerCell}>
+          {listItemContent}
+        </View>
+      );
+    }
   }
 }
 
 VideoListItem.propTypes = {
   onFavoriteToggled: PropTypes.func.isRequired,
+  onPress: PropTypes.func,
   video: PropTypes.object.isRequired
 };
 
 var styles = StyleSheet.create({
-
-  cell: {
-    flexDirection: 'row',
+  outerCell: {
     backgroundColor: 'white',
     padding: 16,
-    height: 96,
     justifyContent: 'flex-start',
     borderRadius: 4,
     shadowColor: '#000000',
@@ -77,13 +78,19 @@ var styles = StyleSheet.create({
     shadowOffset: {
       height: 1,
       width: 0
-    }
+    },
+    marginBottom: 10
+  },
+
+  innerCell: {
+    flexDirection: 'row',
+    height: 64
   },
 
   rowData: {
     flexDirection: 'column',
     paddingLeft: 16,
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     flex: 1
   },
 
