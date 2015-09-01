@@ -47,7 +47,7 @@ class VideoList extends Component {
     } else {
       JukappApi.favoriteVideo(video)
         .done(() => {
-          this._toast.flash('Added', 'fontawesome|star');
+          this._toast.flash('Favorited', 'fontawesome|star');
         });
     }
 
