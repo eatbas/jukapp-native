@@ -8,7 +8,6 @@ var {
 var {
   Component,
   StyleSheet,
-  PropTypes,
   View,
   Text,
   Animated
@@ -25,23 +24,23 @@ class Toast extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.show) {
-      Animated.timing(
-        this.state.opacity,
-        {
-          toValue: 0,
-          friction: 1,
-          delay: 300
-        }
-      ).start(() => {
-        this.props.onDismissed();
-        this.setState({opacity: new Animated.Value(0.8)});
+  flash() {
+    Animated.timing(
+      this.state.opacity,
+      {
+        toValue: 0,
+        friction: 1,
+        delay: 300
+      }
+    ).start(() => {
+      this.setState({
+        opacity: new Animated.Value(0.8),
+        isVisible: false
       });
-    }
+    });
 
     this.setState({
-      isVisible: nextProps.show
+      isVisible: true
     });
   }
 
@@ -67,10 +66,6 @@ class Toast extends Component {
     );
   }
 }
-
-Toast.propTypes = {
-  onDismissed: PropTypes.func.isRequired
-};
 
 var styles = StyleSheet.create({
   container: {

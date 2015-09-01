@@ -33,7 +33,7 @@ class VideoList extends Component {
 
   _onPress(video) {
     JukappApi.queueVideo(video);
-    this.setState({showToast: true});
+    this._toast.flash();
   }
 
   _onDismissed() {
@@ -61,7 +61,7 @@ class VideoList extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Toast show={this.state.showToast} onDismissed={this._onDismissed.bind(this)} />
+        <Toast ref={(component) => this._toast = component} />
         <ListView
           contentContainerStyle={styles.listViewContent}
           dataSource={this.state.dataSource}
