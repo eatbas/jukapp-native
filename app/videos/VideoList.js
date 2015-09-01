@@ -32,11 +32,12 @@ class VideoList extends Component {
   }
 
   _onPress(video) {
-    // JukappApi.queueVideo(video);
-    this.setState({isVisible: true});
-    setTimeout(() => {
-      this.setState({isVisible: false});
-    }, 500);
+    JukappApi.queueVideo(video);
+    this.setState({showToast: true});
+  }
+
+  _onDismissed() {
+    this.setState({showToast: false});
   }
 
   _renderRow(video) {
@@ -60,7 +61,7 @@ class VideoList extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Toast isVisible={this.state.isVisible} />
+        <Toast show={this.state.showToast} onDismissed={this._onDismissed.bind(this)} />
         <ListView
           contentContainerStyle={styles.listViewContent}
           dataSource={this.state.dataSource}

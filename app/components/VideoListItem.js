@@ -46,9 +46,9 @@ class VideoListItem extends Component {
 
     if (this.props.onPress) {
       return (
-          <TouchableHighlight underlayColor='#CFD6D6' onPress={this.props.onPress} style={styles.outerCell}>
-            {listItemContent}
-          </TouchableHighlight>
+        <TouchableHighlight underlayColor='#CFD6D6' onPress={this.props.onPress} style={styles.outerCell}>
+          {listItemContent}
+        </TouchableHighlight>
       );
     } else {
       return (

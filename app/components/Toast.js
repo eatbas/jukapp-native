@@ -8,8 +8,10 @@ var {
 var {
   Component,
   StyleSheet,
+  PropTypes,
   View,
-  Text
+  Text,
+  Animated
 } = React;
 
 class Toast extends Component {
@@ -18,20 +20,39 @@ class Toast extends Component {
     super(props);
 
     this.state = {
-      isVisible: false
+      isVisible: false,
+      opacity: new Animated.Value(0.8)
     };
   }
 
   componentWillReceiveProps(nextProps) {
+    if (nextProps.show) {
+      Animated.timing(
+        this.state.opacity,
+        {
+          toValue: 0,
+          friction: 1,
+          delay: 300
+        }
+      ).start(() => {
+        this.props.onDismissed();
+        this.setState({opacity: new Animated.Value(0.8)});
+      });
+    }
+
     this.setState({
-      isVisible: nextProps.isVisible
+      isVisible: nextProps.show
     });
   }
 
   render() {
     return (
       <Overlay isVisible={this.state.isVisible}>
-        <View style={styles.container}>
+        <Animated.View
+          style={[
+            styles.container,
+            {opacity: this.state.opacity}
+          ]}>
           <View style={styles.round}>
             <Icon
               name='fontawesome|check'
@@ -41,11 +62,15 @@ class Toast extends Component {
             />
             <Text style={styles.text}>Added</Text>
           </View>
-        </View>
+        </Animated.View>
       </Overlay>
     );
   }
 }
+
+Toast.propTypes = {
+  onDismissed: PropTypes.func.isRequired
+};
 
 var styles = StyleSheet.create({
   container: {
@@ -61,7 +86,6 @@ var styles = StyleSheet.create({
     backgroundColor: 'black',
     justifyContent: 'space-around',
     alignItems: 'center',
-    opacity: 0.80,
     flexDirection: 'column',
     padding: 20
   },
