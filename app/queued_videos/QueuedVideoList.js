@@ -56,7 +56,6 @@ class QueuedVideoList extends Component {
         videos={JukappStore.getQueuedVideos()}
         loading={this.state.loading}
         onFavoriteToggled={this.fetchData.bind(this)}
-        action={true}
       />
     );
   }
