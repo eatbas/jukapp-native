@@ -36,6 +36,7 @@ class QueuedVideoList extends Component {
   }
 
   fetchData() {
+    console.log('[QueuedVideoList] fetching queuedVideos');
     JukappApi.fetchQueuedVideos().done((queuedVideos) => {
       Dispatcher.dispatch({
         type: 'loadQueuedVideos',

@@ -1,7 +1,9 @@
 var React = require('react-native');
 var Toast = require('../components/Toast');
 var VideoListItem = require('../components/VideoListItem');
+var Dispatcher = require('../../Dispatcher');
 var JukappApi = require('../JukappApi');
+var JukappStore = require('../stores/JukappStore');
 
 var {
   Component,
@@ -19,6 +21,7 @@ class VideoList extends Component {
     var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
     this.state = {
+      favorites: JukappStore.getFavorites(),
       dataSource: dataSource.cloneWithRows(this.props.videos),
       loading: this.props.loading
     };
@@ -39,6 +42,7 @@ class VideoList extends Component {
   }
 
   _onFavoriteToggled(video) {
+    // simplify as toggleFavorite, let the api handle
     if (video.isFavorite) {
       JukappApi.unfavoriteVideo(video)
         .done(() => {
@@ -51,10 +55,25 @@ class VideoList extends Component {
         });
     }
 
+    JukappApi.fetchFavorites().done((favorites) => {
+      Dispatcher.dispatch({
+        type: 'loadFavorites',
+        favorites
+      });
+    });
+
+    // this should be commented out
     this.props.onFavoriteToggled();
   }
 
+  _onChange() {
+    this.setState({
+      favorites: JukappStore.getFavorites()
+    });
+  }
+
   _renderRow(video) {
+    // use clone with props
     if (this.props.action) {
       return (
         <VideoListItem video={video} onFavoriteToggled={() => this._onFavoriteToggled(video)} onPress={() => this._onPress(video)} />
