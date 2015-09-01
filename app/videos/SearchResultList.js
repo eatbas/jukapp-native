@@ -1,24 +1,21 @@
 var React = require('react-native');
-var VideoListItem = require('../components/VideoListItem.js');
 var JukappStore = require('../stores/JukappStore');
 var Dispatcher = require('../../Dispatcher');
 var JukappApi = require('../JukappApi');
+var VideoList = require('./VideoList');
 
 var {
-  Component,
-  StyleSheet,
-  ListView,
-  ActivityIndicatorIOS
+  Component
 } = React;
 
+// TODO: Needs loading indicator
 class SearchResultsList extends Component {
   constructor(props) {
     super(props);
 
-    var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-
     this.state = {
-      dataSource
+      videos: [],
+      loading: false
     };
   }
 
@@ -30,20 +27,14 @@ class SearchResultsList extends Component {
     JukappStore.removeChangeListener(this._onChange);
   }
 
-  _renderFooter() {
-    if (this.state.loading) {
-      return <ActivityIndicatorIOS />;
-    }
-  }
-
   _onChange() {
     this.setState({
-      loading: false,
-      dataSource: this.state.dataSource.cloneWithRows(JukappStore.getSearchResults())
+      videos: JukappStore.getSearchResults(),
+      loading: false
     });
   }
 
-  _refreshList() {
+  fetchData() {
     JukappApi.searchVideo(JukappStore.getLastQuery())
       .done((searchResults) => {
         Dispatcher.dispatch({
@@ -54,40 +45,16 @@ class SearchResultsList extends Component {
       });
   }
 
-  _renderRow(video) {
-    return (
-      <VideoListItem video={video} onFavoriteToggled={this._refreshList.bind(this)}/>
-    );
-  }
-
   render() {
     return (
-        <ListView
-          style={styles.listView}
-          contentContainerStyle={styles.listViewContent}
-          dataSource={this.state.dataSource}
-          renderRow={this._renderRow.bind(this)}
-          renderFooter={this._renderFooter.bind(this)}
-        />
+      <VideoList
+        videos={this.state.videos}
+        loading={this.state.loading}
+        onFavoriteToggled={this.fetchData.bind(this)}
+        action={true}
+      />
     );
   }
 }
-
-var styles = StyleSheet.create({
-  container: {
-    paddingTop: 20,
-    flex: 1,
-    backgroundColor: '#EEF2F2'
-  },
-
-  listView: {
-    backgroundColor: '#EEF2F2',
-    padding: 10
-  },
-
-  listViewContent: {
-    justifyContent: 'center'
-  }
-});
 
 module.exports = SearchResultsList;
