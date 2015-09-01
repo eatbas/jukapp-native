@@ -34,18 +34,34 @@ class VideoList extends Component {
   _onPress(video) {
     JukappApi.queueVideo(video)
       .done(() => {
-        this._toast.flash();
+        this._toast.flash('Added', 'fontawesome|check');
       });
+  }
+
+  _onFavoriteToggled(video) {
+    if (video.isFavorite) {
+      JukappApi.unfavoriteVideo(video)
+        .done(() => {
+          this._toast.flash('Removed', 'fontawesome|star-o');
+        });
+    } else {
+      JukappApi.favoriteVideo(video)
+        .done(() => {
+          this._toast.flash('Added', 'fontawesome|star');
+        });
+    }
+
+    this.props.onFavoriteToggled();
   }
 
   _renderRow(video) {
     if (this.props.action) {
       return (
-        <VideoListItem video={video} onFavoriteToggled={this.props.onFavoriteToggled} onPress={() => this._onPress(video)} />
+        <VideoListItem video={video} onFavoriteToggled={() => this._onFavoriteToggled(video)} onPress={() => this._onPress(video)} />
       );
     } else {
       return (
-        <VideoListItem video={video} onFavoriteToggled={this.props.onFavoriteToggled} />
+        <VideoListItem video={video} onFavoriteToggled={() => this._onFavoriteToggled(video)} />
       );
     }
   }

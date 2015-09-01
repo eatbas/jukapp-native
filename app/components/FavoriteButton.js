@@ -1,5 +1,4 @@
 var React = require('react-native');
-var JukappApi = require('../JukappApi');
 
 var {
   Icon
@@ -13,14 +12,6 @@ var {
 } = React;
 
 class FavoriteButton extends Component {
-
-  _handleButtonPress() {
-    var video = this.props.video;
-    video.isFavorite ? JukappApi.unfavoriteVideo(video) : JukappApi.favoriteVideo(video);
-
-    this.props.onFavoriteToggled();
-  }
-
   render() {
     var icon = this.props.video.isFavorite ? 'fontawesome|star' : 'fontawesome|star-o';
 
@@ -28,7 +19,7 @@ class FavoriteButton extends Component {
       <TouchableHighlight
         underlayColor="#ebeeee"
         style={styles.secondaryButton}
-        onPress={this._handleButtonPress.bind(this)}>
+        onPress={this.props.onFavoriteToggled}>
         <Icon
           name={icon}
           size={20}

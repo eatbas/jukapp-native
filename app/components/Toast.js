@@ -21,7 +21,7 @@ class Toast extends Component {
     this.state = this._defaultState();
   }
 
-  flash() {
+  flash(text, icon) {
     var appearAnimation = Animated.timing(
       this.state.opacity,
       {
@@ -34,7 +34,8 @@ class Toast extends Component {
       this.state.opacity,
       {
         toValue: 0,
-        duration: 400
+        duration: 800,
+        delay: 300
       }
     );
 
@@ -44,7 +45,9 @@ class Toast extends Component {
       });
 
     this.setState({
-      isVisible: true
+      isVisible: true,
+      text,
+      icon
     });
   }
 
@@ -65,12 +68,12 @@ class Toast extends Component {
             {opacity: this.state.opacity}
           ]}>
             <Icon
-              name='fontawesome|check'
+              name={this.state.icon}
               size={50}
               color='white'
               style={styles.icon}
             />
-            <Text style={styles.text}>Added</Text>
+            <Text style={styles.text}>{this.state.text}</Text>
           </Animated.View>
         </Animated.View>
       </Overlay>
