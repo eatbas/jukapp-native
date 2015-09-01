@@ -38,10 +38,6 @@ class VideoList extends Component {
       });
   }
 
-  _onDismissed() {
-    this.setState({showToast: false});
-  }
-
   _renderRow(video) {
     if (this.props.action) {
       return (

@@ -18,41 +18,52 @@ class Toast extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      isVisible: false,
-      opacity: new Animated.Value(0.8)
-    };
+    this.state = this._defaultState();
   }
 
   flash() {
-    Animated.timing(
+    var appearAnimation = Animated.timing(
+      this.state.opacity,
+      {
+        toValue: 0.85,
+        duration: 200
+      }
+    );
+
+    var disappearAnimation = Animated.timing(
       this.state.opacity,
       {
         toValue: 0,
-        friction: 1,
-        delay: 300
+        duration: 400
       }
-    ).start(() => {
-      this.setState({
-        opacity: new Animated.Value(0.8),
-        isVisible: false
+    );
+
+    Animated.sequence([appearAnimation, disappearAnimation])
+      .start(() => {
+        this.setState(this._defaultState());
       });
-    });
 
     this.setState({
       isVisible: true
     });
   }
 
+  _defaultState() {
+    return {
+      opacity: new Animated.Value(0),
+      isVisible: false
+    };
+  }
+
   render() {
     return (
       <Overlay isVisible={this.state.isVisible}>
         <Animated.View
-          style={[
-            styles.container,
+          style={styles.container}>
+          <Animated.View style={[
+            styles.round,
             {opacity: this.state.opacity}
           ]}>
-          <View style={styles.round}>
             <Icon
               name='fontawesome|check'
               size={50}
@@ -60,7 +71,7 @@ class Toast extends Component {
               style={styles.icon}
             />
             <Text style={styles.text}>Added</Text>
-          </View>
+          </Animated.View>
         </Animated.View>
       </Overlay>
     );
