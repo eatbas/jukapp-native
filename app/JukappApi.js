@@ -205,7 +205,7 @@ var JukappApi = {
   favoriteVideo(video) {
     var options = this.postOptions(this.videoOptions(video));
 
-    this.fetch('/favorites', options)
+    return this.fetch('/favorites', options)
       .then((response) => {
         if (response.status == 201) {
           console.log('Successfully favorited video');
@@ -222,7 +222,7 @@ var JukappApi = {
   unfavoriteVideo(video) {
     var options = this.deleteOptions(this.videoOptions(video));
 
-    this.fetch('/favorites', options)
+    return this.fetch('/favorites', options)
       .then((response) => {
         if (response.status == 200) {
           console.log('Successfully unfavorited video');

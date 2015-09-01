@@ -6,6 +6,10 @@ var Router = require('./Router');
 var routes = require('./routes');
 
 var {
+  Icon
+} = require('react-native-icons');
+
+var {
   Component,
   StyleSheet,
   View,
@@ -19,13 +23,13 @@ var {
 } = Navigator;
 
 Router.routes = routes;
-var mainRoutes = ['room', 'search', 'favorites', 'account'];
+var mainRoutes = ['room', 'favorites', 'account'];
 
 var NavigatorRouteMapper = {
   Title({route}) {
     return (
       <View style={styles.navigatorTitleContainer}>
-        <Text style={styles.navigatorTitle}>{route.title}</Text>
+        {route.titleComponent}
       </View>
     );
   },
@@ -36,22 +40,24 @@ var NavigatorRouteMapper = {
     }
 
     return (
-      <TouchableOpacity onPress={() => {
-
-        // technical debt to prevent double tap
-        if (navigator.state.presentedIndex == 0) {
-          return;
-        }
-
-        navigator.pop();
-      }}>
-        <Text style={styles.leftButtonText}>‹</Text>
+      <TouchableOpacity
+        onPress={() => {
+          navigator.pop();
+        }}
+        style={styles.leftButton}
+      >
+        <Icon
+          style={styles.leftButtonIcon}
+          name='fontawesome|arrow-left'
+          size={20}
+          color='black'
+        />
       </TouchableOpacity>
     );
   },
 
-  RightButton() {
-    return null;
+  RightButton({route}) {
+    return route.rightButton;
   }
 };
 
@@ -177,26 +183,27 @@ var styles = StyleSheet.create({
     marginTop: 30
   },
 
-  navigatorBar: {
-    backgroundColor: '#33ADFF'
-  },
-
   navigatorTitleContainer: {
     height: NavigationBar.Styles.General.NavBarHeight,
     justifyContent: 'center',
     alignItems: 'center'
   },
 
-  navigatorTitle: {
-    color: 'white',
-    fontSize: 24,
-    fontWeight: 'bold'
+  navigatorBar: {
+    backgroundColor: '#33ADFF'
   },
 
-  leftButtonText: {
-    color: 'white',
-    fontSize: 30,
-    marginLeft: 10
+  leftButton: {
+    width: 60,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
+  leftButtonIcon: {
+    width: 20,
+    height: 20,
+    color: 'black'
   },
 
   navigatorScene: {
