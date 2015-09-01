@@ -32,8 +32,10 @@ class VideoList extends Component {
   }
 
   _onPress(video) {
-    JukappApi.queueVideo(video);
-    this._toast.flash();
+    JukappApi.queueVideo(video)
+      .done(() => {
+        this._toast.flash();
+      });
   }
 
   _onDismissed() {
