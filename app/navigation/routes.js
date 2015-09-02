@@ -13,7 +13,7 @@ var routes = {
     component: FavoriteList,
     title: 'Favorites',
     titleComponent: <NavigatorTitle title={'Favorites'} />,
-    icon: 'fontawesome|star'
+    icon: 'fontawesome|heart'
   },
 
   room: {
