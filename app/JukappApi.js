@@ -80,6 +80,10 @@ var JukappApi = {
     return this.fetchJson('/search?query=' + query);
   },
 
+  fetchPopularVideos() {
+    return this.fetchJson('/videos');
+  },
+
   queueVideo(video) {
     var options = this.postOptions(this.videoOptions(video));
 
@@ -202,7 +206,7 @@ var JukappApi = {
     eventListener = DeviceEventEmitter.addListener(
       'EventSourceMessage', (message) => {
         if (message.event != 'heartbeat') {
-          onEvent(message);
+          onEvent(JSON.parse(message.data).operation);
         }
       });
 

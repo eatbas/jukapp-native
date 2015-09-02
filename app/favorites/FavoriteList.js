@@ -54,6 +54,7 @@ class FavoriteList extends Component {
         videos={JukappStore.getFavorites()}
         loading={this.state.loading}
         action={true}
+        automaticallyAdjustContentInsets={false}
       />
     );
   }

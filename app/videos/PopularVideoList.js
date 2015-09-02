@@ -8,7 +8,7 @@ var {
   Component
 } = React;
 
-class QueuedVideoList extends Component {
+class PopularVideoList extends Component {
 
   constructor(props) {
     super(props);
@@ -19,9 +19,10 @@ class QueuedVideoList extends Component {
   }
 
   componentDidMount() {
-    JukappApi.addEventListener((message) => {
-      console.log(message);
-      this.fetchData();
+    JukappApi.addEventListener((operation) => {
+      if (operation == 'play') {
+        this.fetchData();
+      }
     });
 
     JukappStore.addChangeListener(this._onChange.bind(this));
@@ -35,11 +36,11 @@ class QueuedVideoList extends Component {
   }
 
   fetchData() {
-    console.log('[QueuedVideoList] fetching queuedVideos');
-    JukappApi.fetchQueuedVideos().done((queuedVideos) => {
+    console.log('[PopularVideoList] fetching popularVideos');
+    JukappApi.fetchPopularVideos().done((popularVideos) => {
       Dispatcher.dispatch({
-        type: 'loadQueuedVideos',
-        queuedVideos
+        type: 'loadPopularVideos',
+        popularVideos
       });
     });
   }
@@ -53,12 +54,13 @@ class QueuedVideoList extends Component {
   render() {
     return (
       <VideoList
-        videos={JukappStore.getQueuedVideos()}
+        videos={JukappStore.getPopularVideos()}
         loading={this.state.loading}
+        action={true}
         automaticallyAdjustContentInsets={false}
       />
     );
   }
 }
 
-module.exports = QueuedVideoList;
+module.exports = PopularVideoList;

@@ -25,7 +25,7 @@ var {
 
 Router.routes = routes;
 StatusBarIOS.setStyle('light-content');
-var mainRoutes = ['room', 'favorites', 'account'];
+var mainRoutes = ['jukebox', 'account'];
 
 var NavigatorRouteMapper = {
   Title({route}) {
@@ -67,7 +67,7 @@ class Navigation extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {selectedScene: 'room'};
+    this.state = {selectedScene: 'jukebox'};
   }
 
   _renderScene({route, params}, nav) {
