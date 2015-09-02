@@ -64,25 +64,20 @@ var JukappApi = {
     return fetch(JUKAPP_URL + url, options || this.defaultOptions());
   },
 
+  fetchJson(url, options) {
+    return this.fetch(url, options).then((response) => response.json());
+  },
+
   fetchRooms() {
-    return this.fetch('/rooms')
-      .then((response) => {
-        return response.json();
-      });
+    return this.fetchJson('/rooms');
   },
 
   joinRoom(roomId) {
-    return this.fetch('/rooms/' + roomId + '/join')
-      .then((response) => {
-        return response.json();
-      });
+    return this.fetchJson('/rooms/' + roomId + '/join');
   },
 
   searchVideo(query) {
-    return this.fetch('/search?query=' + query)
-      .then((response) => {
-        return response.json();
-      });
+    return this.fetchJson('/search?query=' + query);
   },
 
   queueVideo(video) {
@@ -129,10 +124,7 @@ var JukappApi = {
   },
 
   fetchQueuedVideos() {
-    return this.fetch('/queued_videos')
-      .then((response) => {
-        return response.json();
-      })
+    return this.fetchJson('/queued_videos')
       .then((responseData) => {
         return responseData.map((queueVideoData) => queueVideoData.video);
       })
@@ -150,10 +142,7 @@ var JukappApi = {
       });
     }
 
-    return this.fetch('/favorites')
-      .then((response) => {
-        return response.json();
-      })
+    return this.fetchJson('/favorites')
       .then((responseData) => {
         return responseData.map((favoriteData) => favoriteData.video);
       })
