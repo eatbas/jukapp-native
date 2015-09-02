@@ -8,7 +8,6 @@ var {
   Component
 } = React;
 
-// TODO: Fetch videos on focus
 class QueuedVideoList extends Component {
 
   constructor(props) {
@@ -36,6 +35,7 @@ class QueuedVideoList extends Component {
   }
 
   fetchData() {
+    console.log('[QueuedVideoList] fetching queuedVideos');
     JukappApi.fetchQueuedVideos().done((queuedVideos) => {
       Dispatcher.dispatch({
         type: 'loadQueuedVideos',
@@ -55,7 +55,6 @@ class QueuedVideoList extends Component {
       <VideoList
         videos={JukappStore.getQueuedVideos()}
         loading={this.state.loading}
-        onFavoriteToggled={this.fetchData.bind(this)}
       />
     );
   }
