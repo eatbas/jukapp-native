@@ -32,7 +32,7 @@ class VideoList extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(this._generateVideoRows(nextProps.videos, JukappStore.getFavorites())),
+      dataSource: this.state.dataSource.cloneWithRows(this._generateVideoRows(nextProps.videos, JukappStore.getFavorites()))
     });
   }
 
@@ -109,8 +109,9 @@ class VideoList extends Component {
     };
 
     if (this.props.action) {
-      listItemProps._onPress = () => this._onPress(video);
+      listItemProps.onPress = () => this._onPress(video);
     }
+
 
     return <VideoListItem {...listItemProps} />;
   }
