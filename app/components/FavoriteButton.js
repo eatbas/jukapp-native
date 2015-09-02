@@ -26,8 +26,12 @@ class FavoriteButton extends Component {
 
   _onFavoriteToggled() {
     JukappApi.toggleFavorite(this.props.video)
-      .done(() => {
-        Router._toast.flash('Removed', 'fontawesome|star-o');
+      .done((favorited) => {
+        if (favorited) {
+          Router._toast.flash('Favorited', 'fontawesome|star');
+        } else {
+          Router._toast.flash('Removed', 'fontawesome|star-o');
+        }
         this.fetchData();
       });
   }

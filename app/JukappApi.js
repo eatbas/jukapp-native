@@ -153,11 +153,15 @@ var JukappApi = {
   },
 
   toggleFavorite(video) {
-    if (video.isFavorite) {
-      return this.unfavoriteVideo(video);
-    } else {
-      return this.favoriteVideo(video);
-    }
+    return new Promise((fulfill) => {
+      if (video.isFavorite) {
+        return this.unfavoriteVideo(video)
+          .done(() => fulfill(false));
+      } else {
+        return this.favoriteVideo(video)
+          .done(() => fulfill(true));
+      }
+    });
   },
 
   favoriteVideo(video) {
