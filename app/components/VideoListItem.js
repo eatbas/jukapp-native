@@ -71,7 +71,7 @@ var styles = StyleSheet.create({
     justifyContent: 'flex-start',
     shadowColor: '#000000',
     shadowRadius: 2,
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.5,
     shadowOffset: {
       height: 1,
       width: 0
