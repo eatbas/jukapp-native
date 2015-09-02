@@ -79,19 +79,9 @@ var JukappApi = {
   },
 
   searchVideo(query) {
-    var videos = [];
-
     return this.fetch('/search?query=' + query)
       .then((response) => {
         return response.json();
-      })
-      .then((responseData) => {
-        videos = responseData;
-
-        return this.fetchFavorites();
-      })
-      .then((responseData) => {
-        return this.checkFavorites(videos, responseData);
       });
   },
 
@@ -139,23 +129,12 @@ var JukappApi = {
   },
 
   fetchQueuedVideos() {
-    var videos = [];
-
     return this.fetch('/queued_videos')
       .then((response) => {
         return response.json();
       })
       .then((responseData) => {
-        for (var queuedVideo of responseData) {
-          videos.push(queuedVideo.video);
-        }
-
-        // return favorite info from first request
-        // return this.fetchFavorites();
-        return([]);
-      })
-      .then((responseData) => {
-        return this.checkFavorites(videos, responseData);
+        return responseData.map((queueVideo) => queueVideo.video);
       })
       .catch((response) => {
         console.log('Queued videos error', response);
@@ -163,21 +142,9 @@ var JukappApi = {
       });
   },
 
-  // HAS TO GO
-  checkFavorites(videos, favorites) {
-    // for (var video of videos) {
-    //   for (var favoriteVideo of favorites) {
-    //     if (video.id == favoriteVideo.id) video['isFavorite'] = true;
-    //   }
-    //   if (!video.isFavorite) video['isFavorite'] = false;
-    // }
-
-    return videos;
-  },
-
   fetchFavorites() {
     if (!JukappStore.loggedIn()) {
-      console.log('falling back')
+      console.log('[WARNING] fetchFavorites when not logged in');
       return new Promise((fulfill) => {
         fulfill([]);
       });

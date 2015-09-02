@@ -27,8 +27,9 @@ class VideoListItem extends Component {
     var video = this.props.video;
     var playCount = 0;
 
-    if (video['video_events']) {
-      var videoEvent = video['video_events'].find((events) => events['room_id'] == JukappStore.currentRoom().id);
+    // TODO remove this
+    if (video.videoEvents) {
+      var videoEvent = video.videoEvents.find((events) => events['room_id'] == JukappStore.currentRoom().id);
       if (videoEvent) playCount = videoEvent['play_count'];
     }
 

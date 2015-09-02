@@ -8,7 +8,6 @@ var {
   Component
 } = React;
 
-// TODO: Fetch videos on focus
 class QueuedVideoList extends Component {
 
   constructor(props) {

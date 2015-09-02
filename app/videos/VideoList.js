@@ -22,7 +22,6 @@ class VideoList extends Component {
 
     this.state = {
       dataSource,
-      loading: this.props.loading,
       loggedIn: JukappStore.loggedIn()
     };
   }
@@ -33,15 +32,8 @@ class VideoList extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(this._generateVideoRows(this.props.videos, JukappStore.getFavorites())),
-      loading: nextProps.loading
+      dataSource: this.state.dataSource.cloneWithRows(this._generateVideoRows(nextProps.videos, JukappStore.getFavorites())),
     });
-  }
-
-  componentWillUpdate(nextProps, nextState) {
-    if (!this.state.loggedIn && nextState.loggedIn) {
-      this.fetchData();
-    }
   }
 
   componentWillUnmount() {
@@ -58,6 +50,10 @@ class VideoList extends Component {
   }
 
   _onChange() {
+    if (!this.state.loggedIn && JukappStore.loggedIn()) {
+      this.fetchData();
+    }
+
     this.setState({
       dataSource: this.state.dataSource.cloneWithRows(this._generateVideoRows(this.props.videos, JukappStore.getFavorites())),
       loggedIn: JukappStore.loggedIn()
@@ -75,8 +71,9 @@ class VideoList extends Component {
 
       return {
         isFavorite,
+        title: video.title,
         youtubeId: video.youtube_id,
-        title: video.title
+        videoEvents: video.video_events
       };
     });
   }
@@ -119,7 +116,7 @@ class VideoList extends Component {
   }
 
   _renderFooter() {
-    if (this.state.loading) {
+    if (this.props.loading) {
       return <ActivityIndicatorIOS />;
     }
   }

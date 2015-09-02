@@ -44,7 +44,6 @@ var NavigatorRouteMapper = {
       <TouchableOpacity
         onPress={() => {
           Router.pop();
-          console.log(Router.currentRoute);
         }}
         style={styles.leftButton}
       >
