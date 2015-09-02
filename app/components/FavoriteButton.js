@@ -1,4 +1,7 @@
 var React = require('react-native');
+var Dispatcher = require('../../Dispatcher');
+var JukappApi = require('../JukappApi');
+var Router = require('../navigation/Router');
 
 var {
   Icon
@@ -12,16 +15,46 @@ var {
 } = React;
 
 class FavoriteButton extends Component {
-  render() {
-    var icon = this.props.isFavorite ? 'fontawesome|star' : 'fontawesome|star-o';
+  fetchData() {
+    JukappApi.fetchFavorites().done((favorites) => {
+      Dispatcher.dispatch({
+        type: 'loadFavorites',
+        favorites
+      });
+    });
+  }
 
+  _onFavoriteToggled() {
+    // simplify as toggleFavorite, let the api handle
+    // JukappApi.toggleFavorite(this.props.video)
+    //   .done(() => {
+    //     Router._toast.flash('Removed', 'fontawesome|star-o');
+    //     this.fetchData();
+    //   });
+
+    if (this.props.video.isFavorite) {
+      JukappApi.unfavoriteVideo(this.props.video)
+        .done(() => {
+          Router._toast.flash('Removed', 'fontawesome|star-o');
+          this.fetchData();
+        });
+    } else {
+      JukappApi.favoriteVideo(this.props.video)
+        .done(() => {
+          Router._toast.flash('Favorited', 'fontawesome|star');
+          this.fetchData();
+        });
+    }
+  }
+
+  render() {
     return (
       <TouchableHighlight
         underlayColor="#ebeeee"
         style={styles.secondaryButton}
-        onPress={this.props.onFavoriteToggled}>
+        onPress={this._onFavoriteToggled.bind(this)}>
         <Icon
-          name={icon}
+          name={this.props.video.isFavorite ? 'fontawesome|star' : 'fontawesome|star-o'}
           size={20}
           color='black'
           style={styles.star}
@@ -32,8 +65,7 @@ class FavoriteButton extends Component {
 }
 
 FavoriteButton.propTypes = {
-  isFavorite: PropTypes.bool.isRequired,
-  onFavoriteToggled: PropTypes.func.isRequired
+  video: PropTypes.object.isRequired
 };
 
 var styles = StyleSheet.create({

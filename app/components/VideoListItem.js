@@ -15,11 +15,7 @@ var {
 class VideoListItem extends Component {
   renderFavoriteButton() {
     if (this.props.video.isFavorite != undefined) {
-      return(
-        <FavoriteButton
-          isFavorite={this.props.video.isFavorite}
-          onFavoriteToggled={this.props.onFavoriteToggled} />
-      );
+      return(<FavoriteButton video={this.props.video} />);
     }
   }
 
@@ -64,7 +60,6 @@ class VideoListItem extends Component {
 }
 
 VideoListItem.propTypes = {
-  onFavoriteToggled: PropTypes.func.isRequired,
   onPress: PropTypes.func,
   video: PropTypes.object.isRequired
 };

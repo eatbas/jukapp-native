@@ -1,17 +1,16 @@
 var React = require('react-native');
-var Toast = require('../components/Toast');
 var VideoListItem = require('../components/VideoListItem');
 var Dispatcher = require('../../Dispatcher');
 var JukappApi = require('../JukappApi');
 var JukappStore = require('../stores/JukappStore');
+var Router = require('../navigation/Router');
 
 var {
   Component,
   StyleSheet,
   PropTypes,
   ListView,
-  ActivityIndicatorIOS,
-  View
+  ActivityIndicatorIOS
 } = React;
 
 class VideoList extends Component {
@@ -81,37 +80,16 @@ class VideoList extends Component {
   _onPress(video) {
     JukappApi.queueVideo(video)
       .done(() => {
-        this._toast.flash('Added', 'fontawesome|check');
+        Router._toast.flash('Added', 'fontawesome|check');
       });
   }
 
-  _onFavoriteToggled(video) {
-    // simplify as toggleFavorite, let the api handle
-    if (video.isFavorite) {
-      JukappApi.unfavoriteVideo(video)
-        .done(() => {
-          this._toast.flash('Removed', 'fontawesome|star-o');
-          this.fetchData();
-        });
-    } else {
-      JukappApi.favoriteVideo(video)
-        .done(() => {
-          this._toast.flash('Favorited', 'fontawesome|star');
-          this.fetchData();
-        });
-    }
-  }
-
   _renderRow(video) {
-    var listItemProps = {
-      video,
-      onFavoriteToggled: () => this._onFavoriteToggled(video)
-    };
+    var listItemProps = {video};
 
     if (this.props.action) {
       listItemProps.onPress = () => this._onPress(video);
     }
-
 
     return <VideoListItem {...listItemProps} />;
   }
@@ -124,15 +102,13 @@ class VideoList extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <ListView
-          contentContainerStyle={styles.listViewContent}
-          dataSource={this.state.dataSource}
-          renderRow={this._renderRow.bind(this)}
-          renderFooter={this._renderFooter.bind(this)}
-        />
-        <Toast ref={(component) => this._toast = component} />
-      </View>
+      <ListView
+        style={styles.container}
+        contentContainerStyle={styles.listViewContent}
+        dataSource={this.state.dataSource}
+        renderRow={this._renderRow.bind(this)}
+        renderFooter={this._renderFooter.bind(this)}
+      />
     );
   }
 }
@@ -140,7 +116,6 @@ class VideoList extends Component {
 VideoList.propTypes = {
   action: PropTypes.bool,
   loading: PropTypes.bool,
-  onFavoriteToggled: PropTypes.func.isRequired,
   videos: PropTypes.array.isRequired
 };
 
