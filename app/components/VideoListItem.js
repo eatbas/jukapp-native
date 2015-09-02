@@ -14,11 +14,13 @@ var {
 
 class VideoListItem extends Component {
   renderFavoriteButton() {
-    if (!JukappStore.loggedIn()) {
-      return;
+    if (this.props.video.isFavorite != undefined) {
+      return(
+        <FavoriteButton
+          isFavorite={this.props.video.isFavorite}
+          onFavoriteToggled={this.props.onFavoriteToggled} />
+      );
     }
-
-    return(<FavoriteButton video={this.props.video} onFavoriteToggled={this.props.onFavoriteToggled} />);
   }
 
   render() {
@@ -30,7 +32,7 @@ class VideoListItem extends Component {
       if (videoEvent) playCount = videoEvent['play_count'];
     }
 
-    var image = { uri: 'http://img.youtube.com/vi/' + video.youtube_id + '/default.jpg' };
+    var image = { uri: 'http://img.youtube.com/vi/' + video.youtubeId + '/default.jpg' };
 
     var listItemContent = (
       <View style={styles.innerCell}>

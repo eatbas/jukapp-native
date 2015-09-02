@@ -55,7 +55,7 @@ var JukappApi = {
 
   videoOptions(video) {
     return JSON.stringify({
-      youtube_id: video.youtube_id,
+      youtube_id: video.youtubeId,
       title: video.title
     });
   },
@@ -151,7 +151,8 @@ var JukappApi = {
         }
 
         // return favorite info from first request
-        return this.fetchFavorites();
+        // return this.fetchFavorites();
+        return([]);
       })
       .then((responseData) => {
         return this.checkFavorites(videos, responseData);
@@ -164,18 +165,19 @@ var JukappApi = {
 
   // HAS TO GO
   checkFavorites(videos, favorites) {
-    for (var video of videos) {
-      for (var favoriteVideo of favorites) {
-        if (video.id == favoriteVideo.id) video['isFavorite'] = true;
-      }
-      if (!video.isFavorite) video['isFavorite'] = false;
-    }
+    // for (var video of videos) {
+    //   for (var favoriteVideo of favorites) {
+    //     if (video.id == favoriteVideo.id) video['isFavorite'] = true;
+    //   }
+    //   if (!video.isFavorite) video['isFavorite'] = false;
+    // }
 
     return videos;
   },
 
   fetchFavorites() {
     if (!JukappStore.loggedIn()) {
+      console.log('falling back')
       return new Promise((fulfill) => {
         fulfill([]);
       });

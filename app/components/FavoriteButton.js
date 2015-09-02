@@ -13,7 +13,7 @@ var {
 
 class FavoriteButton extends Component {
   render() {
-    var icon = this.props.video.isFavorite ? 'fontawesome|star' : 'fontawesome|star-o';
+    var icon = this.props.isFavorite ? 'fontawesome|star' : 'fontawesome|star-o';
 
     return (
       <TouchableHighlight
@@ -32,8 +32,8 @@ class FavoriteButton extends Component {
 }
 
 FavoriteButton.propTypes = {
-  onFavoriteToggled: PropTypes.func.isRequired,
-  video: PropTypes.object.isRequired
+  isFavorite: PropTypes.bool.isRequired,
+  onFavoriteToggled: PropTypes.func.isRequired
 };
 
 var styles = StyleSheet.create({

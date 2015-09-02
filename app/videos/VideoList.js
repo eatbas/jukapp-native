@@ -21,16 +21,63 @@ class VideoList extends Component {
     var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
     this.state = {
-      favorites: JukappStore.getFavorites(),
-      dataSource: dataSource.cloneWithRows(this.props.videos),
-      loading: this.props.loading
+      dataSource,
+      loading: this.props.loading,
+      loggedIn: JukappStore.loggedIn()
     };
+  }
+
+  componentDidMount() {
+    JukappStore.addChangeListener(this._onChange.bind(this));
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(nextProps.videos),
+      dataSource: this.state.dataSource.cloneWithRows(this._generateVideoRows(this.props.videos, JukappStore.getFavorites())),
       loading: nextProps.loading
+    });
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    if (!this.state.loggedIn && nextState.loggedIn) {
+      this.fetchData();
+    }
+  }
+
+  componentWillUnmount() {
+    JukappStore.removeChangeListener(this._onChange);
+  }
+
+  fetchData() {
+    JukappApi.fetchFavorites().done((favorites) => {
+      Dispatcher.dispatch({
+        type: 'loadFavorites',
+        favorites
+      });
+    });
+  }
+
+  _onChange() {
+    this.setState({
+      dataSource: this.state.dataSource.cloneWithRows(this._generateVideoRows(this.props.videos, JukappStore.getFavorites())),
+      loggedIn: JukappStore.loggedIn()
+    });
+  }
+
+  _generateVideoRows(videos, favorites) {
+    return videos.map((video) => {
+      var isFavorite;
+      if (this.state.loggedIn) {
+        isFavorite = !!favorites.find((favorite) => {
+          return favorite.youtube_id == video.youtube_id;
+        });
+      }
+
+      return {
+        isFavorite,
+        youtubeId: video.youtube_id,
+        title: video.title
+      };
     });
   }
 
@@ -47,42 +94,28 @@ class VideoList extends Component {
       JukappApi.unfavoriteVideo(video)
         .done(() => {
           this._toast.flash('Removed', 'fontawesome|star-o');
+          this.fetchData();
         });
     } else {
       JukappApi.favoriteVideo(video)
         .done(() => {
           this._toast.flash('Favorited', 'fontawesome|star');
+          this.fetchData();
         });
     }
-
-    JukappApi.fetchFavorites().done((favorites) => {
-      Dispatcher.dispatch({
-        type: 'loadFavorites',
-        favorites
-      });
-    });
-
-    // this should be commented out
-    this.props.onFavoriteToggled();
-  }
-
-  _onChange() {
-    this.setState({
-      favorites: JukappStore.getFavorites()
-    });
   }
 
   _renderRow(video) {
-    // use clone with props
+    var listItemProps = {
+      video,
+      onFavoriteToggled: () => this._onFavoriteToggled(video)
+    };
+
     if (this.props.action) {
-      return (
-        <VideoListItem video={video} onFavoriteToggled={() => this._onFavoriteToggled(video)} onPress={() => this._onPress(video)} />
-      );
-    } else {
-      return (
-        <VideoListItem video={video} onFavoriteToggled={() => this._onFavoriteToggled(video)} />
-      );
+      listItemProps._onPress = () => this._onPress(video);
     }
+
+    return <VideoListItem {...listItemProps} />;
   }
 
   _renderFooter() {
