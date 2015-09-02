@@ -25,26 +25,11 @@ class FavoriteButton extends Component {
   }
 
   _onFavoriteToggled() {
-    // simplify as toggleFavorite, let the api handle
-    // JukappApi.toggleFavorite(this.props.video)
-    //   .done(() => {
-    //     Router._toast.flash('Removed', 'fontawesome|star-o');
-    //     this.fetchData();
-    //   });
-
-    if (this.props.video.isFavorite) {
-      JukappApi.unfavoriteVideo(this.props.video)
-        .done(() => {
-          Router._toast.flash('Removed', 'fontawesome|star-o');
-          this.fetchData();
-        });
-    } else {
-      JukappApi.favoriteVideo(this.props.video)
-        .done(() => {
-          Router._toast.flash('Favorited', 'fontawesome|star');
-          this.fetchData();
-        });
-    }
+    JukappApi.toggleFavorite(this.props.video)
+      .done(() => {
+        Router._toast.flash('Removed', 'fontawesome|star-o');
+        this.fetchData();
+      });
   }
 
   render() {

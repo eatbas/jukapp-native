@@ -134,7 +134,7 @@ var JukappApi = {
         return response.json();
       })
       .then((responseData) => {
-        return responseData.map((queueVideo) => queueVideo.video);
+        return responseData.map((queueVideoData) => queueVideoData.video);
       })
       .catch((response) => {
         console.log('Queued videos error', response);
@@ -155,20 +155,20 @@ var JukappApi = {
         return response.json();
       })
       .then((responseData) => {
-        var videos = [];
-        for (var favoriteVideo of responseData) {
-          var video = favoriteVideo.video;
-          video['isFavorite'] = true;
-
-          videos.push(video);
-        }
-
-        return videos;
+        return responseData.map((favoriteData) => favoriteData.video);
       })
       .catch((response) => {
         console.log('Favorites error', response);
         AlertIOS.alert('Favorites error' + response);
       });
+  },
+
+  toggleFavorite(video) {
+    if (video.isFavorite) {
+      return this.unfavoriteVideo(video);
+    } else {
+      return this.favoriteVideo(video);
+    }
   },
 
   favoriteVideo(video) {
