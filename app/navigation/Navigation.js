@@ -107,6 +107,7 @@ class Navigation extends Component {
           renderScene={this._renderScene.bind(this)}
           navigationBar={<NavigationBar routeMapper={NavigatorRouteMapper} style={styles.navigatorBar} />}
           sceneStyle={styles.navigatorScene}
+          configureScene={() => Navigator.SceneConfigs.HorizontalSwipeJump}
         />
       );
     } else {

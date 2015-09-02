@@ -69,15 +69,13 @@ var styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 16,
     justifyContent: 'flex-start',
-    borderRadius: 4,
     shadowColor: '#000000',
-    shadowRadius: 1,
+    shadowRadius: 2,
     shadowOpacity: 0.3,
     shadowOffset: {
       height: 1,
       width: 0
-    },
-    marginBottom: 10
+    }
   },
 
   innerCell: {
@@ -110,7 +108,8 @@ var styles = StyleSheet.create({
   videoImage: {
     alignSelf: 'flex-start',
     width: 64,
-    height: 64
+    height: 64,
+    borderRadius: 4
   }
 });
 
