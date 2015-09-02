@@ -5,8 +5,16 @@ var JukappApi = require('../JukappApi');
 var VideoList = require('../videos/VideoList');
 
 var {
-  Component
+  Component,
+  StyleSheet,
+  Navigator,
+  View,
+  Text
 } = React;
+
+// var routes = {
+//   inQueue:
+// }
 
 class QueuedVideoList extends Component {
 
@@ -50,7 +58,28 @@ class QueuedVideoList extends Component {
     });
   }
 
-  render() {
+  _renderTabBars() {
+    return (
+      <View style={{
+        flexDirection: 'row',
+        height: 40,
+        marginTop: 20,
+        backgroundColor: 'white'
+      }}>
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', borderBottomColor: '#33ADFF', borderBottomWidth: 2}}>
+          <Text style={{color: '#33ADFF', fontWeight: 'bold'}}>QUEUE</Text>
+        </View>
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <Text style={{color: 'black', fontWeight: 'bold'}}>LATEST</Text>
+        </View>
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <Text style={{color: 'black', fontWeight: 'bold'}}>POPULAR</Text>
+        </View>
+      </View>
+    );
+  }
+
+  _renderScene() {
     return (
       <VideoList
         videos={JukappStore.getQueuedVideos()}
@@ -58,6 +87,29 @@ class QueuedVideoList extends Component {
       />
     );
   }
+
+  render() {
+    return (
+      <View style={{flex: 1}}>
+        {this._renderTabBars()}
+        <Navigator
+          initialRouteStack={['inQueue', 'latest', 'popular']}
+          renderScene={this._renderScene.bind(this)}
+          sceneStyle={styles.navigatorScene}
+        />
+      </View>
+    );
+  }
 }
+
+var styles = StyleSheet.create({
+  navigatorScene: {
+    position: 'absolute',
+    left: 0,
+    top: -20,
+    right: 0,
+    bottom: 0
+  }
+});
 
 module.exports = QueuedVideoList;
