@@ -50,7 +50,6 @@ class SearchResultsList extends Component {
       <VideoList
         videos={this.state.videos}
         loading={this.state.loading}
-        onFavoriteToggled={this.fetchData.bind(this)}
         action={true}
       />
     );

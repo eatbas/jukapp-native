@@ -1,15 +1,16 @@
 var React = require('react-native');
-var Toast = require('../components/Toast');
 var VideoListItem = require('../components/VideoListItem');
+var Dispatcher = require('../../Dispatcher');
 var JukappApi = require('../JukappApi');
+var JukappStore = require('../stores/JukappStore');
+var Router = require('../navigation/Router');
 
 var {
   Component,
   StyleSheet,
   PropTypes,
   ListView,
-  ActivityIndicatorIOS,
-  View
+  ActivityIndicatorIOS
 } = React;
 
 class VideoList extends Component {
@@ -19,70 +20,95 @@ class VideoList extends Component {
     var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
     this.state = {
-      dataSource: dataSource.cloneWithRows(this.props.videos),
-      loading: this.props.loading
+      dataSource,
+      loggedIn: JukappStore.loggedIn()
     };
+  }
+
+  componentDidMount() {
+    JukappStore.addChangeListener(this._onChange.bind(this));
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(nextProps.videos),
-      loading: nextProps.loading
+      dataSource: this.state.dataSource.cloneWithRows(this._generateVideoRows(nextProps.videos, JukappStore.getFavorites()))
+    });
+  }
+
+  componentWillUnmount() {
+    JukappStore.removeChangeListener(this._onChange);
+  }
+
+  fetchData() {
+    JukappApi.fetchFavorites().done((favorites) => {
+      Dispatcher.dispatch({
+        type: 'loadFavorites',
+        favorites
+      });
+    });
+  }
+
+  _onChange() {
+    if (!this.state.loggedIn && JukappStore.loggedIn()) {
+      this.fetchData();
+    }
+
+    this.setState({
+      dataSource: this.state.dataSource.cloneWithRows(this._generateVideoRows(this.props.videos, JukappStore.getFavorites())),
+      loggedIn: JukappStore.loggedIn()
+    });
+  }
+
+  _generateVideoRows(videos, favorites) {
+    return videos.map((video) => {
+      var isFavorite;
+      if (this.state.loggedIn) {
+        isFavorite = !!favorites.find((favorite) => {
+          return favorite.youtube_id == video.youtube_id;
+        });
+      }
+
+      return {
+        isFavorite,
+        title: video.title,
+        youtubeId: video.youtube_id,
+        videoEvents: video.video_events
+      };
     });
   }
 
   _onPress(video) {
     JukappApi.queueVideo(video)
       .done(() => {
-        this._toast.flash('Added', 'fontawesome|check');
+        Router._toast.flash('Added', 'fontawesome|check');
       });
   }
 
-  _onFavoriteToggled(video) {
-    if (video.isFavorite) {
-      JukappApi.unfavoriteVideo(video)
-        .done(() => {
-          this._toast.flash('Removed', 'fontawesome|star-o');
-        });
-    } else {
-      JukappApi.favoriteVideo(video)
-        .done(() => {
-          this._toast.flash('Favorited', 'fontawesome|star');
-        });
-    }
-
-    this.props.onFavoriteToggled();
-  }
-
   _renderRow(video) {
+    var listItemProps = {video};
+
     if (this.props.action) {
-      return (
-        <VideoListItem video={video} onFavoriteToggled={() => this._onFavoriteToggled(video)} onPress={() => this._onPress(video)} />
-      );
-    } else {
-      return (
-        <VideoListItem video={video} onFavoriteToggled={() => this._onFavoriteToggled(video)} />
-      );
+      listItemProps.onPress = () => this._onPress(video);
     }
+
+    return <VideoListItem {...listItemProps} />;
   }
 
   _renderFooter() {
-    if (this.state.loading) {
+    if (this.props.loading) {
       return <ActivityIndicatorIOS />;
     }
   }
 
   render() {
     return (
-      <View style={styles.container}>
-        <ListView
-          contentContainerStyle={styles.listViewContent}
-          dataSource={this.state.dataSource}
-          renderRow={this._renderRow.bind(this)}
-          renderFooter={this._renderFooter.bind(this)}
-        />
-        <Toast ref={(component) => this._toast = component} />
-      </View>
+      <ListView
+        style={styles.container}
+        contentContainerStyle={styles.listViewContent}
+        dataSource={this.state.dataSource}
+        renderRow={this._renderRow.bind(this)}
+        renderFooter={this._renderFooter.bind(this)}
+      />
     );
   }
 }
@@ -90,7 +116,6 @@ class VideoList extends Component {
 VideoList.propTypes = {
   action: PropTypes.bool,
   loading: PropTypes.bool,
-  onFavoriteToggled: PropTypes.func.isRequired,
   videos: PropTypes.array.isRequired
 };
 

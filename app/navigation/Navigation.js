@@ -4,6 +4,7 @@ var SideMenu = require('react-native-side-menu');
 var MenuButton = require('./MenuButton');
 var Router = require('./Router');
 var routes = require('./routes');
+var Toast = require('../components/Toast');
 
 var {
   Icon
@@ -43,7 +44,7 @@ var NavigatorRouteMapper = {
     return (
       <TouchableOpacity
         onPress={() => {
-          navigator.pop();
+          Router.pop();
         }}
         style={styles.leftButton}
       >
@@ -136,6 +137,7 @@ class Navigation extends Component {
       >
         <View style={styles.shadow} >
           {this._renderMainRoutes()}
+          <Toast ref={(component) => Router._toast = component} />
         </View>
       </SideMenu>
     );

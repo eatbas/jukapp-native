@@ -1,4 +1,7 @@
 var React = require('react-native');
+var Dispatcher = require('../../Dispatcher');
+var JukappApi = require('../JukappApi');
+var Router = require('../navigation/Router');
 
 var {
   Icon
@@ -12,16 +15,35 @@ var {
 } = React;
 
 class FavoriteButton extends Component {
-  render() {
-    var icon = this.props.video.isFavorite ? 'fontawesome|star' : 'fontawesome|star-o';
+  fetchData() {
+    JukappApi.fetchFavorites().done((favorites) => {
+      Dispatcher.dispatch({
+        type: 'loadFavorites',
+        favorites
+      });
+    });
+  }
 
+  _onFavoriteToggled() {
+    JukappApi.toggleFavorite(this.props.video)
+      .done((favorited) => {
+        if (favorited) {
+          Router._toast.flash('Favorited', 'fontawesome|star');
+        } else {
+          Router._toast.flash('Removed', 'fontawesome|star-o');
+        }
+        this.fetchData();
+      });
+  }
+
+  render() {
     return (
       <TouchableHighlight
         underlayColor="#ebeeee"
         style={styles.secondaryButton}
-        onPress={this.props.onFavoriteToggled}>
+        onPress={this._onFavoriteToggled.bind(this)}>
         <Icon
-          name={icon}
+          name={this.props.video.isFavorite ? 'fontawesome|star' : 'fontawesome|star-o'}
           size={20}
           color='black'
           style={styles.star}
@@ -32,7 +54,6 @@ class FavoriteButton extends Component {
 }
 
 FavoriteButton.propTypes = {
-  onFavoriteToggled: PropTypes.func.isRequired,
   video: PropTypes.object.isRequired
 };
 

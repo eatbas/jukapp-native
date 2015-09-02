@@ -53,7 +53,6 @@ class FavoriteList extends Component {
       <VideoList
         videos={JukappStore.getFavorites()}
         loading={this.state.loading}
-        onFavoriteToggled={this.fetchData.bind(this)}
         action={true}
       />
     );
