@@ -1,6 +1,5 @@
 var React = require('react-native');
-var JukappApi = require('../JukappApi');
-var Dispatcher = require('../../Dispatcher');
+var Router = require('../navigation/Router');
 
 var {
   Component,
@@ -12,26 +11,15 @@ class SearchInput extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      query: ''
-    };
+    this.state = {query: ''};
   }
 
   _onSubmit() {
-    JukappApi.searchVideo(this.state.query)
-      .done((searchResults) => {
-        Dispatcher.dispatch({
-          type: 'loadSearchResults',
-          query: this.state.query,
-          searchResults
-        });
-      });
+    Router.navigator._currentComponent.search(this.state.query);
   }
 
   _onChange(event) {
-    this.setState({
-      query: event.nativeEvent.text
-    });
+    this.setState({query: event.nativeEvent.text});
   }
 
   render() {

@@ -1,14 +1,13 @@
 var React = require('react-native');
 var JukappStore = require('../stores/JukappStore');
-var Dispatcher = require('../../Dispatcher');
-var JukappApi = require('../JukappApi');
 var VideoList = require('./VideoList');
+var JukappApi = require('../JukappApi');
+var Dispatcher = require('../../Dispatcher');
 
 var {
   Component
 } = React;
 
-// TODO: Needs loading indicator
 class SearchResultsList extends Component {
   constructor(props) {
     super(props);
@@ -34,13 +33,13 @@ class SearchResultsList extends Component {
     });
   }
 
-  fetchData() {
-    JukappApi.searchVideo(JukappStore.getLastQuery())
+  search(query) {
+    this.setState({loading: true});
+    JukappApi.searchVideo(query)
       .done((searchResults) => {
         Dispatcher.dispatch({
           type: 'loadSearchResults',
-          searchResults,
-          query: JukappStore.getLastQuery()
+          searchResults
         });
       });
   }
