@@ -12,21 +12,6 @@ var {
   Navigator
 } = React;
 
-var tabs = [
-  {
-    name: 'queue',
-    component: QueuedVideoList
-  },
-  {
-    name: 'popular',
-    component: PopularVideoList
-  },
-  {
-    name: 'favorites',
-    component: FavoriteList
-  }
-];
-
 class Jukebox extends Component {
 
   constructor(props) {
@@ -40,11 +25,13 @@ class Jukebox extends Component {
 
   componentDidMount() {
     JukappApi.addEventListener(this._onEventReceived.bind(this));
+    JukappStore.addChangeListener(this._onChange.bind(this));
     this._nav.navigationContext.addListener('willfocus', this._onTabWillFocus.bind(this));
     this._nav.navigationContext.addListener('didfocus', this._onTabDidFocus.bind(this));
   }
 
   componentWillUnmount() {
+    JukappStore.removeChangeListener(this._onChange);
     JukappApi.removeEventListener();
   }
 
@@ -66,12 +53,36 @@ class Jukebox extends Component {
     this._currentComponent.fetchData();
   }
 
+  _onChange() {
+    this.setState({
+      loggedIn: JukappStore.loggedIn()
+    });
+  }
+
   _renderTab(tab) {
     var TabComponent = tab.component;
-    return <TabComponent ref={(component) => this._currentComponent = component}/>;
+    return <TabComponent ref={(component) => this._currentComponent = component} />;
   }
 
   render() {
+    var tabs = [
+      {
+        name: 'queue',
+        component: QueuedVideoList
+      },
+      {
+        name: 'popular',
+        component: PopularVideoList
+      }
+    ];
+
+    if (this.state.loggedIn) {
+      tabs.push({
+        name: 'favorites',
+        component: FavoriteList
+      });
+    }
+
     return (
       <Navigator
         style={{flex: 1}}
