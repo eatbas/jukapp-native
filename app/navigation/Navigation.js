@@ -70,11 +70,11 @@ class Navigation extends Component {
     this.state = {selectedScene: 'jukebox'};
   }
 
-  _renderScene({route, params}, nav) {
+  _renderScene({route, params}) {
     var ChildComponent = route.component;
 
     var setRef = (ref) => {
-      nav._currentComponent = ref;
+      Router._currentComponent = ref;
     };
 
     return <ChildComponent ref={setRef} {...params}/>;
@@ -88,31 +88,21 @@ class Navigation extends Component {
     Router.sideMenu = menu;
   }
 
-  _renderMainRoutes() {
-    return mainRoutes.map((routeName) => {
-      return this._renderMainRoute(routeName);
-    });
-  }
-
-  _renderMainRoute(routeName) {
-    var route = routes[routeName];
+  _renderMainRoute() {
+    var route = routes[this.state.selectedScene];
     var params = {};
 
-    if (this.state.selectedScene === routeName) {
-      return (
-        <Navigator
-          ref={this._setCurrentNavigator.bind(this)}
-          key={routeName}
-          initialRoute={{route, params}}
-          renderScene={this._renderScene.bind(this)}
-          navigationBar={<NavigationBar routeMapper={NavigatorRouteMapper} style={styles.navigatorBar} />}
-          sceneStyle={styles.navigatorScene}
-          configureScene={() => Navigator.SceneConfigs.HorizontalSwipeJump}
-        />
-      );
-    } else {
-      return <View key={routeName}/>;
-    }
+    return (
+      <Navigator
+        ref={this._setCurrentNavigator.bind(this)}
+        key={this.state.selectedScene}
+        initialRoute={{route, params}}
+        renderScene={this._renderScene.bind(this)}
+        navigationBar={<NavigationBar routeMapper={NavigatorRouteMapper} style={styles.navigatorBar} />}
+        sceneStyle={styles.navigatorScene}
+        configureScene={() => Navigator.SceneConfigs.HorizontalSwipeJump}
+      />
+    );
   }
 
   _sceneChanged(routeName) {
@@ -137,7 +127,7 @@ class Navigation extends Component {
         touchToClose={true}
       >
         <View style={styles.shadow} >
-          {this._renderMainRoutes()}
+          {this._renderMainRoute()}
           <Toast ref={(component) => Router._toast = component} />
         </View>
       </SideMenu>

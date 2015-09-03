@@ -19,19 +19,12 @@ class QueuedVideoList extends Component {
   }
 
   componentDidMount() {
-    JukappApi.addEventListener((message) => {
-      console.log(message);
-      this.fetchData();
-    });
-
     JukappStore.addChangeListener(this._onChange.bind(this));
-
     this.fetchData();
   }
 
   componentWillUnmount() {
     JukappStore.removeChangeListener(this._onChange);
-    JukappApi.removeEventListener();
   }
 
   fetchData() {

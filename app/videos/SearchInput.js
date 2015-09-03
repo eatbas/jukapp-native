@@ -15,7 +15,7 @@ class SearchInput extends Component {
   }
 
   _onSubmit() {
-    Router.navigator._currentComponent.search(this.state.query);
+    Router._currentComponent.search(this.state.query);
   }
 
   _onChange(event) {

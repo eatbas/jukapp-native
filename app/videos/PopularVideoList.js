@@ -19,20 +19,12 @@ class PopularVideoList extends Component {
   }
 
   componentDidMount() {
-    JukappApi.addEventListener((operation) => {
-      if (operation == 'play') {
-        this.fetchData();
-      }
-    });
-
     JukappStore.addChangeListener(this._onChange.bind(this));
-
     this.fetchData();
   }
 
   componentWillUnmount() {
     JukappStore.removeChangeListener(this._onChange);
-    JukappApi.removeEventListener();
   }
 
   fetchData() {

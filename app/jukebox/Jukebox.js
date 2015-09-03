@@ -1,5 +1,6 @@
 var React = require('react-native');
 var JukappStore = require('../stores/JukappStore');
+var JukappApi = require('../JukappApi');
 var QueuedVideoList = require('../queued_videos/QueuedVideoList');
 var FavoriteList = require('../favorites/FavoriteList');
 var PopularVideoList = require('../videos/PopularVideoList');
@@ -70,6 +71,14 @@ class Jukebox extends Component {
       loggedIn: JukappStore.loggedIn(),
       selectedTab: 0
     };
+  }
+
+  componentDidMount() {
+    JukappApi.addEventListener();
+  }
+
+  componentWillUnmount() {
+    JukappApi.removeEventListener();
   }
 
   // TODO selectedTab doesn't update when navigating with gestures
