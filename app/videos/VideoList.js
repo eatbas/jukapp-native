@@ -50,6 +50,7 @@ class VideoList extends Component {
 
   _onChange() {
     if (!this.state.loggedIn && JukappStore.loggedIn()) {
+      console.log('[TODO] Loading favorites because logged in');
       this.fetchData();
     }
 

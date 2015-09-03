@@ -1,6 +1,7 @@
 var React = require('react-native');
 var JukappStore = require('../stores/JukappStore');
 var JukappApi = require('../JukappApi');
+var TabBar = require('./TabBar');
 var QueuedVideoList = require('../queued_videos/QueuedVideoList');
 var FavoriteList = require('../favorites/FavoriteList');
 var PopularVideoList = require('../videos/PopularVideoList');
@@ -8,57 +9,21 @@ var PopularVideoList = require('../videos/PopularVideoList');
 var {
   Component,
   StyleSheet,
-  PropTypes,
-  Navigator,
-  View,
-  Text,
-  TouchableHighlight
+  Navigator
 } = React;
 
-// BEGINNING OF TABBARITEM
-
-class TabbarItem extends Component {
-  render() {
-    var containerStyle = [styles.tabbarItemContainer];
-    var textStyle = [styles.tabbarItemText];
-
-    if (this.props.active) {
-      containerStyle.push(styles.tabbarItemContainerActive);
-      textStyle.push(styles.tabbarItemTextActive);
-    }
-
-    return (
-      <TouchableHighlight
-        style={{flex: 1}}
-        underlayColor="#F5F5F5"
-        activeOpacity={0.3}
-        onPress={this.props.onPress}
-      >
-        <View style={containerStyle}>
-          <Text style={textStyle}>{this.props.routeName.toUpperCase()}</Text>
-        </View>
-      </TouchableHighlight>
-    );
-  }
-}
-
-TabbarItem.propTypes = {
-  active: PropTypes.bool,
-  onPress: PropTypes.func,
-  routeName: PropTypes.string.isRequired
-};
-
-// END OF TABBARITEM
-
-var routes = [
+var tabs = [
   {
-    component: 'queue'
+    name: 'queue',
+    component: QueuedVideoList
   },
   {
-    component: 'popular'
+    name: 'popular',
+    component: PopularVideoList
   },
   {
-    component: 'favorites'
+    name: 'favorites',
+    component: FavoriteList
   }
 ];
 
@@ -69,79 +34,55 @@ class Jukebox extends Component {
 
     this.state = {
       loggedIn: JukappStore.loggedIn(),
-      selectedTab: 0
+      selectedTab: 'queue'
     };
   }
 
   componentDidMount() {
-    JukappApi.addEventListener();
+    JukappApi.addEventListener(this._onEventReceived.bind(this));
+    this._nav.navigationContext.addListener('willfocus', this._onTabWillFocus.bind(this));
+    this._nav.navigationContext.addListener('didfocus', this._onTabDidFocus.bind(this));
   }
 
   componentWillUnmount() {
     JukappApi.removeEventListener();
   }
 
-  // TODO selectedTab doesn't update when navigating with gestures
-  _renderTabBars() {
-    var tabbarItems = routes.map((route, index) => {
-      if (route.component == 'favorites' && !this.state.loggedIn) {
-        return;
-      }
-
-      var onTabbarItemPress = () => {
-        this.setState({selectedTab: index});
-        this._nav.jumpTo(routes[index]);
-      };
-
-      return (
-        <TabbarItem
-          key={route.component}
-          routeName={route.component}
-          active={this.state.selectedTab == index}
-          onPress={onTabbarItemPress}
-        />
-      );
-    });
-
-    return (
-      <View style={styles.tabbarContainer}>
-        {tabbarItems}
-      </View>
-    );
+  _onEventReceived(operation) {
+    if (operation == 'play') {
+      this._currentComponent.fetchData();
+    } else if (operation == 'new' && this.state.selectedTab == 'queue') {
+      this._currentComponent.fetchData();
+    }
   }
 
-  _renderScene(route) {
-    if (route.component == 'queue') {
-      return (
-        <QueuedVideoList />
-      );
-    } else if (route.component == 'popular') {
-      return (
-        <PopularVideoList />
-      );
-    } else if (route.component == 'favorites') {
-      return (
-        <FavoriteList />
-      );
-    }
+  _onTabWillFocus(event) {
+    this.setState({
+      selectedTab: event.data.route.name
+    });
+  }
+
+  _onTabDidFocus() {
+    this._currentComponent.fetchData();
+  }
+
+  _renderTab(tab) {
+    var TabComponent = tab.component;
+    return <TabComponent ref={(component) => this._currentComponent = component}/>;
   }
 
   render() {
     return (
-      <View style={{flex: 1}}>
-        {this._renderTabBars()}
-        <Navigator
-          ref={(component) => this._nav = component}
-          initialRoute={routes[0]}
-          initialRouteStack={routes}
-          renderScene={this._renderScene.bind(this)}
-          sceneStyle={styles.navigatorScene}
-          configureScene={(route, params) => {
-            console.log(route, params);
-            return Navigator.SceneConfigs.HorizontalSwipeJump;
-          }}
-        />
-      </View>
+      <Navigator
+        style={{flex: 1}}
+        navigationBar={<TabBar />}
+        ref={(component) => this._nav = component}
+        initialRoute={tabs.find((tab) => tab.name == this.state.selectedTab)}
+        initialRouteStack={tabs}
+        renderScene={this._renderTab.bind(this)}
+        sceneStyle={styles.navigatorScene}
+        configureScene={() => Navigator.SceneConfigs.HorizontalSwipeJump }
+      />
     );
   }
 }
@@ -150,38 +91,10 @@ var styles = StyleSheet.create({
   navigatorScene: {
     position: 'absolute',
     left: 0,
-    top: 0,
+    top: 64,
     right: 0,
     bottom: 0
-  },
-
-  tabbarContainer: {
-    flexDirection: 'row',
-    height: 40,
-    marginTop: 20,
-    backgroundColor: 'white'
-  },
-
-  // TabbarItem
-  tabbarItemText: {
-    fontWeight: 'bold'
-  },
-
-  tabbarItemTextActive: {
-    color: '#33ADFF'
-  },
-
-  tabbarItemContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-
-  tabbarItemContainerActive: {
-    borderBottomColor: '#33ADFF',
-    borderBottomWidth: 2
   }
-
 });
 
 module.exports = Jukebox;

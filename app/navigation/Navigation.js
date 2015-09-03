@@ -88,14 +88,14 @@ class Navigation extends Component {
     Router.sideMenu = menu;
   }
 
-  _renderMainRoute() {
+  _renderSelectedScene() {
     var route = routes[this.state.selectedScene];
     var params = {};
 
     return (
       <Navigator
-        ref={this._setCurrentNavigator.bind(this)}
         key={this.state.selectedScene}
+        ref={this._setCurrentNavigator.bind(this)}
         initialRoute={{route, params}}
         renderScene={this._renderScene.bind(this)}
         navigationBar={<NavigationBar routeMapper={NavigatorRouteMapper} style={styles.navigatorBar} />}
@@ -119,7 +119,6 @@ class Navigation extends Component {
         ref={this._setSideMenu.bind(this)}
         menu={
           <MenuList
-            navigator={this.refs.nav}
             onSceneChanged={this._sceneChanged.bind(this)}
             mainRoutes={mainRoutes}
           />
@@ -127,7 +126,7 @@ class Navigation extends Component {
         touchToClose={true}
       >
         <View style={styles.shadow} >
-          {this._renderMainRoute()}
+          {this._renderSelectedScene()}
           <Toast ref={(component) => Router._toast = component} />
         </View>
       </SideMenu>
@@ -203,7 +202,7 @@ var styles = StyleSheet.create({
   navigatorScene: {
     position: 'absolute',
     left: 0,
-    top: NavigationBar.Styles.General.NavBarHeight,
+    top: 40,
     right: 0,
     bottom: 0
   }

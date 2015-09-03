@@ -202,18 +202,11 @@ var JukappApi = {
       });
   },
 
-  addEventListener() {
+  addEventListener(onEvent) {
     eventListener = DeviceEventEmitter.addListener(
       'EventSourceMessage', (message) => {
         if (message.event != 'heartbeat') {
-          var operation = JSON.parse(message.data).operation;
-
-          if (operation == 'play') {
-            // load queued videos
-            // load populars
-          } else if (operation == 'new') {
-            // load queued videos
-          }
+          onEvent(JSON.parse(message.data).operation);
         }
       });
     EventSource.connectWithURL(JUKAPP_URL + '/events?channels[]=queue-' + JukappStore.currentRoom().id);
