@@ -52,7 +52,7 @@ var NavigatorRouteMapper = {
           style={styles.leftButtonIcon}
           name='fontawesome|arrow-left'
           size={20}
-          color='black'
+          color='white'
         />
       </TouchableOpacity>
     );
@@ -107,6 +107,7 @@ class Navigation extends Component {
           renderScene={this._renderScene.bind(this)}
           navigationBar={<NavigationBar routeMapper={NavigatorRouteMapper} style={styles.navigatorBar} />}
           sceneStyle={styles.navigatorScene}
+          configureScene={() => Navigator.SceneConfigs.HorizontalSwipeJump}
         />
       );
     } else {
@@ -206,7 +207,7 @@ var styles = StyleSheet.create({
   leftButtonIcon: {
     width: 20,
     height: 20,
-    color: 'black'
+    color: 'white'
   },
 
   navigatorScene: {

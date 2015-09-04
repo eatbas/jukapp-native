@@ -23,7 +23,7 @@ class MenuButton extends Component {
         <Icon
           name='fontawesome|bars'
           size={20}
-          color='black'
+          color='white'
           style={styles.headerLeftButtonIcon}
         />
       </TouchableHighlight>

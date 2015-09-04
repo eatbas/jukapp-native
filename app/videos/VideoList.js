@@ -126,8 +126,7 @@ var styles = StyleSheet.create({
   },
 
   listViewContent: {
-    justifyContent: 'center',
-    padding: 10
+    justifyContent: 'center'
   }
 });
 

@@ -28,9 +28,9 @@ class FavoriteButton extends Component {
     JukappApi.toggleFavorite(this.props.video)
       .done((favorited) => {
         if (favorited) {
-          Router._toast.flash('Favorited', 'fontawesome|star');
+          Router._toast.flash('Favorited', 'fontawesome|heart');
         } else {
-          Router._toast.flash('Removed', 'fontawesome|star-o');
+          Router._toast.flash('Removed', 'fontawesome|heart-o');
         }
         this.fetchData();
       });
@@ -43,7 +43,7 @@ class FavoriteButton extends Component {
         style={styles.secondaryButton}
         onPress={this._onFavoriteToggled.bind(this)}>
         <Icon
-          name={this.props.video.isFavorite ? 'fontawesome|star' : 'fontawesome|star-o'}
+          name={this.props.video.isFavorite ? 'fontawesome|heart' : 'fontawesome|heart-o'}
           size={20}
           color='black'
           style={styles.star}
@@ -67,14 +67,7 @@ var styles = StyleSheet.create({
 
   star: {
     height: 40,
-    width: 40,
-    shadowColor: '#000000',
-    shadowRadius: 1,
-    shadowOpacity: 0.3,
-    shadowOffset: {
-      height: 1,
-      width: 0
-    }
+    width: 40
   }
 
 });

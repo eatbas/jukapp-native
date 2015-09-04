@@ -13,13 +13,13 @@ var routes = {
     component: FavoriteList,
     title: 'Favorites',
     titleComponent: <NavigatorTitle title={'Favorites'} />,
-    icon: 'fontawesome|star'
+    icon: 'fontawesome|heart'
   },
 
   room: {
     component: QueuedVideoList,
-    title: 'Room', // TODO: Should be the room name probably?
-    titleComponent: <NavigatorTitle title={'Room'} />,
+    title: 'Jukebox',
+    titleComponent: <NavigatorTitle title={'Jukebox'} />,
     icon: 'fontawesome|home',
     rightButton: <SearchButton onPress={() => Router.push('search', {})} />
   },

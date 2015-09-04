@@ -15,7 +15,7 @@ class SearchIcon extends Component {
       <Icon
         name='fontawesome|search'
         size={20}
-        color='black'
+        color='white'
         style={styles.headerRightButtonIcon}
       />
     );
