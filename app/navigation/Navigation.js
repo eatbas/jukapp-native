@@ -52,7 +52,7 @@ var NavigatorRouteMapper = {
           style={styles.leftButtonIcon}
           name='fontawesome|arrow-left'
           size={20}
-          color='black'
+          color='white'
         />
       </TouchableOpacity>
     );
@@ -207,7 +207,7 @@ var styles = StyleSheet.create({
   leftButtonIcon: {
     width: 20,
     height: 20,
-    color: 'black'
+    color: 'white'
   },
 
   navigatorScene: {
