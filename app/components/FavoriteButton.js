@@ -11,7 +11,8 @@ var {
   Component,
   StyleSheet,
   TouchableHighlight,
-  PropTypes
+  PropTypes,
+  View
 } = React;
 
 class FavoriteButton extends Component {
@@ -37,6 +38,11 @@ class FavoriteButton extends Component {
   }
 
   render() {
+
+    if (this.props.video.isFavorite == undefined) {
+      return (<View />);
+    }
+
     return (
       <TouchableHighlight
         underlayColor="#ebeeee"

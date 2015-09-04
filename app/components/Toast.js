@@ -10,7 +10,8 @@ var {
   View,
   Text,
   Animated,
-  Dimensions
+  Dimensions,
+  LayoutAnimation
 } = React;
 
 class Toast extends Component {

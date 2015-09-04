@@ -1,6 +1,7 @@
 var React = require('react-native');
 var JukappStore = require('../stores/JukappStore');
 var FavoriteButton = require('../components/FavoriteButton');
+var VideoDetails = require('./VideoDetails');
 
 var {
   Component,
@@ -13,12 +14,6 @@ var {
 } = React;
 
 class VideoListItem extends Component {
-  renderFavoriteButton() {
-    if (this.props.video.isFavorite != undefined) {
-      return(<FavoriteButton video={this.props.video} />);
-    }
-  }
-
   render() {
     var video = this.props.video;
     var playCount = 0;
@@ -29,17 +24,19 @@ class VideoListItem extends Component {
       if (videoEvent) playCount = videoEvent['play_count'];
     }
 
-    var image = { uri: 'http://img.youtube.com/vi/' + video.youtubeId + '/default.jpg' };
+    if (video.selected) {
+      return <VideoDetails onVideoQueued={this.props.onVideoQueued} video={video} />;
+    }
 
     var listItemContent = (
       <View style={styles.innerCell}>
-        <Image source={image} style={styles.videoImage}/>
+        <Image source={video.image} style={styles.videoImage}/>
 
         <View style={styles.rowData}>
           <Text style={styles.title}>{video.title}</Text>
           <Text style={styles.details}>{playCount} VIEWS</Text>
         </View>
-        {this.renderFavoriteButton()}
+        <FavoriteButton video={this.props.video} />
       </View>
     );
 
@@ -51,9 +48,9 @@ class VideoListItem extends Component {
       );
     } else {
       return (
-        <View style={styles.outerCell}>
+        <TouchableHighlight underlayColor='#CFD6D6' onPress={this.props.onPress} style={styles.outerCell}>
           {listItemContent}
-        </View>
+        </TouchableHighlight>
       );
     }
   }
@@ -61,6 +58,7 @@ class VideoListItem extends Component {
 
 VideoListItem.propTypes = {
   onPress: PropTypes.func,
+  onVideoQueued: PropTypes.func.isRequired,
   video: PropTypes.object.isRequired
 };
 
