@@ -1,5 +1,5 @@
 var React = require('react-native');
-var VideoListItem = require('../components/VideoListItem');
+var VideoListItem = require('./VideoListItem');
 var Dispatcher = require('../../Dispatcher');
 var JukappApi = require('../JukappApi');
 var JukappStore = require('../stores/JukappStore');
@@ -60,7 +60,7 @@ class VideoList extends Component {
   }
 
   _generateVideoRows(videos, favorites) {
-    return videos.map((video) => {
+    var videos = videos.map((video, index) => {
       var isFavorite;
       if (this.state.loggedIn) {
         isFavorite = !!favorites.find((favorite) => {
@@ -72,26 +72,39 @@ class VideoList extends Component {
         isFavorite,
         title: video.title,
         youtubeId: video.youtube_id,
-        videoEvents: video.video_events
+        videoEvents: video.video_events,
+        image: { uri: 'http://img.youtube.com/vi/' + video.youtube_id + '/hqdefault.jpg' },
+        selected: this.selectedRow == index
       };
     });
+
+    return videos;
   }
 
-  _onPress(video) {
+  _onVideoQueued(video) {
     JukappApi.queueVideo(video)
       .done(() => {
         Router._toast.flash('Added', 'fontawesome|check');
       });
   }
 
-  _renderRow(video) {
+  _onPress(rowId) {
+    this.selectedRow = rowId;
+    this.setState({
+      dataSource: this.state.dataSource.cloneWithRows(this._generateVideoRows(this.props.videos, JukappStore.getFavorites()))
+    });
+  }
+
+  _renderRow(video, sectionId, rowId) {
     var listItemProps = {video};
 
     if (this.props.action) {
-      listItemProps.onPress = () => this._onPress(video);
+      listItemProps.onPress = () => this._onVideoQueued(video);
+    } else {
+      listItemProps.onPress = () => this._onPress(rowId);
     }
 
-    return <VideoListItem {...listItemProps} />;
+    return <VideoListItem onVideoQueued={this._onVideoQueued.bind(this)} {...listItemProps} />;
   }
 
   _renderFooter() {

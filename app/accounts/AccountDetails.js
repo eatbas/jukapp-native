@@ -2,7 +2,6 @@ var React = require('react-native');
 var JukappStore = require('../stores/JukappStore');
 var Dispatcher = require('../../Dispatcher');
 var Login = require('./Login');
-var Dispatcher = require('../../Dispatcher');
 var JukappStorage = require('../../JukappStorage');
 
 var {
