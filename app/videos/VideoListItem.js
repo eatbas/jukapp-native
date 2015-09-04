@@ -14,12 +14,6 @@ var {
 } = React;
 
 class VideoListItem extends Component {
-  renderFavoriteButton() {
-    if (this.props.video.isFavorite != undefined) {
-      return(<FavoriteButton video={this.props.video} />);
-    }
-  }
-
   render() {
     var video = this.props.video;
     var playCount = 0;
@@ -42,7 +36,7 @@ class VideoListItem extends Component {
           <Text style={styles.title}>{video.title}</Text>
           <Text style={styles.details}>{playCount} VIEWS</Text>
         </View>
-        {this.renderFavoriteButton()}
+        <FavoriteButton video={this.props.video} />
       </View>
     );
 
