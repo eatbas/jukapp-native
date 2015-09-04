@@ -7,7 +7,6 @@ var QueuedVideoList = require('../queued_videos/QueuedVideoList');
 var SearchButton = require('../components/SearchButton');
 var NavigatorTitle = require('./NavigatorTitle');
 var SearchInput = require('../videos/SearchInput');
-var VideoDetails = require('../videos/VideoDetails');
 
 var routes = {
   favorites: {

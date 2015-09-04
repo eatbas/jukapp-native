@@ -29,18 +29,22 @@ class VideoDetails extends Component {
 
     return (
       <View style={styles.container} >
-        <Image source={video.image} style={styles.videoImage}/>
-        <View style={styles.videoDescription}>
-          <Text style={styles.videoTitle}>{video.title}</Text>
-          <Text style={styles.videoSubtitle}>{playCount} VIEWS</Text>
-        </View>
-        <View style={styles.actionContainer}>
-          <TouchableHighlight underlayColor='#E0E0E0' onPress={() => this.props.onVideoQueued(video)}>
-            <Text style={styles.actionText}>PLAY</Text>
-          </TouchableHighlight>
-          <TouchableHighlight underlayColor='#E0E0E0'>
-            <Text style={styles.actionText}>FAVORITE</Text>
-          </TouchableHighlight>
+        <View style={styles.card} >
+          <View style={styles.imageContainer}>
+            <Image source={video.image} style={styles.videoImage}/>
+          </View>
+          <View style={styles.videoDescription}>
+            <Text style={styles.videoTitle}>{video.title}</Text>
+            <Text style={styles.videoSubtitle}>{playCount} VIEWS</Text>
+          </View>
+          <View style={styles.actionContainer}>
+            <TouchableHighlight underlayColor='#E0E0E0' onPress={() => this.props.onVideoQueued(video)}>
+              <Text style={styles.actionText}>PLAY</Text>
+            </TouchableHighlight>
+            <TouchableHighlight underlayColor='#E0E0E0'>
+              <Text style={styles.actionText}>FAVORITE</Text>
+            </TouchableHighlight>
+          </View>
         </View>
       </View>
     );
@@ -54,47 +58,55 @@ VideoDetails.propTypes = {
 
 var styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: 'white',
     margin: CARD_MARGIN,
     shadowColor: '#000000',
-    shadowRadius: 2,
-    shadowOpacity: 0.5,
+    shadowRadius: 1,
+    shadowOpacity: 0.87,
     shadowOffset: {
       height: 1,
       width: 0
     },
-    borderRadius: 4,
+    borderRadius: 6,
+  },
+
+  card : {
+    backgroundColor: 'white',
+    borderRadius: 6,
     overflow: 'hidden'
   },
 
   videoDescription: {
     margin: 16,
     marginTop: 24,
-    marginBottom: 8
+    marginBottom: 8,
+    overflow: 'hidden'
   },
 
   videoTitle: {
     marginBottom: 16,
     fontSize: 24,
-    opacity: 0.87
+    opacity: 0.87,
+    overflow: 'hidden'
   },
 
   videoSubtitle: {
     fontSize: 14,
-    opacity: 0.54
+    opacity: 0.54,
+    overflow: 'hidden'
   },
 
   actionContainer: {
     flexDirection: 'row',
-    margin: 8
+    margin: 8,
+    overflow: 'hidden'
   },
 
   actionText: {
     padding: 8,
     color: '#33ADFF',
     opacity: 0.87,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    overflow: 'hidden'
   },
 
   videoImage: {

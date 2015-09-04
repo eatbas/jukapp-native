@@ -5,7 +5,8 @@ var JukappApi = require('../JukappApi');
 var VideoList = require('../videos/VideoList');
 
 var {
-  Component
+  Component,
+  LayoutAnimation
 } = React;
 
 class QueuedVideoList extends Component {

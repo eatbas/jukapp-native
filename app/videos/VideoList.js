@@ -10,7 +10,8 @@ var {
   StyleSheet,
   PropTypes,
   ListView,
-  ActivityIndicatorIOS
+  ActivityIndicatorIOS,
+  LayoutAnimation
 } = React;
 
 class VideoList extends Component {
@@ -30,6 +31,7 @@ class VideoList extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    LayoutAnimation.easeInEaseOut();
     this.setState({
       dataSource: this.state.dataSource.cloneWithRows(this._generateVideoRows(nextProps.videos, JukappStore.getFavorites()))
     });
@@ -89,6 +91,7 @@ class VideoList extends Component {
   }
 
   _onPress(rowId) {
+    LayoutAnimation.easeInEaseOut();
     this.selectedRow = rowId;
     this.setState({
       dataSource: this.state.dataSource.cloneWithRows(this._generateVideoRows(this.props.videos, JukappStore.getFavorites()))
