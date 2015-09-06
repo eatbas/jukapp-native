@@ -2,7 +2,8 @@ var React = require('react-native');
 var JukappStore = require('./stores/JukappStore');
 var EventSource = require('NativeModules').RNEventSource;
 
-var JUKAPP_URL = 'https://jukapp-api.herokuapp.com';
+// var JUKAPP_URL = 'http://beta.jukapp.io';
+var JUKAPP_URL = 'http://localhost:3000';
 
 var {
   AlertIOS,
@@ -44,6 +45,16 @@ var JukappApi = {
     return options;
   },
 
+  putOptions(body) {
+    var options = this.defaultOptions();
+
+    options.method = 'PUT';
+    options.body = body;
+
+    return options;
+  },
+
+
   deleteOptions(body) {
     var options = this.defaultOptions();
 
@@ -81,9 +92,9 @@ var JukappApi = {
   },
 
   queueVideo(video) {
-    var options = this.postOptions(this.videoOptions(video));
+    var options = this.putOptions();
 
-    return this.fetch('/queue', options)
+    return this.fetch(`/videos/${video.youtubeId}/queue`, options)
       .then((response) => {
         if (response.status == 201) {
           console.log('Successfully queued video');
@@ -124,9 +135,10 @@ var JukappApi = {
   },
 
   fetchQueuedVideos() {
-    return this.fetchJson('/queued_videos')
+    return this.fetchJson('/jukebox')
       .then((responseData) => {
-        return responseData.map((queueVideoData) => queueVideoData.video);
+        console.log('[QueuedVideos]', responseData);
+        return responseData.map((queueVideoData) => queueVideoData.youtube_video);
       })
       .catch((response) => {
         console.log('Queued videos error', response);
@@ -144,7 +156,8 @@ var JukappApi = {
 
     return this.fetchJson('/favorites')
       .then((responseData) => {
-        return responseData.map((favoriteData) => favoriteData.video);
+        console.log('[Favorites]', responseData);
+        return responseData.map((favoriteData) => favoriteData.youtube_video);
       })
       .catch((response) => {
         console.log('Favorites error', response);
@@ -182,9 +195,9 @@ var JukappApi = {
   },
 
   unfavoriteVideo(video) {
-    var options = this.deleteOptions(this.videoOptions(video));
+    var options = this.deleteOptions();
 
-    return this.fetch('/favorites', options)
+    return this.fetch(`/favorites/${video.youtubeId}`, options)
       .then((response) => {
         if (response.status == 200) {
           console.log('Successfully unfavorited video');
