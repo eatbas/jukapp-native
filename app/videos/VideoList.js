@@ -70,9 +70,9 @@ class VideoList extends Component {
 
       return {
         isFavorite,
-        title: video.title,
+        title: video.youtube_video.title,
         youtubeId: video.youtube_id,
-        videoEvents: video.video_events
+        playCount: video.play_count
       };
     });
   }

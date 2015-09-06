@@ -21,14 +21,6 @@ class VideoListItem extends Component {
 
   render() {
     var video = this.props.video;
-    var playCount = 0;
-
-    // TODO remove this
-    if (video.videoEvents) {
-      var videoEvent = video.videoEvents.find((events) => events['room_id'] == JukappStore.currentRoom().id);
-      if (videoEvent) playCount = videoEvent['play_count'];
-    }
-
     var image = { uri: 'http://img.youtube.com/vi/' + video.youtubeId + '/default.jpg' };
 
     var listItemContent = (
@@ -37,7 +29,7 @@ class VideoListItem extends Component {
 
         <View style={styles.rowData}>
           <Text style={styles.title}>{video.title}</Text>
-          <Text style={styles.details}>{playCount} VIEWS</Text>
+          <Text style={styles.details}>{video.playCount} VIEWS</Text>
         </View>
         {this.renderFavoriteButton()}
       </View>

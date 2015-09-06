@@ -37,6 +37,7 @@ class SearchResultsList extends Component {
     this.setState({loading: true});
     JukappApi.searchVideo(query)
       .done((searchResults) => {
+        console.log('[SearchResponse]', searchResults);
         Dispatcher.dispatch({
           type: 'loadSearchResults',
           searchResults

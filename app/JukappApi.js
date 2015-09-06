@@ -135,15 +135,7 @@ var JukappApi = {
   },
 
   fetchQueuedVideos() {
-    return this.fetchJson('/jukebox')
-      .then((responseData) => {
-        console.log('[QueuedVideos]', responseData);
-        return responseData.map((queueVideoData) => queueVideoData.youtube_video);
-      })
-      .catch((response) => {
-        console.log('Queued videos error', response);
-        AlertIOS.alert('Queued videos error' + response);
-      });
+    return this.fetchJson('/jukebox');
   },
 
   fetchFavorites() {
@@ -157,7 +149,7 @@ var JukappApi = {
     return this.fetchJson('/favorites')
       .then((responseData) => {
         console.log('[Favorites]', responseData);
-        return responseData.map((favoriteData) => favoriteData.youtube_video);
+        return responseData.map((favoriteData) => favoriteData.video);
       })
       .catch((response) => {
         console.log('Favorites error', response);
