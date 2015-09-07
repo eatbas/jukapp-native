@@ -87,13 +87,14 @@ var JukappApi = {
   },
 
   fetchQueuedVideos() {
-    return this.fetchJson('/jukebox')
+    return this.fetchJson('/videos?type=playlist')
       .then((responseData) => {
         return responseData.map((videoData) => {
           return {
             youtubeId: videoData.youtube_id,
             title: videoData.youtube_video.title,
-            playCount: videoData.play_count
+            playCount: videoData.play_count,
+            status: videoData.status
           };
         });
       });

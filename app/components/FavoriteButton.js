@@ -45,7 +45,7 @@ class FavoriteButton extends Component {
         <Icon
           name={this.props.video.isFavorite ? 'fontawesome|heart' : 'fontawesome|heart-o'}
           size={20}
-          color='black'
+          color='#FF5722'
           style={styles.star}
         />
       </TouchableHighlight>

@@ -5,7 +5,9 @@ var JukappApi = require('../JukappApi');
 var VideoList = require('../videos/VideoList');
 
 var {
-  Component
+  Component,
+  View,
+  Text
 } = React;
 
 class QueuedVideoList extends Component {
@@ -51,11 +53,33 @@ class QueuedVideoList extends Component {
   }
 
   render() {
+    var videos = JukappStore.getQueuedVideos();
+    var playing = videos.find((v) => v.status == 'playing');
+    console.log(videos, playing);
+
+    if (playing) {
+      var nowPlayingTile = (
+        <View style={{
+          marginTop: 20,
+          height: 128,
+          backgroundColor: 'white'
+        }}>
+          <Text style={{color: 'black', fontSize: 32}}>
+            {playing.title}
+          </Text>
+        </View>
+      );
+    }
+
     return (
-      <VideoList
-        videos={JukappStore.getQueuedVideos()}
-        loading={this.state.loading}
-      />
+      <View style={{flex: 1}}>
+        {nowPlayingTile}
+        <VideoList
+          videos={JukappStore.getQueuedVideos()}
+          loading={this.state.loading}
+          automaticallyAdjustContentInsets={!playing}
+        />
+      </View>
     );
   }
 }
