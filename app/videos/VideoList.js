@@ -64,15 +64,15 @@ class VideoList extends Component {
       var isFavorite;
       if (this.state.loggedIn) {
         isFavorite = !!favorites.find((favorite) => {
-          return favorite.youtube_id == video.youtube_id;
+          return favorite.youtubeId == video.youtubeId;
         });
       }
 
       return {
         isFavorite,
         title: video.title,
-        youtubeId: video.youtube_id,
-        videoEvents: video.video_events
+        youtubeId: video.youtubeId,
+        playCount: video.playCount
       };
     });
   }
