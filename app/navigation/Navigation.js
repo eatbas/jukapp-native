@@ -25,7 +25,7 @@ var {
 
 Router.routes = routes;
 StatusBarIOS.setStyle('light-content');
-var mainRoutes = ['room', 'favorites', 'account'];
+var mainRoutes = ['jukebox', 'account'];
 
 var NavigatorRouteMapper = {
   Title({route}) {
@@ -67,14 +67,14 @@ class Navigation extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {selectedScene: 'room'};
+    this.state = {selectedScene: 'jukebox'};
   }
 
-  _renderScene({route, params}, nav) {
+  _renderScene({route, params}) {
     var ChildComponent = route.component;
 
     var setRef = (ref) => {
-      nav._currentComponent = ref;
+      Router._currentComponent = ref;
     };
 
     return <ChildComponent ref={setRef} {...params}/>;
@@ -88,31 +88,21 @@ class Navigation extends Component {
     Router.sideMenu = menu;
   }
 
-  _renderMainRoutes() {
-    return mainRoutes.map((routeName) => {
-      return this._renderMainRoute(routeName);
-    });
-  }
-
-  _renderMainRoute(routeName) {
-    var route = routes[routeName];
+  _renderSelectedScene() {
+    var route = routes[this.state.selectedScene];
     var params = {};
 
-    if (this.state.selectedScene === routeName) {
-      return (
-        <Navigator
-          ref={this._setCurrentNavigator.bind(this)}
-          key={routeName}
-          initialRoute={{route, params}}
-          renderScene={this._renderScene.bind(this)}
-          navigationBar={<NavigationBar routeMapper={NavigatorRouteMapper} style={styles.navigatorBar} />}
-          sceneStyle={styles.navigatorScene}
-          configureScene={() => Navigator.SceneConfigs.HorizontalSwipeJump}
-        />
-      );
-    } else {
-      return <View key={routeName}/>;
-    }
+    return (
+      <Navigator
+        key={this.state.selectedScene}
+        ref={this._setCurrentNavigator.bind(this)}
+        initialRoute={{route, params}}
+        renderScene={this._renderScene.bind(this)}
+        navigationBar={<NavigationBar routeMapper={NavigatorRouteMapper} style={styles.navigatorBar} />}
+        sceneStyle={styles.navigatorScene}
+        configureScene={() => Navigator.SceneConfigs.HorizontalSwipeJump}
+      />
+    );
   }
 
   _sceneChanged(routeName) {
@@ -129,7 +119,6 @@ class Navigation extends Component {
         ref={this._setSideMenu.bind(this)}
         menu={
           <MenuList
-            navigator={this.refs.nav}
             onSceneChanged={this._sceneChanged.bind(this)}
             mainRoutes={mainRoutes}
           />
@@ -137,7 +126,7 @@ class Navigation extends Component {
         touchToClose={true}
       >
         <View style={styles.shadow} >
-          {this._renderMainRoutes()}
+          {this._renderSelectedScene()}
           <Toast ref={(component) => Router._toast = component} />
         </View>
       </SideMenu>
@@ -213,7 +202,7 @@ var styles = StyleSheet.create({
   navigatorScene: {
     position: 'absolute',
     left: 0,
-    top: NavigationBar.Styles.General.NavBarHeight,
+    top: 40,
     right: 0,
     bottom: 0
   }

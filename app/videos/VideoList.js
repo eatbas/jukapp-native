@@ -50,6 +50,7 @@ class VideoList extends Component {
 
   _onChange() {
     if (!this.state.loggedIn && JukappStore.loggedIn()) {
+      console.log('[TODO] Loading favorites because logged in');
       this.fetchData();
     }
 
@@ -108,6 +109,7 @@ class VideoList extends Component {
         dataSource={this.state.dataSource}
         renderRow={this._renderRow.bind(this)}
         renderFooter={this._renderFooter.bind(this)}
+        automaticallyAdjustContentInsets={this.props.automaticallyAdjustContentInsets}
       />
     );
   }
@@ -115,6 +117,7 @@ class VideoList extends Component {
 
 VideoList.propTypes = {
   action: PropTypes.bool,
+  automaticallyAdjustContentInsets: PropTypes.bool,
   loading: PropTypes.bool,
   videos: PropTypes.array.isRequired
 };

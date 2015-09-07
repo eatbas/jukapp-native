@@ -6,6 +6,7 @@ var favorites = [];
 var rooms = [];
 var searchResults = [];
 var queuedVideos = [];
+var popularVideos = [];
 
 var JukappStore = new Store((register: Function) => {
   register({
@@ -31,6 +32,10 @@ var JukappStore = new Store((register: Function) => {
 
     loadQueuedVideos(action) {
       queuedVideos = action.queuedVideos;
+    },
+
+    loadPopularVideos(action) {
+      popularVideos = action.popularVideos;
     },
 
     loadFavorites(action) {
@@ -69,6 +74,10 @@ var JukappStore = new Store((register: Function) => {
 
     getQueuedVideos() {
       return queuedVideos;
+    },
+
+    getPopularVideos() {
+      return popularVideos;
     },
 
     getFavorites() {

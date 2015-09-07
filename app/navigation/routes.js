@@ -1,23 +1,15 @@
 var React = require('react-native');
 var Router = require('./Router');
 var SearchResultList = require('../videos/SearchResultList');
-var FavoriteList = require('../favorites/FavoriteList');
 var AccountDetails = require('../accounts/AccountDetails');
-var QueuedVideoList = require('../queued_videos/QueuedVideoList');
+var Jukebox = require('../jukebox/Jukebox');
 var SearchButton = require('../components/SearchButton');
 var NavigatorTitle = require('./NavigatorTitle');
 var SearchInput = require('../videos/SearchInput');
 
 var routes = {
-  favorites: {
-    component: FavoriteList,
-    title: 'Favorites',
-    titleComponent: <NavigatorTitle title={'Favorites'} />,
-    icon: 'fontawesome|heart'
-  },
-
-  room: {
-    component: QueuedVideoList,
+  jukebox: {
+    component: Jukebox,
     title: 'Jukebox',
     titleComponent: <NavigatorTitle title={'Jukebox'} />,
     icon: 'fontawesome|home',

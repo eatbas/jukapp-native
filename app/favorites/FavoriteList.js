@@ -29,6 +29,7 @@ class FavoriteList extends Component {
   }
 
   fetchData() {
+    console.log('[FavoriteList] fetching favorites');
     JukappApi.fetchFavorites().done((favorites) => {
       Dispatcher.dispatch({
         type: 'loadFavorites',
@@ -54,6 +55,7 @@ class FavoriteList extends Component {
         videos={JukappStore.getFavorites()}
         loading={this.state.loading}
         action={true}
+        automaticallyAdjustContentInsets={false}
       />
     );
   }
