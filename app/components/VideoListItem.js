@@ -29,7 +29,7 @@ class VideoListItem extends Component {
     var listItemContent = (
       <View style={styles.outerCell}>
         <View style={styles.heading}>
-          <Text style={styles.title} numberOfLines='1'>{video.title}</Text>
+          <Text style={styles.title} numberOfLines={1}>{video.title}</Text>
           <Text style={styles.subtitle}>20m</Text>
         </View>
         <View style={styles.innerCell}>
@@ -102,7 +102,9 @@ var styles = StyleSheet.create({
   heading: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
   },
 
   innerCell: {
@@ -126,9 +128,8 @@ var styles = StyleSheet.create({
   title: {
     flex: 1,
     color: '#212121',
-    fontSize: 18,
+    fontSize: 15,
     textAlign: 'left',
-    paddingBottom: 8,
     paddingRight: 16
   },
 
@@ -140,6 +141,7 @@ var styles = StyleSheet.create({
 
   subtitle: {
     width: 30,
+    fontSize: 12,
     color: '#727272'
   },
 

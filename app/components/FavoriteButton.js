@@ -10,7 +10,7 @@ var {
 var {
   Component,
   StyleSheet,
-  TouchableHighlight,
+  TouchableOpacity,
   PropTypes
 } = React;
 
@@ -38,7 +38,7 @@ class FavoriteButton extends Component {
 
   render() {
     return (
-      <TouchableHighlight
+      <TouchableOpacity
         underlayColor="#ebeeee"
         style={styles.secondaryButton}
         onPress={this._onFavoriteToggled.bind(this)}>
@@ -48,7 +48,7 @@ class FavoriteButton extends Component {
           color='#FF5722'
           style={styles.star}
         />
-      </TouchableHighlight>
+      </TouchableOpacity>
     );
   }
 }
@@ -61,13 +61,12 @@ var styles = StyleSheet.create({
 
   secondaryButton: {
     justifyContent: 'center',
-    marginTop: 16,
-    marginBottom: 16
+    alignSelf: 'center'
   },
 
   star: {
-    height: 40,
-    width: 40
+    height: 20,
+    width: 20
   }
 
 });

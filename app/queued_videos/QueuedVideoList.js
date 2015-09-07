@@ -7,7 +7,8 @@ var VideoList = require('../videos/VideoList');
 var {
   Component,
   View,
-  Text
+  Text,
+  ScrollView
 } = React;
 
 class QueuedVideoList extends Component {
@@ -55,7 +56,7 @@ class QueuedVideoList extends Component {
   render() {
     var videos = JukappStore.getQueuedVideos();
     var playing = videos.find((v) => v.status == 'playing');
-    console.log(videos, playing);
+    // console.log(videos, playing);
 
     if (playing) {
       var nowPlayingTile = (
@@ -72,14 +73,14 @@ class QueuedVideoList extends Component {
     }
 
     return (
-      <View style={{flex: 1}}>
+      <ScrollView style={{flex: 1, backgroundColor: '#EEF2F2'}} automaticallyAdjustContentInsets={false}>
         {nowPlayingTile}
         <VideoList
           videos={JukappStore.getQueuedVideos()}
           loading={this.state.loading}
           automaticallyAdjustContentInsets={!playing}
         />
-      </View>
+      </ScrollView>
     );
   }
 }

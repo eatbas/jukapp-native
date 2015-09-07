@@ -124,7 +124,14 @@ VideoList.propTypes = {
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EEF2F2'
+    backgroundColor: '#EEF2F2',
+    shadowColor: '#000000',
+    shadowRadius: 2,
+    shadowOpacity: 0.5,
+    shadowOffset: {
+      height: 1,
+      width: 0
+    },
   },
 
   listViewContent: {
