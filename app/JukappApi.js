@@ -2,8 +2,7 @@ var React = require('react-native');
 var JukappStore = require('./stores/JukappStore');
 var EventSource = require('NativeModules').RNEventSource;
 
-// var JUKAPP_URL = 'http://beta.jukapp.io';
-var JUKAPP_URL = 'http://localhost:3000';
+var JUKAPP_URL = 'http://beta.jukapp.io';
 
 var {
   AlertIOS,
@@ -87,6 +86,19 @@ var JukappApi = {
     return this.fetchJson('/rooms/' + roomId + '/join');
   },
 
+  fetchQueuedVideos() {
+    return this.fetchJson('/jukebox')
+      .then((responseData) => {
+        return responseData.map((videoData) => {
+          return {
+            youtubeId: videoData.youtube_id,
+            title: videoData.youtube_video.title,
+            playCount: videoData.play_count
+          };
+        });
+      });
+  },
+
   searchVideo(query) {
     return this.fetchJson('/search?query=' + query)
       .then((responseData) => {
@@ -98,22 +110,11 @@ var JukappApi = {
 
           if (youtubeVideoData.video){
             video.playCount = youtubeVideoData.video.play_count;
+          } else {
+            video.playCount = 0;
           }
 
           return video;
-        });
-      });
-  },
-
-  fetchQueuedVideos() {
-    return this.fetchJson('/jukebox')
-      .then((responseData) => {
-        return responseData.map((videoData) => {
-          return {
-            youtubeId: videoData.youtube_id,
-            title: videoData.youtube_video.title,
-            playCount: videoData.play_count
-          };
         });
       });
   },
@@ -130,11 +131,18 @@ var JukappApi = {
       .then((responseData) => {
         console.log('[Favorites]', responseData);
         return responseData.map((favoriteData) => {
-          return {
+          var video = {
             youtubeId: favoriteData.youtube_id,
-            title: favoriteData.youtube_video.title,
-            playCount: favoriteData.video.play_count
+            title: favoriteData.youtube_video.title
           };
+
+          if (favoriteData.video){
+            video.playCount = favoriteData.video.play_count;
+          } else {
+            video.playCount = 0;
+          }
+
+          return video;
         });
       })
       .catch((response) => {
