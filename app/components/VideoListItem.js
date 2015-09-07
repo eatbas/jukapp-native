@@ -1,5 +1,4 @@
 var React = require('react-native');
-var JukappStore = require('../stores/JukappStore');
 var FavoriteButton = require('../components/FavoriteButton');
 
 var {

@@ -88,7 +88,59 @@ var JukappApi = {
   },
 
   searchVideo(query) {
-    return this.fetchJson('/search?query=' + query);
+    return this.fetchJson('/search?query=' + query)
+      .then((responseData) => {
+        return responseData.map((youtubeVideoData) => {
+          var video = {
+            youtubeId: youtubeVideoData.youtube_id,
+            title: youtubeVideoData.title
+          };
+
+          if (youtubeVideoData.video){
+            video.playCount = youtubeVideoData.video.play_count;
+          }
+
+          return video;
+        });
+      });
+  },
+
+  fetchQueuedVideos() {
+    return this.fetchJson('/jukebox')
+      .then((responseData) => {
+        return responseData.map((videoData) => {
+          return {
+            youtubeId: videoData.youtube_id,
+            title: videoData.youtube_video.title,
+            playCount: videoData.play_count
+          };
+        });
+      });
+  },
+
+  fetchFavorites() {
+    if (!JukappStore.loggedIn()) {
+      console.log('[WARNING] fetchFavorites when not logged in');
+      return new Promise((fulfill) => {
+        fulfill([]);
+      });
+    }
+
+    return this.fetchJson('/favorites')
+      .then((responseData) => {
+        console.log('[Favorites]', responseData);
+        return responseData.map((favoriteData) => {
+          return {
+            youtubeId: favoriteData.youtube_id,
+            title: favoriteData.youtube_video.title,
+            playCount: favoriteData.video.play_count
+          };
+        });
+      })
+      .catch((response) => {
+        console.log('Favorites error', response);
+        AlertIOS.alert('Favorites error' + response);
+      });
   },
 
   queueVideo(video) {
@@ -105,55 +157,6 @@ var JukappApi = {
       .catch((response) => {
         console.log('Queue error', response);
         AlertIOS.alert('Queue error' + response);
-      });
-  },
-
-  login(username, password) {
-    var user = JSON.stringify({
-      user: {username, password}
-    });
-
-    var options = this.postOptions(user);
-
-    return this.fetch('/users/sign_in', options)
-      .then((response) => {
-        if (response.status == 201) {
-          console.log('Successfully logged in');
-          return response.json();
-        } else {
-          console.log('Could not log in');
-          // test this case
-          return Promise.reject(new Error);
-        }
-      })
-      .then((userData) => {
-        return {
-          username: userData.username,
-          authToken: userData.authentication_token
-        };
-      });
-  },
-
-  fetchQueuedVideos() {
-    return this.fetchJson('/jukebox');
-  },
-
-  fetchFavorites() {
-    if (!JukappStore.loggedIn()) {
-      console.log('[WARNING] fetchFavorites when not logged in');
-      return new Promise((fulfill) => {
-        fulfill([]);
-      });
-    }
-
-    return this.fetchJson('/favorites')
-      .then((responseData) => {
-        console.log('[Favorites]', responseData);
-        return responseData.map((favoriteData) => favoriteData.video);
-      })
-      .catch((response) => {
-        console.log('Favorites error', response);
-        AlertIOS.alert('Favorites error' + response);
       });
   },
 
@@ -200,6 +203,32 @@ var JukappApi = {
       .catch((response) => {
         console.log('Favorites error', response);
         AlertIOS.alert('Favorites error' + response);
+      });
+  },
+
+  login(username, password) {
+    var user = JSON.stringify({
+      user: {username, password}
+    });
+
+    var options = this.postOptions(user);
+
+    return this.fetch('/users/sign_in', options)
+      .then((response) => {
+        if (response.status == 201) {
+          console.log('Successfully logged in');
+          return response.json();
+        } else {
+          console.log('Could not log in');
+          // test this case
+          return Promise.reject(new Error);
+        }
+      })
+      .then((userData) => {
+        return {
+          username: userData.username,
+          authToken: userData.authentication_token
+        };
       });
   },
 
