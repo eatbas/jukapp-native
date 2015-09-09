@@ -94,7 +94,8 @@ var JukappApi = {
             youtubeId: videoData.youtube_id,
             title: videoData.youtube_video.title,
             playCount: videoData.play_count,
-            status: videoData.status
+            status: videoData.status,
+            thumbnail: { uri: 'http://img.youtube.com/vi/' + videoData.youtube_id + '/hqdefault.jpg' }
           };
         });
       });
@@ -106,7 +107,8 @@ var JukappApi = {
         return responseData.map((youtubeVideoData) => {
           var video = {
             youtubeId: youtubeVideoData.youtube_id,
-            title: youtubeVideoData.title
+            title: youtubeVideoData.title,
+            thumbnail: { uri: 'http://img.youtube.com/vi/' + youtubeVideoData.youtube_id + '/hqdefault.jpg' }
           };
 
           if (youtubeVideoData.video){
@@ -134,7 +136,8 @@ var JukappApi = {
         return responseData.map((favoriteData) => {
           var video = {
             youtubeId: favoriteData.youtube_id,
-            title: favoriteData.youtube_video.title
+            title: favoriteData.youtube_video.title,
+            thumbnail: { uri: 'http://img.youtube.com/vi/' + favoriteData.youtube_id + '/hqdefault.jpg' }
           };
 
           if (favoriteData.video){

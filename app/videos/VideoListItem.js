@@ -16,53 +16,46 @@ var {
 } = React;
 
 class VideoListItem extends Component {
-  renderFavoriteButton() {
-    if (this.props.video.isFavorite != undefined) {
-      return(<FavoriteButton video={this.props.video} />);
-    }
-  }
-
   render() {
     var video = this.props.video;
-    var image = { uri: 'http://img.youtube.com/vi/' + video.youtubeId + '/default.jpg' };
 
     var listItemContent = (
-      <View style={styles.outerCell}>
+      <View style={styles.container}>
         <View style={styles.heading}>
           <Text style={styles.title} numberOfLines={1}>{video.title}</Text>
           <Text style={styles.subtitle}>20m</Text>
         </View>
-        <View style={styles.innerCell}>
-          <Image source={image} style={styles.videoImage}/>
-          <View style={styles.rowData}>
-            <View style={styles.rowDetails}>
+        <View style={styles.content}>
+          <Image source={video.thumbnail} style={styles.thumbnail}/>
+          <View style={styles.details}>
+            <View style={styles.detailRow}>
               <Icon
                 name={'fontawesome|user'}
                 size={20}
-                color='#FF5722'
+                color='#FF7043'
                 style={styles.icon}
               />
-              <Text style={styles.details}>added by berk</Text>
+              <Text style={styles.subtitle}>added by berk</Text>
             </View>
-            <View style={styles.rowDetails}>
+            <View style={styles.detailRow}>
               <Icon
                 name={'fontawesome|eye'}
                 size={20}
-                color='#FF5722'
+                color='#FF7043'
                 style={styles.icon}
               />
-              <Text style={styles.details}>{video.playCount} views</Text>
+              <Text style={styles.subtitle}>{video.playCount} views</Text>
               <View style={{width: 16}}/>
               <Icon
                 name={'fontawesome|clock-o'}
                 size={20}
-                color='#FF5722'
+                color='#FF7043'
                 style={styles.icon}
               />
-              <Text style={styles.details}>3:40</Text>
+              <Text style={styles.subtitle}>3:40</Text>
             </View>
           </View>
-          {this.renderFavoriteButton()}
+          <FavoriteButton video={this.props.video} />
         </View>
       </View>
     );
@@ -85,7 +78,7 @@ VideoListItem.propTypes = {
 };
 
 var styles = StyleSheet.create({
-  outerCell: {
+  container: {
     backgroundColor: 'white',
     justifyContent: 'flex-start',
     shadowColor: '#000000',
@@ -96,7 +89,7 @@ var styles = StyleSheet.create({
       width: 0
     },
     padding: 16,
-    paddingBottom: 8
+    paddingTop: 8
   },
 
   heading: {
@@ -104,23 +97,25 @@ var styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 8
   },
 
-  innerCell: {
+  content: {
     flex: 1,
     flexDirection: 'row',
     height: 64
   },
 
-  rowData: {
+  details: {
     flexDirection: 'column',
-    paddingLeft: 16,
+    paddingLeft: 8,
     justifyContent: 'space-around',
-    flex: 1
+    flex: 1,
+    height: 64,
+    alignSelf: 'center'
   },
 
-  rowDetails: {
+  detailRow: {
     alignItems: 'center',
     flexDirection: 'row'
   },
@@ -140,21 +135,14 @@ var styles = StyleSheet.create({
   },
 
   subtitle: {
-    width: 30,
     fontSize: 12,
     color: '#727272'
   },
 
-  details: {
-    color: '#727272',
-    fontSize: 12,
-    textAlign: 'left'
-  },
-
-  videoImage: {
-    height: 45,
-    width: 80,
-    alignSelf: 'center',
+  thumbnail: {
+    height: 63,
+    width: 112,
+    alignSelf: 'center'
   }
 });
 

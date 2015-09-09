@@ -3,12 +3,20 @@ var Dispatcher = require('../../Dispatcher');
 var JukappStore = require('../stores/JukappStore');
 var JukappApi = require('../JukappApi');
 var VideoList = require('../videos/VideoList');
+var VideoListItem = require('../videos/VideoListItem');
+var PlayingVideoListItem = require('../videos/PlayingVideoListItem');
+
+var {
+  Icon
+} = require('react-native-icons');
 
 var {
   Component,
   View,
   Text,
-  ScrollView
+  ScrollView,
+  Image,
+  StyleSheet
 } = React;
 
 class QueuedVideoList extends Component {
@@ -53,34 +61,21 @@ class QueuedVideoList extends Component {
     });
   }
 
-  render() {
-    var videos = JukappStore.getQueuedVideos();
-    var playing = videos.find((v) => v.status == 'playing');
-    // console.log(videos, playing);
-
-    if (playing) {
-      var nowPlayingTile = (
-        <View style={{
-          marginTop: 20,
-          height: 128,
-          backgroundColor: 'white'
-        }}>
-          <Text style={{color: 'black', fontSize: 32}}>
-            {playing.title}
-          </Text>
-        </View>
-      );
+  _renderRow(video) {
+    if (video.status == 'playing') {
+      return <PlayingVideoListItem video={video} />;
+    } else {
+      return <VideoListItem video={video} />;
     }
+  }
 
+  render() {
     return (
-      <ScrollView style={{flex: 1, backgroundColor: '#EEF2F2'}} automaticallyAdjustContentInsets={false}>
-        {nowPlayingTile}
-        <VideoList
-          videos={JukappStore.getQueuedVideos()}
-          loading={this.state.loading}
-          automaticallyAdjustContentInsets={!playing}
-        />
-      </ScrollView>
+      <VideoList
+        videos={JukappStore.getQueuedVideos()}
+        loading={this.state.loading}
+        renderRow={this._renderRow.bind(this)}
+      />
     );
   }
 }

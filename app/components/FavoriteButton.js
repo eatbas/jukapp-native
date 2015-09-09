@@ -11,7 +11,8 @@ var {
   Component,
   StyleSheet,
   TouchableOpacity,
-  PropTypes
+  PropTypes,
+  View
 } = React;
 
 class FavoriteButton extends Component {
@@ -37,6 +38,10 @@ class FavoriteButton extends Component {
   }
 
   render() {
+    if (this.props.video.isFavorite == undefined) {
+      return (<View/>);
+    }
+
     return (
       <TouchableOpacity
         underlayColor="#ebeeee"
@@ -44,9 +49,9 @@ class FavoriteButton extends Component {
         onPress={this._onFavoriteToggled.bind(this)}>
         <Icon
           name={this.props.video.isFavorite ? 'fontawesome|heart' : 'fontawesome|heart-o'}
-          size={20}
-          color='#FF5722'
-          style={styles.star}
+          size={30}
+          color='#FF7043'
+          style={styles.icon}
         />
       </TouchableOpacity>
     );
@@ -64,9 +69,9 @@ var styles = StyleSheet.create({
     alignSelf: 'center'
   },
 
-  star: {
-    height: 20,
-    width: 20
+  icon: {
+    height: 30,
+    width: 30
   }
 
 });

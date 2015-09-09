@@ -1,5 +1,5 @@
 var React = require('react-native');
-var VideoListItem = require('../components/VideoListItem');
+var VideoListItem = require('./VideoListItem');
 var Dispatcher = require('../../Dispatcher');
 var JukappApi = require('../JukappApi');
 var JukappStore = require('../stores/JukappStore');
@@ -72,7 +72,9 @@ class VideoList extends Component {
         isFavorite,
         title: video.title,
         youtubeId: video.youtubeId,
-        playCount: video.playCount
+        playCount: video.playCount,
+        thumbnail: video.thumbnail,
+        status: video.status
       };
     });
   }
@@ -106,7 +108,7 @@ class VideoList extends Component {
         style={styles.container}
         contentContainerStyle={styles.listViewContent}
         dataSource={this.state.dataSource}
-        renderRow={this._renderRow.bind(this)}
+        renderRow={this.props.renderRow || this._renderRow.bind(this)}
         renderFooter={this._renderFooter.bind(this)}
         automaticallyAdjustContentInsets={this.props.automaticallyAdjustContentInsets}
       />
@@ -118,6 +120,7 @@ VideoList.propTypes = {
   action: PropTypes.bool,
   automaticallyAdjustContentInsets: PropTypes.bool,
   loading: PropTypes.bool,
+  renderRow: PropTypes.func,
   videos: PropTypes.array.isRequired
 };
 
@@ -131,7 +134,7 @@ var styles = StyleSheet.create({
     shadowOffset: {
       height: 1,
       width: 0
-    },
+    }
   },
 
   listViewContent: {
