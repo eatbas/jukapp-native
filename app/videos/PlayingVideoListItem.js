@@ -1,7 +1,6 @@
 var React = require('react-native');
 var FavoriteButton = require('../components/FavoriteButton');
 var ShareButton = require('../components/ShareButton');
-var ProgressBar = require('react-native-progress-bar');
 
 var {
   Icon
@@ -13,11 +12,8 @@ var {
   Text,
   View,
   Image,
-  PropTypes,
-  Dimensions
+  PropTypes
 } = React;
-
-var PROGRESS_BAR_WIDTH = Dimensions.get('window').width - 32;
 
 class PlayingVideoListItem extends Component {
   render() {
@@ -55,12 +51,6 @@ class PlayingVideoListItem extends Component {
             <FavoriteButton video={this.props.video} />
           </View>
         </View>
-        <ProgressBar
-          fillStyle={{backgroundColor: '#FF7043'}}
-          backgroundStyle={{backgroundColor: 'gray', borderRadius: 3}}
-          style={{marginTop: 10, width: PROGRESS_BAR_WIDTH}}
-          progress={0.5}
-        />
       </View>
     );
   }
