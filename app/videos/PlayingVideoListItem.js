@@ -1,6 +1,7 @@
 var React = require('react-native');
 var FavoriteButton = require('../components/FavoriteButton');
 var ShareButton = require('../components/ShareButton');
+var Slider = require('react-native-slider');
 
 var {
   Icon
@@ -51,6 +52,14 @@ class PlayingVideoListItem extends Component {
             <FavoriteButton video={this.props.video} />
           </View>
         </View>
+        <Slider
+          style={styles.slider_container}
+          trackStyle={styles.slider_track}
+          thumbStyle={styles.slider_thumb}
+          minimumTrackTintColor='#FF7043'
+          thumbTouchSize={{width: 0, height: 0}}
+          value={0.5}
+        />
       </View>
     );
   }
@@ -91,7 +100,7 @@ var styles = StyleSheet.create({
   content: {
     flex: 1,
     flexDirection: 'row',
-    height: 80
+    height: 85
   },
 
   details: {
@@ -131,6 +140,21 @@ var styles = StyleSheet.create({
     height: 72,
     width: 128,
     alignSelf: 'center'
+  },
+
+  slider_container: {
+    height: 20
+  },
+
+  slider_track: {
+    height: 5
+  },
+
+  slider_thumb: {
+    width: 14,
+    height: 14,
+    backgroundColor: '#3F51B5',
+    borderRadius: 7
   }
 });
 

@@ -4,7 +4,7 @@ var SearchIcon = require('./SearchIcon');
 var {
   Component,
   StyleSheet,
-  TouchableHighlight,
+  TouchableOpacity,
   View,
   PropTypes
 } = React;
@@ -14,7 +14,7 @@ class SearchButton extends Component {
 
     if (this.props.onPress) {
       return (
-        <TouchableHighlight
+        <TouchableOpacity
           underlayColor='#33ADFF'
           activeOpacity={0.3}
           onPress={this.props.onPress}
@@ -23,7 +23,7 @@ class SearchButton extends Component {
           <View>
             <SearchIcon />
           </View>
-        </TouchableHighlight>
+        </TouchableOpacity>
       );
     } else {
       return (
