@@ -77,7 +77,7 @@ var JukappStore = new Store((register: Function) => {
     },
 
     isFavorite(youtubeId) {
-      return favorites.find((favorite) => favorite.youtubeId == youtubeId);
+      return favorites.find((favorite) => favorite.details.youtube_id == youtubeId);
     }
   };
 });

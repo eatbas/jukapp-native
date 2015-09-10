@@ -19,14 +19,15 @@ var {
 class PlayingVideoListItem extends Component {
   render() {
     var video = this.props.video;
+    var thumbnail = { uri: 'http://img.youtube.com/vi/' + video.details.youtube_id + '/hqdefault.jpg' }
 
     return (
       <View style={styles.container}>
         <Text style={styles.title}>
-          {video.title}
+          {video.details.title}
         </Text>
         <View style={styles.content}>
-          <Image source={video.thumbnail} style={styles.thumbnail} />
+          <Image source={thumbnail} style={styles.thumbnail} />
           <View style={styles.details}>
             <View style={styles.detailRow}>
               <Icon
@@ -44,7 +45,7 @@ class PlayingVideoListItem extends Component {
                 color='#FF7043'
                 style={styles.icon}
               />
-              <Text style={styles.subtitle}>{video.playCount} views</Text>
+              <Text style={styles.subtitle}>{video.statistics.play_count} views</Text>
             </View>
           </View>
           <View style={styles.actions}>

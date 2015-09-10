@@ -31,7 +31,7 @@ class VideoList extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(this._generateVideoRows(nextProps.videos, JukappStore.getFavorites()))
+      dataSource: this.state.dataSource.cloneWithRows(nextProps.videos)
     });
   }
 
@@ -54,20 +54,8 @@ class VideoList extends Component {
     }
 
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(this._generateVideoRows(this.props.videos, JukappStore.getFavorites())),
+      dataSource: this.state.dataSource.cloneWithRows(this.props.videos),
       loggedIn: JukappStore.loggedIn()
-    });
-  }
-
-  _generateVideoRows(videos, favorites) {
-    return videos.map((video) => {
-      return {
-        title: video.title,
-        youtubeId: video.youtubeId,
-        playCount: video.playCount,
-        thumbnail: video.thumbnail,
-        status: video.status
-      };
     });
   }
 

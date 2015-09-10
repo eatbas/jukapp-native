@@ -18,15 +18,16 @@ var {
 class VideoListItem extends Component {
   render() {
     var video = this.props.video;
+    var thumbnail = { uri: 'http://img.youtube.com/vi/' + video.details.youtube_id + '/hqdefault.jpg' }
 
     var listItemContent = (
       <View style={styles.container}>
         <View style={styles.heading}>
-          <Text style={styles.title} numberOfLines={1}>{video.title}</Text>
+          <Text style={styles.title} numberOfLines={1}>{video.details.title}</Text>
           <Text style={styles.subtitle}>20m</Text>
         </View>
         <View style={styles.content}>
-          <Image source={video.thumbnail} style={styles.thumbnail}/>
+          <Image source={thumbnail} style={styles.thumbnail}/>
           <View style={styles.details}>
             <View style={styles.detailRow}>
               <Icon
@@ -44,7 +45,7 @@ class VideoListItem extends Component {
                 color='#FF7043'
                 style={styles.icon}
               />
-              <Text style={styles.subtitle}>{video.playCount} views</Text>
+              <Text style={styles.subtitle}>{video.statistics.play_count} views</Text>
               <View style={{width: 16}}/>
               <Icon
                 name={'fontawesome|clock-o'}

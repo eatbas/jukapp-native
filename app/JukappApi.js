@@ -64,10 +64,7 @@ var JukappApi = {
   },
 
   videoOptions(video) {
-    return JSON.stringify({
-      youtube_id: video.youtubeId,
-      title: video.title
-    });
+    return JSON.stringify({youtube_id: video.details.youtube_id});
   },
 
   fetch(url, options) {
@@ -91,11 +88,8 @@ var JukappApi = {
       .then((responseData) => {
         return responseData.map((videoData) => {
           return {
-            youtubeId: videoData.youtube_id,
-            title: videoData.youtube_video.title,
-            playCount: videoData.play_count,
-            status: videoData.status,
-            thumbnail: { uri: 'http://img.youtube.com/vi/' + videoData.youtube_id + '/hqdefault.jpg' }
+            details: videoData.youtube_video,
+            statistics: videoData
           };
         });
       });
@@ -105,20 +99,10 @@ var JukappApi = {
     return this.fetchJson('/search?query=' + query)
       .then((responseData) => {
         return responseData.map((youtubeVideoData) => {
-
-          var video = {
-            youtubeId: youtubeVideoData.youtube_id,
-            title: youtubeVideoData.title,
-            thumbnail: { uri: 'http://img.youtube.com/vi/' + youtubeVideoData.youtube_id + '/hqdefault.jpg' }
+          return {
+            details: youtubeVideoData,
+            statistics: youtubeVideoData.video
           };
-
-          if (youtubeVideoData.video){
-            video.playCount = youtubeVideoData.video.play_count;
-          } else {
-            video.playCount = 0;
-          }
-
-          return video;
         });
       });
   },
@@ -135,19 +119,10 @@ var JukappApi = {
       .then((responseData) => {
         console.log('[Favorites]', responseData);
         return responseData.map((favoriteData) => {
-          var video = {
-            youtubeId: favoriteData.youtube_id,
-            title: favoriteData.youtube_video.title,
-            thumbnail: { uri: 'http://img.youtube.com/vi/' + favoriteData.youtube_id + '/hqdefault.jpg' }
+          return {
+            details: favoriteData.youtube_video,
+            statistics: favoriteData.video
           };
-
-          if (favoriteData.video){
-            video.playCount = favoriteData.video.play_count;
-          } else {
-            video.playCount = 0;
-          }
-
-          return video;
         });
       })
       .catch((response) => {
@@ -205,7 +180,7 @@ var JukappApi = {
   unfavoriteVideo(video) {
     var options = this.deleteOptions();
 
-    return this.fetch(`/favorites/${video.youtubeId}`, options)
+    return this.fetch(`/favorites/${video.details.youtube_id}`, options)
       .then((response) => {
         if (response.status == 200) {
           console.log('Successfully unfavorited video');

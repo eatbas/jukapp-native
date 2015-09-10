@@ -62,7 +62,7 @@ class QueuedVideoList extends Component {
   }
 
   _renderRow(video) {
-    if (video.status == 'playing') {
+    if (video.statistics.status == 'playing') {
       return <PlayingVideoListItem video={video} />;
     } else {
       return <VideoListItem video={video} />;

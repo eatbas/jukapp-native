@@ -21,13 +21,13 @@ class FavoriteButton extends Component {
     super(props);
 
     this.state = {
-      isFavorite: JukappStore.isFavorite(this.props.video.youtubeId)
+      isFavorite: JukappStore.isFavorite(this.props.video.details.youtube_id)
     };
   }
 
   componentWillReceiveProps() {
     this.setState({
-      isFavorite: JukappStore.isFavorite(this.props.video.youtubeId)
+      isFavorite: JukappStore.isFavorite(this.props.video.details.youtube_id)
     });
   }
 
