@@ -105,6 +105,7 @@ var JukappApi = {
     return this.fetchJson('/search?query=' + query)
       .then((responseData) => {
         return responseData.map((youtubeVideoData) => {
+
           var video = {
             youtubeId: youtubeVideoData.youtube_id,
             title: youtubeVideoData.title,
@@ -172,14 +173,14 @@ var JukappApi = {
       });
   },
 
-  toggleFavorite(video) {
+  toggleFavorite(video, isFavorite) {
     return new Promise((fulfill) => {
-      if (video.isFavorite) {
+      if (isFavorite) {
         return this.unfavoriteVideo(video)
-          .done(() => fulfill(false));
+          .done(() => fulfill());
       } else {
         return this.favoriteVideo(video)
-          .done(() => fulfill(true));
+          .done(() => fulfill());
       }
     });
   },

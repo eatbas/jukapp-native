@@ -2,6 +2,7 @@ var React = require('react-native');
 var Dispatcher = require('../../Dispatcher');
 var JukappApi = require('../JukappApi');
 var Router = require('../navigation/Router');
+var JukappStore = require('../stores/JukappStore');
 
 var {
   Icon
@@ -16,6 +17,20 @@ var {
 } = React;
 
 class FavoriteButton extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isFavorite: JukappStore.isFavorite(this.props.video.youtubeId)
+    };
+  }
+
+  componentWillReceiveProps() {
+    this.setState({
+      isFavorite: JukappStore.isFavorite(this.props.video.youtubeId)
+    });
+  }
+
   fetchData() {
     JukappApi.fetchFavorites().done((favorites) => {
       Dispatcher.dispatch({
@@ -26,19 +41,19 @@ class FavoriteButton extends Component {
   }
 
   _onFavoriteToggled() {
-    JukappApi.toggleFavorite(this.props.video)
-      .done((favorited) => {
-        if (favorited) {
-          Router._toast.flash('Favorited', 'fontawesome|heart');
-        } else {
+    JukappApi.toggleFavorite(this.props.video, this.state.isFavorite)
+      .done(() => {
+        if (this.state.isFavorite) {
           Router._toast.flash('Removed', 'fontawesome|heart-o');
+        } else {
+          Router._toast.flash('Favorited', 'fontawesome|heart');
         }
         this.fetchData();
       });
   }
 
   render() {
-    if (this.props.video.isFavorite == undefined) {
+    if (!JukappStore.loggedIn()) {
       return (<View/>);
     }
 
@@ -48,7 +63,7 @@ class FavoriteButton extends Component {
         style={styles.secondaryButton}
         onPress={this._onFavoriteToggled.bind(this)}>
         <Icon
-          name={this.props.video.isFavorite ? 'fontawesome|heart' : 'fontawesome|heart-o'}
+          name={this.state.isFavorite ? 'fontawesome|heart' : 'fontawesome|heart-o'}
           size={30}
           color='#FF7043'
           style={styles.icon}

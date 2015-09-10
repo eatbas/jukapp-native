@@ -17,7 +17,7 @@ class VideoList extends Component {
   constructor(props) {
     super(props);
 
-    var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    var dataSource = new ListView.DataSource({rowHasChanged: () => true});
 
     this.state = {
       dataSource,
@@ -61,15 +61,7 @@ class VideoList extends Component {
 
   _generateVideoRows(videos, favorites) {
     return videos.map((video) => {
-      var isFavorite;
-      if (this.state.loggedIn) {
-        isFavorite = !!favorites.find((favorite) => {
-          return favorite.youtubeId == video.youtubeId;
-        });
-      }
-
       return {
-        isFavorite,
         title: video.title,
         youtubeId: video.youtubeId,
         playCount: video.playCount,
