@@ -1,6 +1,7 @@
 var React = require('react-native');
 var FavoriteButton = require('../components/FavoriteButton');
 var PrettyDate = require('../utilities/PrettyDate');
+var LargeNumberFormatter = require('../utilities/LargeNumberFormatter');
 
 var {
   Icon
@@ -67,7 +68,7 @@ class VideoListItem extends Component {
                 color='#FF7043'
                 style={styles.icon}
               />
-              <Text style={styles.subtitle}>{video.details.view_count} views</Text>
+              <Text style={styles.subtitle}>{LargeNumberFormatter.format(video.details.view_count)} views</Text>
               <View style={{width: 16}}/>
               <Icon
                 name={'fontawesome|clock-o'}

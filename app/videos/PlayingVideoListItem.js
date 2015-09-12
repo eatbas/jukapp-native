@@ -2,6 +2,7 @@ var React = require('react-native');
 var FavoriteButton = require('../components/FavoriteButton');
 var ShareButton = require('../components/ShareButton');
 var Slider = require('react-native-slider');
+var LargeNumberFormatter = require('../utilities/LargeNumberFormatter');
 
 var {
   Icon
@@ -51,7 +52,7 @@ class PlayingVideoListItem extends Component {
                 color='#FF7043'
                 style={styles.icon}
               />
-              <Text style={styles.subtitle}>{video.details.view_count} views</Text>
+              <Text style={styles.subtitle}>{LargeNumberFormatter.format(video.details.view_count)} views</Text>
             </View>
           </View>
           <View style={styles.actions}>
