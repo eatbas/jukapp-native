@@ -1,5 +1,6 @@
 var React = require('react-native');
 var FavoriteButton = require('../components/FavoriteButton');
+var PrettyDate = require('../utilities/PrettyDate');
 
 var {
   Icon
@@ -45,11 +46,15 @@ class VideoListItem extends Component {
       );
     }
 
+    if (video.statistics && video.statistics.queued_at) {
+      var timeAgo = <Text style={styles.subtitle}>{PrettyDate.timeAgoInWords(video.statistics.queued_at)}</Text>;
+    }
+
     var listItemContent = (
       <View style={styles.container}>
         <View style={styles.heading}>
           <Text style={styles.title} numberOfLines={1}>{video.details.title}</Text>
-          <Text style={styles.subtitle}>20m</Text>
+          {timeAgo}
         </View>
         <View style={styles.content}>
           <Image source={thumbnail} style={styles.thumbnail}/>
