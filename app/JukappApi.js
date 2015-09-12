@@ -134,7 +134,7 @@ var JukappApi = {
   queueVideo(video) {
     var options = this.putOptions();
 
-    return this.fetch(`/videos/${video.youtubeId}/queue`, options)
+    return this.fetch(`/videos/${video.details.youtube_id}/queue`, options)
       .then((response) => {
         if (response.status == 201) {
           console.log('Successfully queued video');

@@ -18,7 +18,32 @@ var {
 class VideoListItem extends Component {
   render() {
     var video = this.props.video;
-    var thumbnail = { uri: 'http://img.youtube.com/vi/' + video.details.youtube_id + '/hqdefault.jpg' }
+    var thumbnail = { uri: 'http://img.youtube.com/vi/' + video.details.youtube_id + '/hqdefault.jpg' };
+
+    var minutes = ~~(video.details.duration/60);
+    var seconds = video.details.duration%60;
+
+    if (seconds < 10) {
+      seconds = `0${seconds}`;
+    }
+
+    var durationString = `${minutes}:${seconds}`;
+
+    console.log(video);
+
+    if (video.statistics && video.statistics.queued_by) {
+      var addedBy = (
+        <View style={styles.detailRow}>
+          <Icon
+            name={'fontawesome|user'}
+            size={20}
+            color='#FF7043'
+            style={styles.icon}
+          />
+          <Text style={styles.subtitle}>added by {video.statistics.queued_by.username}</Text>
+        </View>
+      );
+    }
 
     var listItemContent = (
       <View style={styles.container}>
@@ -29,15 +54,7 @@ class VideoListItem extends Component {
         <View style={styles.content}>
           <Image source={thumbnail} style={styles.thumbnail}/>
           <View style={styles.details}>
-            <View style={styles.detailRow}>
-              <Icon
-                name={'fontawesome|user'}
-                size={20}
-                color='#FF7043'
-                style={styles.icon}
-              />
-              <Text style={styles.subtitle}>added by berk</Text>
-            </View>
+            {addedBy}
             <View style={styles.detailRow}>
               <Icon
                 name={'fontawesome|eye'}
@@ -45,7 +62,7 @@ class VideoListItem extends Component {
                 color='#FF7043'
                 style={styles.icon}
               />
-              <Text style={styles.subtitle}>{video.statistics.play_count} views</Text>
+              <Text style={styles.subtitle}>{video.details.view_count} views</Text>
               <View style={{width: 16}}/>
               <Icon
                 name={'fontawesome|clock-o'}
@@ -53,7 +70,7 @@ class VideoListItem extends Component {
                 color='#FF7043'
                 style={styles.icon}
               />
-              <Text style={styles.subtitle}>3:40</Text>
+              <Text style={styles.subtitle}>{durationString}</Text>
             </View>
           </View>
           <FavoriteButton video={this.props.video} />

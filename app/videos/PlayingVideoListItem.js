@@ -19,7 +19,21 @@ var {
 class PlayingVideoListItem extends Component {
   render() {
     var video = this.props.video;
-    var thumbnail = { uri: 'http://img.youtube.com/vi/' + video.details.youtube_id + '/hqdefault.jpg' }
+    var thumbnail = { uri: 'http://img.youtube.com/vi/' + video.details.youtube_id + '/hqdefault.jpg' };
+
+    if (video.statistics.queued_by) {
+      var addedBy = (
+        <View style={styles.detailRow}>
+          <Icon
+            name={'fontawesome|user'}
+            size={20}
+            color='#FF7043'
+            style={styles.icon}
+          />
+          <Text style={styles.subtitle}>added by {video.statistics.queued_by.username}</Text>
+        </View>
+      );
+    }
 
     return (
       <View style={styles.container}>
@@ -29,15 +43,7 @@ class PlayingVideoListItem extends Component {
         <View style={styles.content}>
           <Image source={thumbnail} style={styles.thumbnail} />
           <View style={styles.details}>
-            <View style={styles.detailRow}>
-              <Icon
-                name={'fontawesome|user'}
-                size={20}
-                color='#FF7043'
-                style={styles.icon}
-              />
-              <Text style={styles.subtitle}>added by berk</Text>
-            </View>
+            {addedBy}
             <View style={styles.detailRow}>
               <Icon
                 name={'fontawesome|eye'}
@@ -45,7 +51,7 @@ class PlayingVideoListItem extends Component {
                 color='#FF7043'
                 style={styles.icon}
               />
-              <Text style={styles.subtitle}>{video.statistics.play_count} views</Text>
+              <Text style={styles.subtitle}>{video.details.view_count} views</Text>
             </View>
           </View>
           <View style={styles.actions}>
