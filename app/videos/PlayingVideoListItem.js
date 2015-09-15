@@ -18,9 +18,50 @@ var {
 } = React;
 
 class PlayingVideoListItem extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      currentTime: this.props.video.statistics.current_time
+    };
+  }
+
+  componentDidMount() {
+    this.setInterval();
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.setInterval);
+  }
+
+  setInterval() {
+    // this leaks, don't increment if paused
+    setInterval(() => {
+      if (this.props.video.statistics.status == 'playing') {
+        this.setState({currentTime: this.state.currentTime + 1});
+      }
+    }, 1000);
+  }
+
+  integerToDuration(value) {
+    var minutes = ~~(value/60);
+    var seconds = value%60;
+
+    if (seconds < 10) {
+      seconds = `0${seconds}`;
+    }
+
+    return `${minutes}:${seconds}`;
+  }
+
   render() {
     var video = this.props.video;
     var thumbnail = { uri: 'http://img.youtube.com/vi/' + video.details.youtube_id + '/hqdefault.jpg' };
+
+    var durationString = this.integerToDuration(video.details.duration);
+    var currentTimeString = this.integerToDuration(this.state.currentTime);
+
+    console.log(video);
 
     if (video.statistics.queued_by) {
       var addedBy = (
@@ -38,7 +79,7 @@ class PlayingVideoListItem extends Component {
 
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>
+        <Text numberOfLines={1} style={styles.title}>
           {video.details.title}
         </Text>
         <View style={styles.content}>
@@ -60,14 +101,18 @@ class PlayingVideoListItem extends Component {
             <FavoriteButton video={this.props.video} />
           </View>
         </View>
-        <Slider
-          style={styles.slider_container}
-          trackStyle={styles.slider_track}
-          thumbStyle={styles.slider_thumb}
-          minimumTrackTintColor='#FF7043'
-          thumbTouchSize={{width: 0, height: 0}}
-          value={0.5}
-        />
+        <View style={styles.detailRow}>
+          <Text style={styles.subtitle}>{currentTimeString}</Text>
+          <Slider
+            style={styles.slider_container}
+            trackStyle={styles.slider_track}
+            thumbStyle={styles.slider_thumb}
+            minimumTrackTintColor='#FF7043'
+            thumbTouchSize={{width: 0, height: 0}}
+            value={this.state.currentTime/video.details.duration}
+          />
+          <Text style={styles.subtitle}>{durationString}</Text>
+        </View>
       </View>
     );
   }
@@ -151,7 +196,10 @@ var styles = StyleSheet.create({
   },
 
   slider_container: {
-    height: 20
+    height: 20,
+    flex: 1,
+    marginRight: 8,
+    marginLeft: 8
   },
 
   slider_track: {
