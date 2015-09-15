@@ -2,7 +2,7 @@ var React = require('react-native');
 var JukappStore = require('./stores/JukappStore');
 var EventSource = require('NativeModules').RNEventSource;
 
-var JUKAPP_URL = 'http://localhost:3000';
+var JUKAPP_URL = 'http://beta.jukapp.io';
 
 var {
   AlertIOS,
