@@ -5,13 +5,16 @@ var Navigation = require('./app/navigation/Navigation');
 var JukappStorage = require('./JukappStorage');
 
 var {
-  AppRegistry
+  AppRegistry,
+  StatusBarIOS
 } = React;
 
 var Jukapp = React.createClass({
   mixins: [JukappStore.Watch],
 
   getInitialState() {
+    StatusBarIOS.setStyle('light-content');
+
     return {
       inRoom: JukappStore.inRoom()
     };

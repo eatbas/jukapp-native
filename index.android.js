@@ -1,52 +1,45 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- */
-'use strict';
-
 var React = require('react-native');
+var RoomList = require('./app/rooms/RoomList');
+var JukappStore = require('./app/stores/JukappStore');
+var Navigation = require('./app/navigation/Navigation');
+var JukappStorage = require('./JukappStorage');
+
 var {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View,
+  AppRegistry
 } = React;
 
 var Jukapp = React.createClass({
-  render: function() {
+  mixins: [JukappStore.Watch],
+
+  getInitialState() {
+    return {
+      inRoom: JukappStore.inRoom()
+    };
+  },
+
+  componentDidMount() {
+    setTimeout(() => {
+      // KNOWN ISSUE: ScrollView sometimes errs with "Cannot find view with tag #XXX": #1941
+      // https://github.com/facebook/react-native/issues/1941
+      JukappStorage.loadFromStorage();
+    }, 100);
+  },
+
+  _onChange() {
+    this.setState({
+      inRoom: JukappStore.inRoom()
+    });
+  },
+
+  render() {
+    if (!this.state.inRoom) {
+      return <RoomList />;
+    }
+
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Shake or press menu button for dev menu
-        </Text>
-      </View>
+      <Navigation />
     );
   }
-});
-
-var styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
 });
 
 AppRegistry.registerComponent('Jukapp', () => Jukapp);
