@@ -8,13 +8,13 @@ var {
 var {
   Component,
   StyleSheet,
-  TouchableHighlight
+  TouchableOpacity
 } = React;
 
 class MenuButton extends Component {
   render() {
     return (
-      <TouchableHighlight
+      <TouchableOpacity
         onPress={() => Router.sideMenu.toggleMenu()}
         activeOpacity={0.3}
         underlayColor='#33ADFF'
@@ -26,7 +26,7 @@ class MenuButton extends Component {
           color='white'
           style={styles.headerLeftButtonIcon}
         />
-      </TouchableHighlight>
+      </TouchableOpacity>
     );
   }
 }

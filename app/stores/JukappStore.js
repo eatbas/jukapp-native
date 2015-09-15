@@ -23,6 +23,7 @@ var JukappStore = new Store((register: Function) => {
 
     logout() {
       user = null;
+      favorites = [];
     },
 
     loadRooms(action) {
@@ -73,6 +74,10 @@ var JukappStore = new Store((register: Function) => {
 
     getFavorites() {
       return favorites;
+    },
+
+    isFavorite(youtubeId) {
+      return favorites.find((favorite) => favorite.details.youtube_id == youtubeId);
     }
   };
 });

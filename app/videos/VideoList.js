@@ -1,5 +1,5 @@
 var React = require('react-native');
-var VideoListItem = require('../components/VideoListItem');
+var VideoListItem = require('./VideoListItem');
 var Dispatcher = require('../../Dispatcher');
 var JukappApi = require('../JukappApi');
 var JukappStore = require('../stores/JukappStore');
@@ -17,7 +17,7 @@ class VideoList extends Component {
   constructor(props) {
     super(props);
 
-    var dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    var dataSource = new ListView.DataSource({rowHasChanged: () => true});
 
     this.state = {
       dataSource,
@@ -31,7 +31,7 @@ class VideoList extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(this._generateVideoRows(nextProps.videos, JukappStore.getFavorites()))
+      dataSource: this.state.dataSource.cloneWithRows(nextProps.videos)
     });
   }
 
@@ -54,26 +54,8 @@ class VideoList extends Component {
     }
 
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(this._generateVideoRows(this.props.videos, JukappStore.getFavorites())),
+      dataSource: this.state.dataSource.cloneWithRows(this.props.videos),
       loggedIn: JukappStore.loggedIn()
-    });
-  }
-
-  _generateVideoRows(videos, favorites) {
-    return videos.map((video) => {
-      var isFavorite;
-      if (this.state.loggedIn) {
-        isFavorite = !!favorites.find((favorite) => {
-          return favorite.youtubeId == video.youtubeId;
-        });
-      }
-
-      return {
-        isFavorite,
-        title: video.title,
-        youtubeId: video.youtubeId,
-        playCount: video.playCount
-      };
     });
   }
 
@@ -106,8 +88,9 @@ class VideoList extends Component {
         style={styles.container}
         contentContainerStyle={styles.listViewContent}
         dataSource={this.state.dataSource}
-        renderRow={this._renderRow.bind(this)}
+        renderRow={this.props.renderRow || this._renderRow.bind(this)}
         renderFooter={this._renderFooter.bind(this)}
+        automaticallyAdjustContentInsets={this.props.automaticallyAdjustContentInsets}
       />
     );
   }
@@ -115,14 +98,23 @@ class VideoList extends Component {
 
 VideoList.propTypes = {
   action: PropTypes.bool,
+  automaticallyAdjustContentInsets: PropTypes.bool,
   loading: PropTypes.bool,
+  renderRow: PropTypes.func,
   videos: PropTypes.array.isRequired
 };
 
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EEF2F2'
+    backgroundColor: '#EEF2F2',
+    shadowColor: '#000000',
+    shadowRadius: 2,
+    shadowOpacity: 0.5,
+    shadowOffset: {
+      height: 1,
+      width: 0
+    }
   },
 
   listViewContent: {

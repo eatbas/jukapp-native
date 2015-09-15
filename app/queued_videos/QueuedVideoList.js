@@ -3,9 +3,20 @@ var Dispatcher = require('../../Dispatcher');
 var JukappStore = require('../stores/JukappStore');
 var JukappApi = require('../JukappApi');
 var VideoList = require('../videos/VideoList');
+var VideoListItem = require('../videos/VideoListItem');
+var PlayingVideoListItem = require('../videos/PlayingVideoListItem');
 
 var {
-  Component
+  Icon
+} = require('react-native-icons');
+
+var {
+  Component,
+  View,
+  Text,
+  ScrollView,
+  Image,
+  StyleSheet
 } = React;
 
 class QueuedVideoList extends Component {
@@ -50,11 +61,20 @@ class QueuedVideoList extends Component {
     });
   }
 
+  _renderRow(video) {
+    if (video.statistics.status == 'playing') {
+      return <PlayingVideoListItem video={video} />;
+    } else {
+      return <VideoListItem video={video} />;
+    }
+  }
+
   render() {
     return (
       <VideoList
         videos={JukappStore.getQueuedVideos()}
         loading={this.state.loading}
+        renderRow={this._renderRow.bind(this)}
       />
     );
   }

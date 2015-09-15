@@ -194,7 +194,7 @@ var styles = StyleSheet.create({
   },
 
   navigatorBar: {
-    backgroundColor: '#33ADFF'
+    backgroundColor: '#3F51B5'
   },
 
   leftButton: {

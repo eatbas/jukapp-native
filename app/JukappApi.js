@@ -2,7 +2,7 @@ var React = require('react-native');
 var JukappStore = require('./stores/JukappStore');
 var EventSource = require('NativeModules').RNEventSource;
 
-var JUKAPP_URL = 'http://beta.jukapp.io';
+var JUKAPP_URL = 'http://localhost:3000';
 
 var {
   AlertIOS,
@@ -64,10 +64,7 @@ var JukappApi = {
   },
 
   videoOptions(video) {
-    return JSON.stringify({
-      youtube_id: video.youtubeId,
-      title: video.title
-    });
+    return JSON.stringify({youtube_id: video.details.youtube_id});
   },
 
   fetch(url, options) {
@@ -87,13 +84,12 @@ var JukappApi = {
   },
 
   fetchQueuedVideos() {
-    return this.fetchJson('/jukebox')
+    return this.fetchJson('/videos?type=playlist')
       .then((responseData) => {
         return responseData.map((videoData) => {
           return {
-            youtubeId: videoData.youtube_id,
-            title: videoData.youtube_video.title,
-            playCount: videoData.play_count
+            details: videoData.youtube_video,
+            statistics: videoData
           };
         });
       });
@@ -103,18 +99,10 @@ var JukappApi = {
     return this.fetchJson('/search?query=' + query)
       .then((responseData) => {
         return responseData.map((youtubeVideoData) => {
-          var video = {
-            youtubeId: youtubeVideoData.youtube_id,
-            title: youtubeVideoData.title
+          return {
+            details: youtubeVideoData,
+            statistics: youtubeVideoData.video
           };
-
-          if (youtubeVideoData.video){
-            video.playCount = youtubeVideoData.video.play_count;
-          } else {
-            video.playCount = 0;
-          }
-
-          return video;
         });
       });
   },
@@ -131,18 +119,10 @@ var JukappApi = {
       .then((responseData) => {
         console.log('[Favorites]', responseData);
         return responseData.map((favoriteData) => {
-          var video = {
-            youtubeId: favoriteData.youtube_id,
-            title: favoriteData.youtube_video.title
+          return {
+            details: favoriteData.youtube_video,
+            statistics: favoriteData.video
           };
-
-          if (favoriteData.video){
-            video.playCount = favoriteData.video.play_count;
-          } else {
-            video.playCount = 0;
-          }
-
-          return video;
         });
       })
       .catch((response) => {
@@ -154,7 +134,7 @@ var JukappApi = {
   queueVideo(video) {
     var options = this.putOptions();
 
-    return this.fetch(`/videos/${video.youtubeId}/queue`, options)
+    return this.fetch(`/videos/${video.details.youtube_id}/queue`, options)
       .then((response) => {
         if (response.status == 201) {
           console.log('Successfully queued video');
@@ -168,14 +148,14 @@ var JukappApi = {
       });
   },
 
-  toggleFavorite(video) {
+  toggleFavorite(video, isFavorite) {
     return new Promise((fulfill) => {
-      if (video.isFavorite) {
+      if (isFavorite) {
         return this.unfavoriteVideo(video)
-          .done(() => fulfill(false));
+          .done(() => fulfill());
       } else {
         return this.favoriteVideo(video)
-          .done(() => fulfill(true));
+          .done(() => fulfill());
       }
     });
   },
@@ -200,7 +180,7 @@ var JukappApi = {
   unfavoriteVideo(video) {
     var options = this.deleteOptions();
 
-    return this.fetch(`/favorites/${video.youtubeId}`, options)
+    return this.fetch(`/favorites/${video.details.youtube_id}`, options)
       .then((response) => {
         if (response.status == 200) {
           console.log('Successfully unfavorited video');
