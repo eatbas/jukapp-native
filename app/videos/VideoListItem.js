@@ -31,8 +31,6 @@ class VideoListItem extends Component {
 
     var durationString = `${minutes}:${seconds}`;
 
-    console.log(video);
-
     if (video.statistics && video.statistics.queued_by) {
       var addedBy = (
         <View style={styles.detailRow}>
