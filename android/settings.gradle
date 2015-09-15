@@ -1,0 +1,3 @@
+rootProject.name = 'Jukapp'
+
+include ':app'
